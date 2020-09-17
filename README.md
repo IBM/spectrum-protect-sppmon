@@ -5,10 +5,10 @@ The built-in functionality to monitor the SPP server, vSnap, VADP and Microsoft 
 
 The SPPMON project consists of three major components. The SPPMON core engine (the open source) is used to query the system data and ingext it in an database. An Influx time series database is used to store and prepare the collected data for the graphical interface. Grafana is used as the graphical interface for the project. The below picture describes the components and the general workflow on a high level. 
 
-![SPP / SPPmon Overview](https://github.com/IBM/sppmon/blob/master/wiki/pictures/Screenshot%202020-05-15%20at%2012.12.03.png)
+![SPP / SPPmon Overview](https://github.com/IBM/spectrum-protect-sppmon/blob/master/wiki/pictures/Screenshot%202020-05-15%20at%2012.12.03.png)
 
 **Note:** The documentation is split in two sections: The user guide and the developer guide. The user guide includes all information needed to setup and configure the SPPMON system an data protection environment. The developer guide includes all information needed to improve the SPPMON system with more functionality, contribute to the open source projects or running SPPMON in a containerized environment.  
 
 **Note:** SPPMON can be setup from scratch on a Linux operating system or can be deployed in a containerized environment. See the documentation for more details.  
 
-### Find the documentation in the project [Wiki](https://github.com/IBM/sppmon/wiki)
+### Find the documentation in the project [Wiki](https://github.com/IBM/spectrum-protect-sppmon/wiki)
