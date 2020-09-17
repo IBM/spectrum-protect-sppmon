@@ -5,6 +5,6 @@ The built-in functionality to monitor the SPP server, vSnap, VADP and Microsoft 
 
 THE SPPMON project consists of three major components. The SPPMON core engine (the open source) is used to query the system data and ingext it in an database. An Influx time series database is used to store and prepare the collected data for the graphical interface. Grafana is used as the graphical interface for the project.
 
-## Find the documentation in the project [Wiki](wiki)
+## Find the documentation in the project [Wiki](https://github.com/IBM/sppmon/wiki)
 
 **Note:** The documentation is split in two sections: The user guide and the developer guide. The user guide includes all information needed to setup and configure the SPPMON system an data protection environment. The developer guide includes all information needed to improve the SPPMON system with more functionality, contribute to the open source projects or running SPPMON in a containerized environment.  
