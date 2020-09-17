@@ -1,0 +1,14 @@
+{
+    "strictParameterNoneValue": false,
+    "reportMissingImports": false,
+    "reportGeneralTypeIssues": "warning",
+    "reportUnnecessaryIsInstance": false,
+    "enableTypeIgnoreComments": true,
+    "typeCheckingMode": "strict",
+    "reportUnusedVariable": "warning",
+    "reportUnknownMemberType": "warning",
+    "reportUnknownVariableType": "warning",
+    "reportUnknownArgumentType": "warning",
+    "reportUnknownParameterType": "warning",
+    "reportUnknownLambdaType": "warning"
+}

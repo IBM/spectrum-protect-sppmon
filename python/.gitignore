@@ -1,0 +1,6 @@
+__pycache__
+utils/__pycache__/
+sppmon.code-workspace
+.vscode/
+.VSCodeCounter/
+sppconnections.conf
