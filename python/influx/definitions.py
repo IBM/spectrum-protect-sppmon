@@ -393,6 +393,7 @@ class Definitions:
             tags=[
                 'sppmon_version',
                 'spp_version',
+                'vms',
                 'spp_build',
                 'all',
                 'confFileJSON',
@@ -462,7 +463,6 @@ class Definitions:
                 'cpu':              Datatype.INT,
                 'coresPerCpu':      Datatype.INT,
                 'memory':           Datatype.INT,
-                'id':               Datatype.STRING,
                 'name':             Datatype.STRING
             },
             tags=[
@@ -473,6 +473,7 @@ class Definitions:
                 'inHLO',
                 'isEncrypted',
                 'datacenterName',
+                'id',                   # For issue #6, moved id to tags from fields to ensure uniqueness in tag set
                 'hypervisorType'
             ],
             time_key='catalogTime',
