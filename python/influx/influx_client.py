@@ -394,7 +394,7 @@ class InfluxClient:
             ValueError: No list with dictonarys are given or of wrong type.
             ValueError: No table name is given
         """
-        LOGGER.debug("Enter")
+        LOGGER.debug(f"Enter insert_dicts for table: {table_name}")
         if(list_with_dicts is None): # empty list is allowed
             raise ValueError("missing list with dictonarys in insert")
         if(not table_name):
@@ -410,7 +410,6 @@ class InfluxClient:
 
         # Generate querys for each dict
         query_buffer = []
-        appendCount = 0
         for mydict in list_with_dicts:
             try:
                 # split dict according to default tables
@@ -422,7 +421,6 @@ class InfluxClient:
 
                 # create query and append to query_buffer
                 query_buffer.append(InsertQuery(table, values, tags, timestamp))
-                appendCount = appendCount + 1
             except ValueError as err:
                 ExceptionUtils.exception_info(error=err, extra_message="skipping single dict to insert")
                 continue
@@ -431,11 +429,13 @@ class InfluxClient:
         table_buffer = self.__insert_buffer.get(table, list())
         table_buffer.extend(query_buffer)
         self.__insert_buffer[table] = table_buffer
+        LOGGER.debug("Appended %d items to the insert buffer", len(query_buffer))
+
         # safeguard to avoid memoryError
         if(len(self.__insert_buffer[table]) > 5 * self.__query_max_batch_size):
             self.flush_insert_buffer()
-        LOGGER.debug("Appended %d items to the insert buffer", appendCount)
-        LOGGER.debug("Exit")
+        
+        LOGGER.debug(f"Exit insert_dicts for table: {table_name}")
 
     def flush_insert_buffer(self) -> None:
         """Flushes the insert buffer, send querys to influxdb server.
