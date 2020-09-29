@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 5,
+  "id": 21,
   "links": [],
   "panels": [
     {
@@ -86,7 +86,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [
@@ -177,7 +177,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "",
@@ -270,7 +270,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "$tag_name",
@@ -380,7 +380,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "$tag_jobName",
@@ -475,7 +475,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -649,7 +649,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [],
@@ -729,7 +729,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [],
@@ -776,7 +776,7 @@
           "mappings": [],
           "noValue": "Not Executed",
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
                 "color": "light-blue",
@@ -809,7 +809,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [],
@@ -839,6 +839,18 @@
               "key": "jobName",
               "operator": "=~",
               "value": "/.*catalog.*/"
+            },
+            {
+              "condition": "AND",
+              "key": "status",
+              "operator": "=",
+              "value": "COMPLETED"
+            },
+            {
+              "condition": "AND",
+              "key": "subPolicyType",
+              "operator": "=",
+              "value": "BACKUP"
             }
           ]
         }
@@ -889,7 +901,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [],
@@ -974,7 +986,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": false
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "--constant",
@@ -1248,7 +1260,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "Catalog Backup",
@@ -1330,7 +1342,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "",
@@ -1421,7 +1433,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1529,7 +1541,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1637,7 +1649,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "$tag_ssh_type",
@@ -1743,7 +1755,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "Amount Replicated",
@@ -1855,7 +1867,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [],
@@ -2038,7 +2050,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2262,7 +2274,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2449,7 +2461,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2644,7 +2656,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -2856,7 +2868,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -3014,7 +3026,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -3186,7 +3198,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3325,7 +3337,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3520,7 +3532,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3692,7 +3704,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3877,7 +3889,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4056,7 +4068,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4235,7 +4247,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4414,7 +4426,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4611,7 +4623,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4802,7 +4814,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4976,7 +4988,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5146,7 +5158,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5273,7 +5285,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5602,7 +5614,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -5795,7 +5807,7 @@
               "value": "partial"
             },
             {
-              "condition": "AND",
+              "condition": "OR",
               "key": "status",
               "operator": "=",
               "value": "failed"
@@ -5978,7 +5990,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6121,7 +6133,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6171,7 +6183,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -6272,7 +6290,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6318,7 +6336,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "sum"
               }
             ]
           ],
@@ -6415,7 +6433,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6552,7 +6570,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6689,7 +6707,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6842,7 +6860,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -6976,7 +6994,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7145,7 +7163,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7288,7 +7306,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7426,7 +7444,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7615,7 +7633,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7861,7 +7879,7 @@
           }
         ]
       },
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "groupBy": [
@@ -7968,7 +7986,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8175,7 +8193,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.5",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10890,8 +10908,8 @@
     "list": []
   },
   "time": {
-    "from": "now-14d",
-    "to": "now-2m"
+    "from": "now-7d",
+    "to": "now"
   },
   "timepicker": {
     "nowDelay": "",
@@ -10906,7 +10924,7 @@
     ]
   },
   "timezone": "",
-  "title": "SPPMON for IBM Spectrum Protect Plus",
+  "title": "SPPMON for IBM Spectrum Protect Plus_fixes",
   "uid": "PcYuUMSMk",
-  "version": 10
+  "version": 2
 }
