@@ -17,8 +17,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 20,
-  "iteration": 1598360864388,
+  "id": 26,
+  "iteration": 1601580759335,
   "links": [],
   "panels": [
     {
@@ -46,8 +46,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -78,7 +77,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -187,29 +186,7 @@
       "description": "max 90% Percentille  of each component memory usage",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
+          "custom": {}
         },
         "overrides": []
       },
@@ -237,7 +214,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -278,7 +255,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "SPP-Server File Systems (Catalog)",
+      "title": "SPP Server Catalog Space Used",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -294,6 +271,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:4176",
           "format": "percent",
           "label": null,
           "logBase": 1,
@@ -302,6 +280,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:4177",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -325,38 +304,7 @@
       "description": "Duration selected jobs",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "min": 0,
-          "noValue": "No Execution Recorded",
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 36000000
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 72000000
-              }
-            ]
-          },
-          "unit": "ms"
+          "custom": {}
         },
         "overrides": []
       },
@@ -384,7 +332,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -515,7 +463,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -634,30 +582,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "noValue": "N/A",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 65
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          },
-          "unit": "percent"
+          "custom": {}
         },
         "overrides": []
       },
@@ -684,7 +609,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -796,29 +721,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "noValue": "N/A",
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#299c46",
-                "value": null
-              },
-              {
-                "color": "light-orange",
-                "value": 36000000
-              },
-              {
-                "color": "#d44a3a",
-                "value": 72000000
-              }
-            ]
-          },
-          "unit": "ms"
+          "custom": {}
         },
         "overrides": []
       },
@@ -848,7 +751,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -935,20 +838,7 @@
       "description": "Sum of replicated bytes \nSum of transferred bytes\n",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "mappings": [],
-          "noValue": "N/A",
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
+          "custom": {}
         },
         "overrides": []
       },
@@ -978,7 +868,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1111,30 +1001,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "noValue": "N/A",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 65
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          },
-          "unit": "percentunit"
+          "custom": {}
         },
         "overrides": []
       },
@@ -1161,7 +1028,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1273,21 +1140,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "noValue": "N/A",
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
+          "custom": {}
         },
         "overrides": []
       },
@@ -1317,7 +1170,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1439,8 +1292,7 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -1468,7 +1320,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -1724,7 +1576,7 @@
           }
         ]
       },
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "targets": [
         {
           "alias": "",
@@ -1832,8 +1684,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -1861,7 +1712,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -2122,8 +1973,7 @@
       "decimals": 1,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2153,7 +2003,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2267,8 +2117,7 @@
       "description": "Selected Processes monitored by top command\n\"java\", \"mongo\", \"beam.smp\"",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2301,7 +2150,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2416,8 +2265,7 @@
       "decimals": 1,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2446,7 +2294,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2555,8 +2403,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2583,7 +2430,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -2705,8 +2552,7 @@
       "description": "Mean-Sum of process-group displayed",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2737,7 +2583,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2854,8 +2700,7 @@
       "description": "Selected Processes monitored by top command\n\"java\", \"mongo\", \"beam.smp\"",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -2888,7 +2733,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2997,8 +2842,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3026,7 +2870,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3067,7 +2911,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "SPP-Server File System",
+      "title": "SPP Server Catalog Space Used",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -3114,8 +2958,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3142,7 +2985,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3275,8 +3118,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3306,7 +3148,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3400,9 +3242,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": [],
-          "unit": "ms"
+          "custom": {}
         },
         "overrides": []
       },
@@ -3429,7 +3269,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3521,8 +3361,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3549,7 +3388,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3641,8 +3480,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3669,7 +3507,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3768,8 +3606,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3796,7 +3633,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3907,8 +3744,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -3935,7 +3771,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4027,8 +3863,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -4055,7 +3890,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4160,8 +3995,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -4188,7 +4022,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4311,35 +4145,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "VM False"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "VM Unprotected"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "VM True"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "VM Protected"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 0,
       "fillGradient": 1,
@@ -4364,7 +4172,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4488,8 +4296,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -4516,7 +4323,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4619,32 +4426,7 @@
         "defaults": {
           "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "vmStats.vmCountHyperV"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "HyperV Count"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "vmStats.vmCountVMware"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "VMWare Count"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -4670,7 +4452,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4757,8 +4539,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -4785,7 +4566,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4862,7 +4643,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "vmSizes (in inventory, not catalog)",
+      "title": "Virtual Machine Sizes",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4915,8 +4696,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -4945,7 +4725,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -5153,23 +4933,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5194,7 +4960,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5244,7 +5010,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5298,23 +5070,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5339,7 +5097,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5389,7 +5147,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5463,23 +5227,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Type: "
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Type: Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5504,7 +5254,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5554,7 +5304,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5608,23 +5364,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5649,7 +5391,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5699,7 +5441,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5753,23 +5501,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5794,7 +5528,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5844,7 +5578,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5898,23 +5638,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -5939,7 +5665,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5973,7 +5699,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -6041,24 +5773,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": [],
-          "unit": "percent"
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 1,
@@ -6084,7 +5801,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -6173,23 +5890,9 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 1,
@@ -6215,7 +5918,7 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -6244,7 +5947,7 @@
             [
               {
                 "params": [
-                  "mean_used"
+                  "used"
                 ],
                 "type": "field"
               }
@@ -6307,23 +6010,9 @@
       "decimals": 1,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Undefined"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 1,
@@ -6351,7 +6040,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6455,8 +6144,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -6483,7 +6171,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6682,24 +6370,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
+          "custom": {}
         },
         "overrides": []
       },
@@ -6726,7 +6397,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6839,24 +6510,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          "custom": {}
         },
         "overrides": []
       },
@@ -6883,7 +6537,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6990,8 +6644,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -7018,7 +6671,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7217,8 +6870,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -7245,7 +6897,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7450,8 +7102,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -7478,7 +7129,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7819,8 +7470,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -7847,7 +7497,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7953,8 +7603,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -7981,7 +7630,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8088,8 +7737,7 @@
       "datasource": "$SPP_Server",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "links": []
+          "custom": {}
         },
         "overrides": []
       },
@@ -8116,7 +7764,7 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "7.1.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8223,9 +7871,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "cb11_new",
-          "value": "cb11_new"
+          "selected": true,
+          "text": "default",
+          "value": "default"
         },
         "hide": 0,
         "includeAll": false,
@@ -8288,5 +7936,5 @@
   "timezone": "",
   "title": "SPPMON Long Term View (90 Days / Infinite)",
   "uid": "8pQ8jDSGk",
-  "version": 40
+  "version": 3
 }
