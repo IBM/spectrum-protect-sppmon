@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 21,
+  "id": 22,
   "links": [],
   "panels": [
     {
@@ -10924,7 +10924,7 @@
     ]
   },
   "timezone": "",
-  "title": "SPPMON for IBM Spectrum Protect Plus_fixes",
+  "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
   "version": 2
 }
