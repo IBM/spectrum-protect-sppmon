@@ -3,6 +3,6 @@
 ################################################################################
 
 /.vs
+/python/.vs/python/v16
 /python/python.pyproj
 /python/python.sln
-/python/.vs/python/v16

@@ -393,6 +393,7 @@ class Definitions:
             tags=[
                 'sppmon_version',
                 'spp_version',
+                'vms',
                 'spp_build',
                 'all',
                 'confFileJSON',
@@ -462,7 +463,6 @@ class Definitions:
                 'cpu':              Datatype.INT,
                 'coresPerCpu':      Datatype.INT,
                 'memory':           Datatype.INT,
-                'id':               Datatype.STRING,
                 'name':             Datatype.STRING
             },
             tags=[
@@ -473,27 +473,56 @@ class Definitions:
                 'inHLO',
                 'isEncrypted',
                 'datacenterName',
+                'id',                   # For issue #6, moved id to tags from fields to ensure uniqueness in tag set
                 'hypervisorType'
             ],
             time_key='catalogTime',
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
-                cls._CQ_DWSMPL([ # strings are not calculated, uptime as timestamp removed
-                    "mean(commited) as commited",
-                    "mean(uncommited) as uncommited",
-                    "mean(shared) as shared",
-                    "mean(cpu) as cpu",
-                    "mean(coresPerCpu) as coresPerCpu",
-                    "mean(memory) as memory"
-                    ], cls._RP_DAYS_90(), "6h"),
-                cls._CQ_DWSMPL([
-                    "mean(commited) as commited",
-                    "mean(uncommited) as uncommited",
-                    "mean(shared) as shared",
-                    "mean(cpu) as cpu",
-                    "mean(coresPerCpu) as coresPerCpu",
-                    "mean(memory) as memory"
-                    ], cls._RP_INF(), "1w"),
+                cls._CQ_DWSMPL(
+                    fields=[ # strings are not calculated, uptime as timestamp removed
+                        "mean(commited) as commited",
+                        "mean(uncommited) as uncommited",
+                        "mean(shared) as shared",
+                        "mean(cpu) as cpu",
+                        "mean(coresPerCpu) as coresPerCpu",
+                        "mean(memory) as memory"
+                    ], 
+                    new_retention_policy=cls._RP_DAYS_90(),
+                    group_time="6h",
+                    group_args=[
+                        'host',
+                        'vmVersion',
+                        'osName',
+                        'isProtected',
+                        'inHLO',
+                        'isEncrypted',
+                        'datacenterName',
+                        #'id',  ## Not ID to allow a meaningfull grouping
+                        'hypervisorType'
+                    ]),
+                cls._CQ_DWSMPL(
+                    fields=[
+                        "mean(commited) as commited",
+                        "mean(uncommited) as uncommited",
+                        "mean(shared) as shared",
+                        "mean(cpu) as cpu",
+                        "mean(coresPerCpu) as coresPerCpu",
+                        "mean(memory) as memory"
+                    ],
+                    new_retention_policy=cls._RP_INF(),
+                    group_time="1w",
+                    group_args=[
+                        'host',
+                        'vmVersion',
+                        'osName',
+                        'isProtected',
+                        'inHLO',
+                        'isEncrypted',
+                        'datacenterName',
+                        #'id',  ## Not ID to allow a meaningfull grouping
+                        'hypervisorType'
+                    ]),
 
 
                 # VM STATS TABLE
