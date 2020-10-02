@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 22,
+  "id": 36,
   "links": [],
   "panels": [
     {
@@ -10908,8 +10908,8 @@
     "list": []
   },
   "time": {
-    "from": "now-7d",
-    "to": "now"
+    "from": "now-14d",
+    "to": "now-5m"
   },
   "timepicker": {
     "nowDelay": "",
@@ -10926,5 +10926,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 2
+  "version": 4
 }
