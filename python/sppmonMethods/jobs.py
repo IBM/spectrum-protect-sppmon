@@ -232,6 +232,7 @@ class JobMethods:
 
         # only continue with joblogs we want to save
         supported_log_list = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
+        maxTimestamp = 0
         for job_log in supported_log_list:
             message_id = job_log['messageId']
 
@@ -250,7 +251,19 @@ class JobMethods:
                 continue
 
             row_dict['messageId'] = message_id
-            row_dict['time'] = job_log['logTime']
+            # Issue 9, In case where all tag values duplicate another record, including the timestamp, Influx will throw the insert
+            # out as a duplicate.  In some cases, the changing of epoch timestamps from millisecond to second precision is
+            # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to 
+            # ensure uniqueness.  Only use this when some innacuracy of the timestamps is acceptable
+            curTimestamp = job_log['logTime'] 
+            if table_name == 'vmBackupSummary':
+                    if(isinstance(curTimestamp, str)):
+                        curTimestamp = int(curTimestamp)
+                    if curTimestamp <= (maxTimestamp+1000):
+                        curTimestamp = maxTimestamp + 1001
+                    maxTimestamp = curTimestamp
+            
+            row_dict['time'] = curTimestamp
 
             for(key, item) in row_dict.items():
                 if(item in ('null', 'null(null)')):

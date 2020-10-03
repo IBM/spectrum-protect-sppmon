@@ -17,8 +17,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 26,
-  "iteration": 1601580759335,
+  "id": 28,
+  "iteration": 1601761701374,
   "links": [],
   "panels": [
     {
@@ -912,7 +912,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA0398"
+            }
+          ]
         },
         {
           "alias": "Backuped Bytes",
@@ -949,7 +955,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -972,6 +984,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:4196",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -980,6 +993,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:4197",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -4741,6 +4755,7 @@
           "yaxis": 2
         },
         {
+          "$$hashKey": "object:4452",
           "alias": "Sucess Ratio",
           "yaxis": 1
         }
@@ -4792,7 +4807,19 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "failed"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
         },
         {
           "alias": "Sucess Ratio",
@@ -4838,7 +4865,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
         },
         {
           "alias": "Total Count",
@@ -4873,11 +4906,17 @@
               },
               {
                 "params": [],
-                "type": "sum"
+                "type": "count"
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -5015,6 +5054,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5152,6 +5197,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5309,6 +5360,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5446,6 +5503,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5583,6 +5646,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5704,6 +5773,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -7936,5 +8011,5 @@
   "timezone": "",
   "title": "SPPMON Long Term View (90 Days / Infinite)",
   "uid": "8pQ8jDSGk",
-  "version": 3
+  "version": 2
 }
