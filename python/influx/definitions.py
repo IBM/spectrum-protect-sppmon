@@ -607,8 +607,8 @@ class Definitions:
                 'throughputBytes/s':        Datatype.INT,
                 'queueTimeSec':             Datatype.INT,
                 'protectedVMDKs':           Datatype.INT,
-                'TotalVMDKs':               Datatype.INT
-                #'name':                     Datatype.STRING                #  Issue #9 changing to tag to ensure uniqueness
+                'TotalVMDKs':               Datatype.INT,
+                'name':                     Datatype.STRING
             },
             tags=[
                 'proxy',
@@ -616,7 +616,6 @@ class Definitions:
                 'type',
                 'transportType',
                 'status',
-                'name',
                 'messageId'
             ],
             time_key='time',
