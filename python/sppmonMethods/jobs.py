@@ -231,9 +231,11 @@ class JobMethods:
         """
 
         # only continue with joblogs we want to save
-        supported_log_list = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
-        maxTimestamp = 0
-        for job_log in supported_log_list:
+        supported_log_iterator = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
+        sorted_log_iterator = sorted(supported_log_iterator, key=lambda item: item['supported_log_iterator'])
+        max_sec_timestamp = 0 # required for preventing duplicates
+
+        for job_log in sorted_log_iterator:
             message_id = job_log['messageId']
 
             table_func_tuple = self.__supported_ids[message_id]
@@ -255,15 +257,24 @@ class JobMethods:
             # out as a duplicate.  In some cases, the changing of epoch timestamps from millisecond to second precision is
             # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to 
             # ensure uniqueness.  Only use this when some innacuracy of the timestamps is acceptable
-            curTimestamp = job_log['logTime'] 
-            if table_name == 'vmBackupSummary':
-                    if(isinstance(curTimestamp, str)):
-                        curTimestamp = int(curTimestamp)
-                    if curTimestamp <= (maxTimestamp+1000):
-                        curTimestamp = maxTimestamp + 1001
-                    maxTimestamp = curTimestamp
+            cur_timestamp = job_log['logTime'] 
+            if(table_name == 'vmBackupSummary'):
+
+                if(cur_timestamp is None): # prevent None
+                    ExceptionUtils.error_message(f"Warning: logTime is None, duplicate may be purged. Log: {job_log}")
+
+                if(isinstance(cur_timestamp, str)): # make sure its int
+                    cur_timestamp = int(cur_timestamp)
+                
+                cur_sec_timestamp = SppUtils.to_epoch_secs(cur_timestamp)
+                if(cur_sec_timestamp <= max_sec_timestamp):
+                    digits = max((int) (cur_timestamp / max_sec_timestamp), 1)
+                    max_sec_timestamp += 1 # increase by 1 second
+                    cur_timestamp = max_sec_timestamp * digits
+                else:
+                    max_sec_timestamp = cur_sec_timestamp
             
-            row_dict['time'] = curTimestamp
+            row_dict['time'] = cur_timestamp
 
             for(key, item) in row_dict.items():
                 if(item in ('null', 'null(null)')):
