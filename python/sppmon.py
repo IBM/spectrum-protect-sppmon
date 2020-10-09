@@ -744,8 +744,6 @@ class SppMon:
 
         if(OPTIONS.create_dashboard):
             try:
-                if(not self.influx_client):
-                    raise ValueError("need the influxclient to create the dashboard")
                 OtherMethods.create_dashboard(
                     dashboard_folder_path=OPTIONS.dashboard_folder_path,
                     database_name=self.influx_client.database.name)
