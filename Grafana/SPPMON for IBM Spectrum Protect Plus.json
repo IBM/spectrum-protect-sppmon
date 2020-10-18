@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 36,
+  "id": 42,
   "links": [],
   "panels": [
     {
@@ -1786,7 +1786,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA0398"
+            }
+          ]
         },
         {
           "alias": "Amount Protected",
@@ -1817,7 +1823,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
         }
       ],
       "timeFrom": null,
@@ -5583,6 +5595,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -5622,19 +5635,25 @@
         {
           "$$hashKey": "object:81170",
           "alias": "VM Failures",
+          "bars": true,
           "color": "#F2495C",
+          "lines": false,
+          "stack": true,
           "yaxis": 2
         },
         {
           "$$hashKey": "object:81177",
-          "alias": "VM Total",
-          "color": "#5794F2",
+          "alias": "VM Success",
+          "bars": true,
+          "color": "#73BF69",
+          "lines": false,
+          "stack": true,
           "yaxis": 2
         },
         {
           "$$hashKey": "object:2833",
           "alias": "Sucess Ratio",
-          "color": "#73BF69",
+          "color": "#3274D9",
           "yaxis": 1
         }
       ],
@@ -5647,7 +5666,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -5661,7 +5680,7 @@
           "measurement": "vmBackupSummary",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT \"TotalVMDKs\" - protectedVMDKs FROM \"vmBackupSummary\" WHERE $timeFilter GROUP BY time($interval)",
+          "query": "SELECT count(\"TotalVMDKs\") -sum(protectedVMDKs) FROM \"rp_days_14\".\"vmBackupSummary\" WHERE (\"status\" = 'failed' AND \"messageId\" = 'CTGGA2384') AND $timeFilter GROUP BY time($__interval) fill(none)",
           "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
@@ -5676,6 +5695,12 @@
               {
                 "params": [],
                 "type": "count"
+              },
+              {
+                "params": [
+                  "-sum(protectedVMDKs)"
+                ],
+                "type": "math"
               }
             ]
           ],
@@ -5686,10 +5711,10 @@
               "value": "failed"
             },
             {
-              "condition": "OR",
-              "key": "status",
+              "condition": "AND",
+              "key": "messageId",
               "operator": "=",
-              "value": "partial"
+              "value": "CTGGA2384"
             }
           ]
         },
@@ -5713,7 +5738,7 @@
           "measurement": "vmBackupSummary",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT sum(\"protectedVMDKs\") / sum(TotalVMDKs) FROM \"vmBackupSummary\" WHERE $timeFilter GROUP BY time(24h) fill(none)",
+          "query": "SELECT sum(\"protectedVMDKs\") / sum(TotalVMDKs) FROM \"rp_days_14\".\"vmBackupSummary\" WHERE (\"status\" = 'complete' OR \"status\" = 'partial' OR \"status\" = 'failed' AND \"messageId\" = 'CTGGA2384') AND $timeFilter GROUP BY time(24h) fill(none)",
           "rawQuery": false,
           "refId": "B",
           "resultFormat": "time_series",
@@ -5754,15 +5779,21 @@
               "key": "status",
               "operator": "=",
               "value": "failed"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         },
         {
-          "alias": "VM Total",
+          "alias": "VM Success",
           "groupBy": [
             {
               "params": [
-                "$interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -5784,13 +5815,13 @@
             [
               {
                 "params": [
-                  "TotalVMDKs"
+                  "protectedVMDKs"
                 ],
                 "type": "field"
               },
               {
                 "params": [],
-                "type": "count"
+                "type": "sum"
               }
             ]
           ],
@@ -5801,16 +5832,10 @@
               "value": "complete"
             },
             {
-              "condition": "OR",
-              "key": "status",
+              "condition": "AND",
+              "key": "messageId",
               "operator": "=",
-              "value": "partial"
-            },
-            {
-              "condition": "OR",
-              "key": "status",
-              "operator": "=",
-              "value": "failed"
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -5827,7 +5852,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Backup Sucess Rate",
+      "title": "Daily Backup Sucess Rate",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -5961,6 +5986,282 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 89
+      },
+      "hiddenSeries": false,
+      "id": 160,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_proxy",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "vmBackupSummary",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "transferredBytes"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "=",
+              "value": "complete"
+            },
+            {
+              "condition": "OR",
+              "key": "status",
+              "operator": "=",
+              "value": "partial"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Daily Total Data Protected",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1896",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1897",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 89
+      },
+      "hiddenSeries": false,
+      "id": 161,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Replicated Bytes",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "vmReplicateStats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "replicatedBytes"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA0398"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Daily Total Data Replicated",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1896",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1897",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -5973,7 +6274,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 89
+        "y": 96
       },
       "hiddenSeries": false,
       "id": 84,
@@ -6004,7 +6305,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6051,6 +6352,12 @@
               "key": "status",
               "operator": "=",
               "value": "partial"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6116,7 +6423,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 89
+        "y": 96
       },
       "hiddenSeries": false,
       "id": 86,
@@ -6147,7 +6454,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6188,6 +6495,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6273,7 +6586,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 89
+        "y": 96
       },
       "hiddenSeries": false,
       "id": 85,
@@ -6304,7 +6617,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6351,6 +6664,12 @@
               "key": "status",
               "operator": "=",
               "value": "partial"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6416,7 +6735,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 96
+        "y": 103
       },
       "hiddenSeries": false,
       "id": 104,
@@ -6447,7 +6766,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6488,6 +6807,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6553,7 +6878,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 96
+        "y": 103
       },
       "hiddenSeries": false,
       "id": 148,
@@ -6584,7 +6909,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6625,6 +6950,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6690,7 +7021,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 96
+        "y": 103
       },
       "hiddenSeries": false,
       "id": 149,
@@ -6721,7 +7052,7 @@
           "groupBy": [
             {
               "params": [
-                "$__interval"
+                "24h"
               ],
               "type": "time"
             },
@@ -6762,6 +7093,12 @@
               "key": "status",
               "operator": "=",
               "value": "complete"
+            },
+            {
+              "condition": "AND",
+              "key": "messageId",
+              "operator": "=",
+              "value": "CTGGA2384"
             }
           ]
         }
@@ -6816,7 +7153,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 103
+        "y": 110
       },
       "id": 70,
       "panels": [],
@@ -6842,7 +7179,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 104
+        "y": 111
       },
       "hiddenSeries": false,
       "id": 158,
@@ -6976,7 +7313,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 104
+        "y": 111
       },
       "hiddenSeries": false,
       "id": 71,
@@ -7145,7 +7482,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 111
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 14,
@@ -7288,7 +7625,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 111
+        "y": 118
       },
       "hiddenSeries": false,
       "id": 159,
@@ -7424,7 +7761,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 118
+        "y": 125
       },
       "hiddenSeries": false,
       "id": 48,
@@ -7616,7 +7953,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 118
+        "y": 125
       },
       "hiddenSeries": false,
       "id": 92,
@@ -7819,7 +8156,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 123
+        "y": 130
       },
       "id": 77,
       "panels": [],
@@ -7867,7 +8204,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 124
+        "y": 131
       },
       "id": 79,
       "options": {
@@ -7969,7 +8306,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 124
+        "y": 131
       },
       "hiddenSeries": false,
       "id": 157,
@@ -8176,7 +8513,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 132
+        "y": 139
       },
       "hiddenSeries": false,
       "id": 91,
@@ -8373,2531 +8710,2528 @@
       }
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 140
+        "y": 147
       },
       "id": 132,
-      "panels": [
-        {
-          "alert": {
-            "alertRuleTags": {},
-            "conditions": [
-              {
-                "evaluator": {
-                  "params": [
-                    65
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "and"
-                },
-                "query": {
-                  "params": [
-                    "A",
-                    "5m",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    90
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "B",
-                    "5m",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              }
-            ],
-            "executionErrorState": "alerting",
-            "for": "5m",
-            "frequency": "1m",
-            "handler": 1,
-            "name": "Cloudproxy CPU & RAM Health alert",
-            "noDataState": "ok",
-            "notifications": []
-          },
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 1,
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 28
-          },
-          "hiddenSeries": false,
-          "id": 134,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "CPU $tag_name on host $tag_hostName",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "hostName"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "name"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "ssh_mpstat_cmd",
-              "orderByTime": "ASC",
-              "policy": "rp_days_14",
-              "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "%idle"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "*-1+100"
-                    ],
-                    "type": "math"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "ssh_type",
-                  "operator": "=",
-                  "value": "CLOUDPROXY"
-                }
-              ]
-            },
-            {
-              "alias": "RAM on host $tag_hostName",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "hostName"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "ssh_free_cmd",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "used"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      "*100/mean(total) "
-                    ],
-                    "type": "math"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "ssh_type",
-                  "operator": "=",
-                  "value": "CLOUDPROXY"
-                },
-                {
-                  "condition": "AND",
-                  "key": "name",
-                  "operator": "=",
-                  "value": "Mem"
-                }
-              ]
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 65
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Cloudproxy CPU & RAM Health",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:524",
-              "format": "percent",
-              "label": null,
-              "logBase": 1,
-              "max": "100",
-              "min": "0",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:525",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
+      "panels": [],
       "title": "Cloud Proxies",
       "type": "row"
     },
     {
-      "collapsed": true,
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                65
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                90
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Cloudproxy CPU & RAM Health alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 148
+      },
+      "hiddenSeries": false,
+      "id": 134,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "CPU $tag_name on host $tag_hostName",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "hostName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ssh_mpstat_cmd",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "%idle"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "*-1+100"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "CLOUDPROXY"
+            }
+          ]
+        },
+        {
+          "alias": "RAM on host $tag_hostName",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "hostName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ssh_free_cmd",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "*100/mean(total) "
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "CLOUDPROXY"
+            },
+            {
+              "condition": "AND",
+              "key": "name",
+              "operator": "=",
+              "value": "Mem"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 65
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Cloudproxy CPU & RAM Health",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 141
+        "y": 156
       },
       "id": 112,
-      "panels": [
-        {
-          "datasource": "-- Dashboard --",
-          "description": "Displays the final change rate of errors which occured, going to stay at 0 if all is on a normal \"error\"-level",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": null
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "semi-dark-green",
-                    "value": null
-                  },
-                  {
-                    "color": "light-green",
-                    "value": -1
-                  },
-                  {
-                    "color": "dark-red",
-                    "value": 1
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 5,
-            "x": 0,
-            "y": 29
-          },
-          "id": 109,
-          "interval": "24h",
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "7.1.5",
-          "targets": [
-            {
-              "panelId": 108,
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "SPPmon Collection Error delta Display",
-          "transformations": [],
-          "type": "gauge"
-        },
-        {
-          "aliasColors": {
-            "All Errors": "semi-dark-purple",
-            "Constant Errors": "dark-yellow",
-            "Constant Errors Change Rate": "dark-green",
-            "Error Count": "dark-red",
-            "Everything": "dark-purple",
-            "Everything Max(12h)": "dark-green",
-            "Everything not listed": "dark-red",
-            "Other Errors": "semi-dark-red",
-            "Total Errors": "dark-orange",
-            "constant": "semi-dark-blue"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 1,
-          "gridPos": {
-            "h": 8,
-            "w": 9,
-            "x": 5,
-            "y": 29
-          },
-          "hiddenSeries": false,
-          "id": 107,
-          "legend": {
-            "avg": false,
-            "current": true,
-            "hideEmpty": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 0.5,
-          "points": true,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": true,
-          "targets": [
-            {
-              "alias": "Constant Errors",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "Daily Errors",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "daily",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "All Errors",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "all",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "Hourly Errors",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "D",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "hourly",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "Other Errors",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "G",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "all",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "daily",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "hourly",
-                  "operator": "!=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "SPPmon Collection Errors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:27143",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:27144",
-              "decimals": null,
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "dashboardFilter": "",
-          "dashboardTags": [],
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "folderId": null,
-          "gridPos": {
-            "h": 16,
-            "w": 5,
-            "x": 14,
-            "y": 29
-          },
-          "id": 62,
-          "limit": "100",
-          "nameFilter": "",
-          "onlyAlertsOnDashboard": true,
-          "repeat": null,
-          "repeatDirection": "h",
-          "show": "current",
-          "sortOrder": 3,
-          "stateFilter": [
-            "paused",
-            "no_data",
-            "execution_error",
-            "alerting",
-            "pending"
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "SPP active Alerts",
-          "type": "alertlist"
-        },
-        {
-          "dashboardFilter": "",
-          "dashboardTags": [],
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "folderId": 0,
-          "gridPos": {
-            "h": 16,
-            "w": 5,
-            "x": 19,
-            "y": 29
-          },
-          "id": 147,
-          "limit": "100",
-          "nameFilter": "",
-          "onlyAlertsOnDashboard": true,
-          "repeatDirection": "h",
-          "show": "changes",
-          "sortOrder": 3,
-          "stateFilter": [
-            "paused",
-            "no_data",
-            "execution_error",
-            "alerting",
-            "pending"
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "SPP Alert History",
-          "type": "alertlist"
-        },
-        {
-          "alert": {
-            "alertRuleTags": {},
-            "conditions": [
-              {
-                "evaluator": {
-                  "params": [
-                    0
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "and"
-                },
-                "query": {
-                  "params": [
-                    "A",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    0
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "B",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    0
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "C",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    0
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "D",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    0
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "G",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              }
-            ],
-            "executionErrorState": "alerting",
-            "for": "5m",
-            "frequency": "1m",
-            "handler": 1,
-            "name": "SPPmon Collection Errors delta alert",
-            "noDataState": "keep_state",
-            "notifications": []
-          },
-          "aliasColors": {
-            "--all": "semi-dark-purple",
-            "All Errors": "semi-dark-purple",
-            "Constant Errors": "dark-yellow",
-            "Constant Errors Change Rate": "dark-green",
-            "Error Count": "dark-red",
-            "Everything": "dark-purple",
-            "Everything Max(12h)": "dark-green",
-            "Everything not listed": "dark-red",
-            "Other Errors": "semi-dark-red",
-            "Others": "semi-dark-orange",
-            "Total Errors": "dark-orange",
-            "constant": "semi-dark-blue"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 1,
-          "gridPos": {
-            "h": 8,
-            "w": 9,
-            "x": 5,
-            "y": 37
-          },
-          "hiddenSeries": false,
-          "id": 108,
-          "legend": {
-            "avg": true,
-            "current": false,
-            "hideEmpty": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 0.5,
-          "points": true,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": true,
-          "targets": [
-            {
-              "alias": "--daily",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "difference"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "daily",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "--all",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT non_negative_difference(difference(\"errorCount\")) FROM \"sppmon_metrics\" WHERE (\"all\" = 'True') AND $timeFilter",
-              "rawQuery": false,
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "difference"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "all",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "--constant",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "difference"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "--hourly",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "D",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "difference"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "hourly",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "Others",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "G",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorCount"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "difference"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "all",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "daily",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "hourly",
-                  "operator": "!=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 0
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "SPPmon Collection Errors delta",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:27143",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:27144",
-              "decimals": null,
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "left",
-                "displayMode": "auto"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Error Messages"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 1000
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Count of Errors"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 145
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 45
-          },
-          "id": 143,
-          "options": {
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": true
-          },
-          "pluginVersion": "7.1.0",
-          "targets": [
-            {
-              "alias": "Test",
-              "groupBy": [],
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "logs",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorMessages"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [
-                      "Error Messages"
-                    ],
-                    "type": "alias"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Constant Error Messages",
-          "transformations": [],
-          "type": "logs"
-        },
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "left",
-                "displayMode": "auto"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Error Messages"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 1000
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Count of Errors"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 145
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 45
-          },
-          "id": 145,
-          "options": {
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": true
-          },
-          "pluginVersion": "7.1.0",
-          "targets": [
-            {
-              "alias": "Test",
-              "groupBy": [],
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "logs",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorMessages"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [
-                      "Error Messages"
-                    ],
-                    "type": "alias"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "hourly",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Hourly Error Messages",
-          "transformations": [],
-          "type": "logs"
-        },
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "left",
-                "displayMode": "auto"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Error Messages"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 1000
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Count of Errors"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "center"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 145
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 45
-          },
-          "id": 146,
-          "options": {
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": true
-          },
-          "pluginVersion": "7.1.0",
-          "targets": [
-            {
-              "alias": "Test",
-              "groupBy": [],
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "logs",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "errorMessages"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "hourly",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "constant",
-                  "operator": "!=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Other Error Messages",
-          "transformations": [],
-          "type": "logs"
-        },
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "build.Version"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "InfluxDB version"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "runtime.version"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Go runtime version"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "system.started"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "InfluxDB start time"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 13,
-            "x": 0,
-            "y": 53
-          },
-          "id": 153,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "/.*/",
-              "values": true
-            },
-            "textMode": "value_and_name"
-          },
-          "pluginVersion": "7.1.5",
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "rp_days_14",
-              "query": "show diagnostics",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "version"
-                    ],
-                    "type": "field"
-                  }
-                ],
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "InfluxDB version",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "build.Version",
-                    "runtime.version",
-                    "system.started"
-                  ]
-                }
-              }
-            }
-          ],
-          "type": "stat"
-        },
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "center"
-              },
-              "mappings": [],
-              "noValue": "Unknown",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 11,
-            "x": 13,
-            "y": 53
-          },
-          "id": 154,
-          "options": {
-            "showHeader": true
-          },
-          "pluginVersion": "7.1.5",
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "spp_build"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "spp_version"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "sppmon_version"
-                  ],
-                  "type": "tag"
-                }
-              ],
-              "measurement": "sppmon_metrics",
-              "orderByTime": "DESC",
-              "policy": "rp_days_14",
-              "refId": "A",
-              "resultFormat": "table",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "SPP & SPPMon version",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "Time",
-                    "spp_build",
-                    "spp_version",
-                    "sppmon_version"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "spp_build": 2,
-                  "spp_version": 1
-                },
-                "renameByName": {
-                  "Time": "Last used time",
-                  "spp_build": "SPP Build",
-                  "spp_version": "SPP Version",
-                  "sppmon_version": "SPPMon version"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
+      "panels": [],
       "title": "Alerts & State",
       "type": "row"
     },
     {
-      "collapsed": true,
+      "datasource": "-- Dashboard --",
+      "description": "Displays the final change rate of errors which occured, going to stay at 0 if all is on a normal \"error\"-level",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              },
+              {
+                "color": "light-green",
+                "value": -1
+              },
+              {
+                "color": "dark-red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 5,
+        "x": 0,
+        "y": 157
+      },
+      "id": 109,
+      "interval": "24h",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "7.1.3",
+      "targets": [
+        {
+          "panelId": 108,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SPPmon Collection Error delta Display",
+      "transformations": [],
+      "type": "gauge"
+    },
+    {
+      "aliasColors": {
+        "All Errors": "semi-dark-purple",
+        "Constant Errors": "dark-yellow",
+        "Constant Errors Change Rate": "dark-green",
+        "Error Count": "dark-red",
+        "Everything": "dark-purple",
+        "Everything Max(12h)": "dark-green",
+        "Everything not listed": "dark-red",
+        "Other Errors": "semi-dark-red",
+        "Total Errors": "dark-orange",
+        "constant": "semi-dark-blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 5,
+        "y": 157
+      },
+      "hiddenSeries": false,
+      "id": 107,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "Constant Errors",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "Daily Errors",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "daily",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "All Errors",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "all",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "Hourly Errors",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "hourly",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "Other Errors",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "all",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "daily",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "hourly",
+              "operator": "!=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SPPmon Collection Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:27143",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:27144",
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "dashboardFilter": "",
+      "dashboardTags": [],
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "folderId": null,
+      "gridPos": {
+        "h": 16,
+        "w": 5,
+        "x": 14,
+        "y": 157
+      },
+      "id": 62,
+      "limit": "100",
+      "nameFilter": "",
+      "onlyAlertsOnDashboard": true,
+      "repeat": null,
+      "repeatDirection": "h",
+      "show": "current",
+      "sortOrder": 3,
+      "stateFilter": [
+        "paused",
+        "no_data",
+        "execution_error",
+        "alerting",
+        "pending"
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SPP active Alerts",
+      "type": "alertlist"
+    },
+    {
+      "dashboardFilter": "",
+      "dashboardTags": [],
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "folderId": 0,
+      "gridPos": {
+        "h": 16,
+        "w": 5,
+        "x": 19,
+        "y": 157
+      },
+      "id": 147,
+      "limit": "100",
+      "nameFilter": "",
+      "onlyAlertsOnDashboard": true,
+      "repeatDirection": "h",
+      "show": "changes",
+      "sortOrder": 3,
+      "stateFilter": [
+        "paused",
+        "no_data",
+        "execution_error",
+        "alerting",
+        "pending"
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SPP Alert History",
+      "type": "alertlist"
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "B",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "C",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "D",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "G",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "SPPmon Collection Errors delta alert",
+        "noDataState": "keep_state",
+        "notifications": []
+      },
+      "aliasColors": {
+        "--all": "semi-dark-purple",
+        "All Errors": "semi-dark-purple",
+        "Constant Errors": "dark-yellow",
+        "Constant Errors Change Rate": "dark-green",
+        "Error Count": "dark-red",
+        "Everything": "dark-purple",
+        "Everything Max(12h)": "dark-green",
+        "Everything not listed": "dark-red",
+        "Other Errors": "semi-dark-red",
+        "Others": "semi-dark-orange",
+        "Total Errors": "dark-orange",
+        "constant": "semi-dark-blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 5,
+        "y": 165
+      },
+      "hiddenSeries": false,
+      "id": 108,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "--daily",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "daily",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "--all",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT non_negative_difference(difference(\"errorCount\")) FROM \"sppmon_metrics\" WHERE (\"all\" = 'True') AND $timeFilter",
+          "rawQuery": false,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "all",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "--constant",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "--hourly",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "hourly",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "Others",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "all",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "daily",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "hourly",
+              "operator": "!=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SPPmon Collection Errors delta",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:27143",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:27144",
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Messages"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1000
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count of Errors"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 116
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 173
+      },
+      "id": 143,
+      "options": {
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "7.1.0",
+      "targets": [
+        {
+          "alias": "Test",
+          "groupBy": [],
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "logs",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorMessages"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Error Messages"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Constant Error Messages",
+      "transformations": [],
+      "type": "logs"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Messages"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1000
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count of Errors"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 116
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 173
+      },
+      "id": 145,
+      "options": {
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "7.1.0",
+      "targets": [
+        {
+          "alias": "Test",
+          "groupBy": [],
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "logs",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorMessages"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Error Messages"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "hourly",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Hourly Error Messages",
+      "transformations": [],
+      "type": "logs"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Messages"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1000
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count of Errors"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 116
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 173
+      },
+      "id": 146,
+      "options": {
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "7.1.0",
+      "targets": [
+        {
+          "alias": "Test",
+          "groupBy": [],
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "logs",
+          "select": [
+            [
+              {
+                "params": [
+                  "errorMessages"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "hourly",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "constant",
+              "operator": "!=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Other Error Messages",
+      "transformations": [],
+      "type": "logs"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "build.Version"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "InfluxDB version"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "runtime.version"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Go runtime version"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "system.started"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "InfluxDB start time"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 13,
+        "x": 0,
+        "y": 181
+      },
+      "id": 153,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.1.3",
+      "targets": [
+        {
+          "groupBy": [],
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "show diagnostics",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "version"
+                ],
+                "type": "field"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "InfluxDB version",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "build.Version",
+                "runtime.version",
+                "system.started"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "center"
+          },
+          "mappings": [],
+          "noValue": "Unknown",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 11,
+        "x": 13,
+        "y": 181
+      },
+      "id": 154,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.1.3",
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "spp_build"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "spp_version"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "sppmon_version"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "sppmon_metrics",
+          "orderByTime": "DESC",
+          "policy": "rp_days_14",
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SPP & SPPMon version",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "spp_build",
+                "spp_version",
+                "sppmon_version"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "spp_build": 2,
+              "spp_version": 1
+            },
+            "renameByName": {
+              "Time": "Last used time",
+              "spp_build": "SPP Build",
+              "spp_version": "SPP Version",
+              "sppmon_version": "SPPMon version"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 142
+        "y": 187
       },
       "id": 65,
-      "panels": [
-        {
-          "alert": {
-            "alertRuleTags": {},
-            "conditions": [
-              {
-                "evaluator": {
-                  "params": [
-                    72000000
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "and"
-                },
-                "query": {
-                  "params": [
-                    "B",
-                    "48h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    300000
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "D",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    72000000
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "E",
-                    "48h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    7200000
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "A",
-                    "24h",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "max"
-                },
-                "type": "query"
-              }
-            ],
-            "executionErrorState": "alerting",
-            "for": "5m",
-            "frequency": "1m",
-            "handler": 1,
-            "name": "SPPMON Runtime Duration alert",
-            "noDataState": "alerting",
-            "notifications": []
-          },
-          "aliasColors": {
-            "Error Count": "dark-red",
-            "Everything": "dark-purple",
-            "Everything Max(12h)": "dark-green",
-            "Everything not listed": "dark-purple",
-            "constant": "semi-dark-blue"
-          },
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 1,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 30
-          },
-          "hiddenSeries": false,
-          "id": 41,
-          "legend": {
-            "avg": true,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "daily",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "daily",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "All",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "all",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "constant",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "D",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "constant",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "Everything Max(12h)",
-              "groupBy": [
-                {
-                  "params": [
-                    "12h"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "E",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "max"
-                  }
-                ]
-              ],
-              "tags": []
-            },
-            {
-              "alias": "Everything not listed",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
-              "rawQuery": false,
-              "refId": "G",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "all",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "constant",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "daily",
-                  "operator": "!=",
-                  "value": "True"
-                },
-                {
-                  "condition": "AND",
-                  "key": "hourly",
-                  "operator": "!=",
-                  "value": "True"
-                }
-              ]
-            },
-            {
-              "alias": "hourly",
-              "groupBy": [],
-              "hide": false,
-              "measurement": "sppmon_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "hourly",
-                  "operator": "=",
-                  "value": "True"
-                }
-              ]
-            }
-          ],
-          "thresholds": [
-            {
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 72000000
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "SPPMON Runtime Duration",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:27143",
-              "format": "ms",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:27144",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 0,
-            "y": 39
-          },
-          "hiddenSeries": false,
-          "id": 21,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Table: [[tag_tableName]]",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "tableName"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "influx_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration_ms\") FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(30m), \"tableName\"",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration_ms"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Average Query Duration",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "dtdurationms",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 8,
-            "y": 39
-          },
-          "hiddenSeries": false,
-          "id": 23,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Avg Duration(ns) per Item",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "hide": false,
-              "measurement": "influx_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration_ms\")  / (mean(item_count)/1000) FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(10s), \"tableName\"",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "duration_ms"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  },
-                  {
-                    "params": [
-                      " / mean(item_count)"
-                    ],
-                    "type": "math"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Query Duration per Item",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "ms",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 39
-          },
-          "hiddenSeries": false,
-          "id": 22,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "percentage": false,
-          "pluginVersion": "7.1.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Table: [[tag_tableName]]",
-              "groupBy": [
-                {
-                  "params": [
-                    "30m"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "tableName"
-                  ],
-                  "type": "tag"
-                },
-                {
-                  "params": [
-                    "none"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "influx_metrics",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT mean(\"duration_ms\") FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(30m), \"tableName\"",
-              "rawQuery": false,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "item_count"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Avgerage Query Item Count",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
+      "panels": [],
       "title": "SPPMon Statistics",
       "type": "row"
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                72000000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "48h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                300000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "D",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                72000000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "E",
+                "48h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                7200000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "24h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "SPPMON Runtime Duration alert",
+        "noDataState": "alerting",
+        "notifications": []
+      },
+      "aliasColors": {
+        "Error Count": "dark-red",
+        "Everything": "dark-purple",
+        "Everything Max(12h)": "dark-green",
+        "Everything not listed": "dark-purple",
+        "constant": "semi-dark-blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 188
+      },
+      "hiddenSeries": false,
+      "id": 41,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "daily",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "daily",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "All",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "all",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "constant",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "constant",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "Everything Max(12h)",
+          "groupBy": [
+            {
+              "params": [
+                "12h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Everything not listed",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration\") FROM \"sppmon_metrics\" WHERE $timeFilter GROUP BY time(12h)",
+          "rawQuery": false,
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "all",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "constant",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "daily",
+              "operator": "!=",
+              "value": "True"
+            },
+            {
+              "condition": "AND",
+              "key": "hourly",
+              "operator": "!=",
+              "value": "True"
+            }
+          ]
+        },
+        {
+          "alias": "hourly",
+          "groupBy": [],
+          "hide": false,
+          "measurement": "sppmon_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "hourly",
+              "operator": "=",
+              "value": "True"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 72000000
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SPPMON Runtime Duration",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:27143",
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:27144",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 197
+      },
+      "hiddenSeries": false,
+      "id": 21,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Table: [[tag_tableName]]",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "tableName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "influx_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration_ms\") FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(30m), \"tableName\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration_ms"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Average Query Duration",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "dtdurationms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 8,
+        "y": 197
+      },
+      "hiddenSeries": false,
+      "id": 23,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Avg Duration(ns) per Item",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "influx_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration_ms\")  / (mean(item_count)/1000) FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(10s), \"tableName\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "duration_ms"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  " / mean(item_count)"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Query Duration per Item",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 197
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Table: [[tag_tableName]]",
+          "groupBy": [
+            {
+              "params": [
+                "30m"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "tableName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "influx_metrics",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"duration_ms\") FROM \"influx_metrics\" WHERE $timeFilter GROUP BY time(30m), \"tableName\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "item_count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Avgerage Query Item Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "5m",
@@ -10926,5 +11260,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 4
+  "version": 2
 }

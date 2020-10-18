@@ -183,7 +183,7 @@ class ProtectionMethods:
 
         # query the last vm stats to compare timestamps with last vm
         last_time_ms: int = last_vm["time"]
-        last_time = SppUtils.epoch_time_to_seconds(last_time_ms)
+        last_time = SppUtils.to_epoch_secs(last_time_ms)
         where_str = "time = {}s".format(last_time)
 
         vm_stats_table = self.__influx_client.database["vmStats"]

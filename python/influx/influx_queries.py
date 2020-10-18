@@ -71,7 +71,7 @@ class InsertQuery:
         self.__keyword = Keyword.INSERT
         self.__table = table
 
-        self.__time_stamp = SppUtils.epoch_time_to_seconds(time_stamp)
+        self.__time_stamp = SppUtils.to_epoch_secs(time_stamp)
         fields = self.format_fields(fields)
 
         # make sure you have some fields if they are not privided
@@ -156,7 +156,7 @@ class InsertQuery:
 
             # Make time always be saved in seconds, save as int
             if(datatype == Structures.Datatype.TIMESTAMP):
-                value = SppUtils.epoch_time_to_seconds(value)
+                value = SppUtils.to_epoch_secs(value)
                 value = '{}i'.format(value)
 
             # Make Integer to an IntLiteral

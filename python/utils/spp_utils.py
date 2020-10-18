@@ -155,8 +155,8 @@ class SppUtils:
 
 
     @staticmethod
-    def epoch_time_to_seconds(time_stamp: Union[str, int, float]) -> int:
-        """Converts timestamp from any epoch-format into epoch-seconds.
+    def to_epoch_secs(time_stamp: Union[str, int, float]) -> int:
+        """Converts timestamp from any epoch-format into epoch-seconds precision.
 
         Arguments:
             time_stamp {Union[str, int, float]} -- timestamp to be converted.
