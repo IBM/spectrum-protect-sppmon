@@ -232,7 +232,7 @@ class JobMethods:
 
         # only continue with joblogs we want to save
         supported_log_iterator = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
-        sorted_log_iterator = sorted(supported_log_iterator, key=lambda item: item['supported_log_iterator'])
+        sorted_log_iterator = sorted(supported_log_iterator, key=lambda entry: entry['logTime'])
         max_sec_timestamp = 0 # required for preventing duplicates
 
         for job_log in sorted_log_iterator:
@@ -268,11 +268,9 @@ class JobMethods:
                 
                 cur_sec_timestamp = SppUtils.to_epoch_secs(cur_timestamp)
                 if(cur_sec_timestamp <= max_sec_timestamp):
-                    digits = max((int) (cur_timestamp / max_sec_timestamp), 1)
-                    max_sec_timestamp += 1 # increase by 1 second
-                    cur_timestamp = max_sec_timestamp * digits
-                else:
-                    max_sec_timestamp = cur_sec_timestamp
+                    cur_sec_timestamp = max_sec_timestamp + 1
+                max_sec_timestamp = cur_sec_timestamp
+                cur_timestamp = cur_sec_timestamp
             
             row_dict['time'] = cur_timestamp
 
