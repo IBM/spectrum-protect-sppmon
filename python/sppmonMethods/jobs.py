@@ -255,9 +255,9 @@ class JobMethods:
             row_dict['messageId'] = message_id
             # Issue 9, In case where all tag values duplicate another record, including the timestamp, Influx will throw the insert
             # out as a duplicate.  In some cases, the changing of epoch timestamps from millisecond to second precision is
-            # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to 
+            # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to
             # ensure uniqueness.  Only use this when some innacuracy of the timestamps is acceptable
-            cur_timestamp = job_log['logTime'] 
+            cur_timestamp = job_log['logTime']
             if(table_name == 'vmBackupSummary'):
 
                 if(cur_timestamp is None): # prevent None
@@ -265,13 +265,15 @@ class JobMethods:
 
                 if(isinstance(cur_timestamp, str)): # make sure its int
                     cur_timestamp = int(cur_timestamp)
-                
+
                 cur_sec_timestamp = SppUtils.to_epoch_secs(cur_timestamp)
                 if(cur_sec_timestamp <= max_sec_timestamp):
-                    cur_sec_timestamp = max_sec_timestamp + 1
-                max_sec_timestamp = cur_sec_timestamp
-                cur_timestamp = cur_sec_timestamp
-            
+                    digits = (int)(cur_timestamp / cur_sec_timestamp)
+                    max_sec_timestamp += 1 # increase by 1 second
+                    cur_timestamp = max_sec_timestamp * digits
+                else:
+                    max_sec_timestamp = cur_sec_timestamp
+
             row_dict['time'] = cur_timestamp
 
             for(key, item) in row_dict.items():
