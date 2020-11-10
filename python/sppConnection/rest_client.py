@@ -47,7 +47,6 @@ class RestClient():
                  send_retries: int,
                  starting_page_size: int,
                  min_page_size: int,
-
                  verbose: bool):
 
         if(not auth_rest):
@@ -107,9 +106,6 @@ class RestClient():
             LOGGER.info(f"SPP-Version: {version}, build {build}")
 
         self.__headers['X-Endeavour-Sessionid'] = self.__sessionid
-
-
-
 
 
     def logout(self) -> None:

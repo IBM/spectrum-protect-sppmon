@@ -227,6 +227,11 @@ class SppMon:
     loaded_joblog_types: str = '["SUMMARY"]'
     """jobLog types to be requested on loaded systems."""
 
+    # String, cause of days etc
+    # ### DATALOSS if turned down ###
+    job_log_retention_time = "60d"
+    """Configured spp log rentation time, logs get deleted after this time."""
+
     # set later in each method, here to avoid missing attribute
     influx_client = None
     rest_client = None
@@ -241,10 +246,6 @@ class SppMon:
         """path to logger, set in set_logger."""
         self.pid_file_path: str = ""
         """path to pid_file, set in check_pid_file."""
-
-        # String, cause of days etc
-        self.job_log_retention_time = "60d"
-        """Configured spp log rentation time, logs get deleted after this time."""
 
         self.set_logger()
 
@@ -430,9 +431,9 @@ class SppMon:
 
             self.job_log_retention_time = auth_rest.get("jobLog_rentation", "60d")
 
-            # Setting pagesize scaling settings
-            ConnectionUtils.verbose = OPTIONS.verbose
 
+            ConnectionUtils.verbose = OPTIONS.verbose
+            # ### Loaded Systems part 1/2 ### #
             if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
                 # Setting pagesize scaling settings
                 ConnectionUtils.timeout_reduction = self.loaded_timeout_reduction
@@ -480,12 +481,16 @@ class SppMon:
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
 
+        # ### Loaded Systems part 2/2 ### #
+        if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
+            given_log_types = self.loaded_joblog_types
+        else:
+            given_log_types = self.joblog_types
+
         try:
             self.job_methods = JobMethods(
                 self.influx_client, self.api_queries, self.job_log_retention_time,
-                self.loaded_joblog_types,
-                self.joblog_types, # TODO
-                OPTIONS.verbose, OPTIONS.minimumLogs)
+                given_log_types, OPTIONS.verbose)
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
 
