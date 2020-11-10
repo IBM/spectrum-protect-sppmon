@@ -41,17 +41,23 @@ class RestClient():
         'Content-type': 'application/json'}
     """Headers send to the REST-API. SessionId added after login."""
 
-    def __init__(self, auth_rest: Dict[str, Any], timeout: int, preferred_time: float,
-                 page_size: int, min_page_size: int, send_retries: int, verbose: bool):
+    def __init__(self, auth_rest: Dict[str, Any],
+                 pref_send_time: int,
+                 request_timeout: int,
+                 send_retries: int,
+                 starting_page_size: int,
+                 min_page_size: int,
+
+                 verbose: bool):
 
         if(not auth_rest):
             raise ValueError("REST API parameters are not specified")
-        if(timeout is None):
+        if(request_timeout is None):
             raise ValueError("no timeout specified")
-        self.__timeout = timeout
+        self.__timeout = request_timeout
 
-        self.__preferred_time = preferred_time
-        self.__page_size = page_size
+        self.__preferred_time = pref_send_time
+        self.__page_size = starting_page_size
         self.__min_page_size = min_page_size
         self.__send_retries = send_retries
 

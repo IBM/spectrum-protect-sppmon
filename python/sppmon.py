@@ -181,50 +181,50 @@ class SppMon:
     # 5. set joblog_type on "Summary" only
     # 6. reduce retries (0 = disable)
 
-    preferred_send_time = 30
+    pref_send_time: int = 30
     """preferred query send time in seconds"""
-    loaded_preferred_time = 20
+    loaded_pref_send_time: int = 20
     """desired send time per query in seconds for loaded systems"""
 
-    max_scaling_factor = 3.5
+    max_scaling_factor: float = 3.5
     """max scaling factor of the pagesize increase per request"""
-    loaded_max_scaling_factor = 3.5
+    loaded_max_scaling_factor: float = 3.5
     """max scaling factor of the pagesize increase per request for loaded systems"""
 
-    allowed_send_delta = 0.1
+    allowed_send_delta: float = 0.1
     """delta of send allowed before adjustments are made in %"""
-    loaded_allowed_send_delta = 0.1
+    loaded_allowed_send_delta: float = 0.1
     """delta of send allowed before adjustments are made in % on loaded systems"""
 
-    request_timeout = 60
+    request_timeout: int = 60
     """timeout for api-requests"""
-    loaded_request_timeout = 360
+    loaded_request_timeout: int = 360
     """timeout on loaded systems"""
 
-    timeout_reduction = 0.7
+    timeout_reduction: float = 0.7
     """reduce of the actual pagesize on timeout in percent"""
-    loaded_timeout_reduction = 0.95
+    loaded_timeout_reduction: float = 0.95
     """reduce of the actual pagesize on timeout in percent on loaded systems"""
 
-    send_retries = 3
+    send_retries: int = 3
     """Count of retries before failing request. Last one is min size. 0 to disable."""
-    loaded_send_retries = 1
+    loaded_send_retries: int = 1
     """Count of retries before failing request on loaded systems. Last one is min size. 0 to disable."""
 
-    starting_page_size = 50
+    starting_page_size: int = 50
     """starting page size for dynamical change within rest_client"""
-    loaded_starting_page_size = 10
+    loaded_starting_page_size: int = 10
     """starting page size for dynamical change within rest_client on loaded systems"""
 
-    min_page_size = 5
+    min_page_size: int = 5
     """minimum size of a rest-api page"""
-    loaded_min_page_size = 1
+    loaded_min_page_size: int = 1
     """minimum size of a rest-api page on loaded systems"""
 
     # possible options: '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
-    joblog_types = '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
+    joblog_types: str = '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
     """regular joblog query types on normal running systems"""
-    loaded_joblog_types = '["SUMMARY"]'
+    loaded_joblog_types: str = '["SUMMARY"]'
     """jobLog types to be requested on loaded systems."""
 
     # set later in each method, here to avoid missing attribute
@@ -430,21 +430,40 @@ class SppMon:
 
             self.job_log_retention_time = auth_rest.get("jobLog_rentation", "60d")
 
+            # Setting pagesize scaling settings
             ConnectionUtils.verbose = OPTIONS.verbose
-            ConnectionUtils.timeout_reduction = self.timeout_reduction
-            ConnectionUtils.allowed_time_diff_quota = self.allowed_send_delta
-            ConnectionUtils.maximum_increase_pagesize = self.max_scaling_factor
 
+            if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
+                # Setting pagesize scaling settings
+                ConnectionUtils.timeout_reduction = self.loaded_timeout_reduction
+                ConnectionUtils.allowed_send_delta = self.loaded_allowed_send_delta
+                ConnectionUtils.max_scaling_factor = self.loaded_max_scaling_factor
 
-            if(OPTIONS.minimumLogs):
-                rest_time_out = self.loaded_request_timeout
-                rest_preferred_time = self.loaded_preferred_time
+                # Setting RestClient request settings.
+                self.rest_client = RestClient(
+                    auth_rest=auth_rest,
+                    pref_send_time=self.loaded_pref_send_time,
+                    request_timeout=self.loaded_request_timeout,
+                    send_retries=self.loaded_send_retries,
+                    starting_page_size=self.loaded_starting_page_size,
+                    min_page_size=self.loaded_min_page_size,
+                    verbose=OPTIONS.verbose
+                )
             else:
-                rest_time_out = self.request_timeout
-                rest_preferred_time = self.preferred_send_time
+                ConnectionUtils.timeout_reduction = self.timeout_reduction
+                ConnectionUtils.allowed_send_delta = self.allowed_send_delta
+                ConnectionUtils.max_scaling_factor = self.max_scaling_factor
 
-            self.rest_client = RestClient(auth_rest, rest_time_out, rest_preferred_time, self.starting_page_size,
-                                          self.min_page_size, self.send_retries, OPTIONS.verbose)
+                # Setting RestClient request settings.
+                self.rest_client = RestClient(
+                    auth_rest=auth_rest,
+                    pref_send_time=self.pref_send_time,
+                    request_timeout=self.request_timeout,
+                    send_retries=self.send_retries,
+                    starting_page_size=self.starting_page_size,
+                    min_page_size=self.min_page_size,
+                    verbose=OPTIONS.verbose
+                )
 
             self.api_queries = ApiQueries(self.rest_client)
             self.rest_client.login()
@@ -465,7 +484,7 @@ class SppMon:
             self.job_methods = JobMethods(
                 self.influx_client, self.api_queries, self.job_log_retention_time,
                 self.loaded_joblog_types,
-                self.joblog_types,
+                self.joblog_types, # TODO
                 OPTIONS.verbose, OPTIONS.minimumLogs)
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
@@ -515,6 +534,12 @@ class SppMon:
         """This method set up all required parameters and transforms arg groups into individual args.
         """
         # ## call functions based on cmdline parameters
+
+        # Temporary features / Depricated
+
+        if(OPTIONS.minimumLogs):
+            ExceptionUtils.error_message(
+                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystems'.")
 
         # incremental setup, higher executes all below
         all_args: bool = OPTIONS.all
