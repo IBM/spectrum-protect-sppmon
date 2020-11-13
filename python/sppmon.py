@@ -167,19 +167,31 @@ class SppMon:
     # if unsure contact the sppmon develop team before adjusting
 
     # ## Recommend changes for loaded systems ##
+
+    # Use --loaded_systems if sppmon causes big CPU spikes on your SPP-Server
     # CAUTION: using --loaded_systems causes some data to not be recorded.
-    # Changes: Adjusts settings to avoid double running jobs.
-    # Hint: make sure SPP-Mongod tables are correctly indexed.
+    # all changes adjusts settings to avoid double running mongodb jobs.
+    # Hint: make sure SPP-mongodb tables are correctly indexed.
 
     # Priority list for manual changes:
-    # (0. decrease allowed_send_delta)
+
+    # Small/Medium Spikes:
+
+    # finetune `default` variables:
     # 1. increase timeout while decreasing preferred send time
-    # 2. decrease scaling factor (>1)
-    # 3. increase timeout reduction (0-0.99)
-    # 4. decrease starting pagesize (>1)
-    # CAUTION DATALOSS below: not all data is recorded
-    # 5. set joblog_type on "Summary" only
-    # 6. reduce retries (0 = disable)
+    # 2. increase timeout reduction (0-0.99)
+    # 3. decrease scaling factor (>1)
+
+    # Critical/Big Spikes:
+
+    # CAUTION DATALOSS: causes only SUMMARY-Joblogs to be recorded
+    # 1. Enable `--loaded_systems`
+    # 2. finetune `loaded`-variables (see medium spikes 1-3)
+
+    # Other finetuning mechanics (no data-loss):
+    # 1. decrease allowed_send_delta (>=0)
+    # 2. decrease starting pagesize (>1)
+
 
     pref_send_time: int = 30
     """preferred query send time in seconds"""
@@ -192,9 +204,9 @@ class SppMon:
     """max scaling factor of the pagesize increase per request for loaded systems"""
 
     allowed_send_delta: float = 0.1
-    """delta of send allowed before adjustments are made in %"""
+    """delta of send allowed before adjustments are made to the pagesize in %"""
     loaded_allowed_send_delta: float = 0.1
-    """delta of send allowed before adjustments are made in % on loaded systems"""
+    """delta of send allowed before adjustments are made to the pagesize in % on loaded systems"""
 
     request_timeout: int = 60
     """timeout for api-requests"""
