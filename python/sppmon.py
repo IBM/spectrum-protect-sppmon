@@ -184,9 +184,10 @@ class SppMon:
 
     # Critical/Big Spikes:
 
-    # CAUTION DATALOSS: causes only SUMMARY-Joblogs to be recorded
+    # CAUTION Reduce Recording: causes less Joblogs-Types to be recorded
     # 1. Enable `--loadedSystem`
     # 2. finetune `loaded`-variables (see medium spikes 1-3)
+    # 3. Reduce JobLog-Types (min only `SUMMARY`)
 
     # Other finetuning mechanics (no data-loss):
     # 1. decrease allowed_send_delta (>=0)
@@ -236,7 +237,7 @@ class SppMon:
     # possible options: '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
     joblog_types: str = '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
     """regular joblog query types on normal running systems"""
-    loaded_joblog_types: str = '["SUMMARY"]'
+    loaded_joblog_types: str = '["DEBUG","ERROR","SUMMARY","WARN"]'
     """jobLog types to be requested on loaded systems."""
 
     # String, cause of days etc
