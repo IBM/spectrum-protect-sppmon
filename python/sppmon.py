@@ -40,6 +40,7 @@ Author:
  08/02/2020 version 0.10.0 Introducing Retention Policies and Continuous Queries, breaking old tables
  08/25/2020 version 0.10.1 Fixes to Transfer Data, Parse Unit and Top-SSH-Command parsing
  09/01/2020 version 0.10.2 Parse_Unit fixes (JobLogs) and adjustments on timeout
+ 11/10/2020 version 0.10.3 Introduced --loadedSystem argument and moved --minimumLogs to depricated
 
 """
 from __future__ import annotations
@@ -69,7 +70,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.2  (2020/09/01)"
+VERSION = "0.10.3  (2020/11/10)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
@@ -94,8 +95,8 @@ parser.add_option("--all", dest="all", action="store_true", help="execute all fu
 parser.add_option("--jobs", dest="jobs", action="store_true", help="store job history")
 parser.add_option("--jobLogs", dest="jobLogs", action="store_true",
                   help="retrieve detailed information per job (job-sessions)")
-parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
-                  help="only with --joblogs/daily/all: special settings for loaded systems")
+parser.add_option("--loadedSystem", dest="loadedSystem", action="store_true",
+                  help="Special settings for loaded systems, reducing API-request loads")
 
 parser.add_option("--ssh", dest="ssh", action="store_true", help="execute monitoring commands via ssh")
 parser.add_option("--processStats", dest="processStats", action="store_true",
@@ -113,6 +114,9 @@ parser.add_option("--cpu", dest="cpu", action="store_true", help="capture SPP se
 parser.add_option("--sppcatalog", dest="sppcatalog", action="store_true", help="capture Spp-Catalog Storage usage")
 
 ##########################
+#TODO Remove minimum Logs on next version.
+parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
+                  help="DEPRICATED, use '--loadedSystem' instead")
 parser.add_option("--transfer_data", dest="transfer_data", action="store_true",
                   help="TEMPORARY FEATURE:transfer data into retention policies, BACKUP before doing so")
 parser.add_option("--old_database", dest="old_database",
@@ -157,36 +161,89 @@ class SppMon:
     MethodUtils.verbose = OPTIONS.verbose
     SppUtils.verbose = OPTIONS.verbose
 
-    # ## API-REST Page settings ## #
-    timeout_reduction = 0.9
-    """How much % the pagesize is reduced after a timeout"""
-    allowed_time_diff_quota = 0.1
-    """% allowed to differ before adjustments are made"""
-    maximum_increase_pagesize = 3.5
-    """maximum factor for the pagesize to be increased in one go"""
-    page_size = 50
-    """ the starting page size, adjusted later on within rest_client"""
-    min_page_size = 1
+    # ###### API-REST page settings  ###### #
+    # ## IMPORTANT NOTES ## #
+    # please read the documentation before adjusting values.
+    # if unsure contact the sppmon develop team before adjusting
+
+    # ## Recommend changes for loaded systems ##
+
+    # Use --loadedSystem if sppmon causes big CPU spikes on your SPP-Server
+    # CAUTION: using --loadedSystem causes some data to not be recorded.
+    # all changes adjusts settings to avoid double running mongodb jobs.
+    # Hint: make sure SPP-mongodb tables are correctly indexed.
+
+    # Priority list for manual changes:
+
+    # Small/Medium Spikes:
+
+    # finetune `default` variables:
+    # 1. increase timeout while decreasing preferred send time
+    # 2. increase timeout reduction (0-0.99)
+    # 3. decrease scaling factor (>1)
+
+    # Critical/Big Spikes:
+
+    # CAUTION Reduce Recording: causes less Joblogs-Types to be recorded
+    # 1. Enable `--loadedSystem`
+    # 2. finetune `loaded`-variables (see medium spikes 1-3)
+    # 3. Reduce JobLog-Types (min only `SUMMARY`)
+
+    # Other finetuning mechanics (no data-loss):
+    # 1. decrease allowed_send_delta (>=0)
+    # 2. decrease starting pagesize (>1)
+
+
+    pref_send_time: int = 30
+    """preferred query send time in seconds"""
+    loaded_pref_send_time: int = 20
+    """desired send time per query in seconds for loaded systems"""
+
+    max_scaling_factor: float = 3.5
+    """max scaling factor of the pagesize increase per request"""
+    loaded_max_scaling_factor: float = 3.5
+    """max scaling factor of the pagesize increase per request for loaded systems"""
+
+    allowed_send_delta: float = 0.1
+    """delta of send allowed before adjustments are made to the pagesize in %"""
+    loaded_allowed_send_delta: float = 0.1
+    """delta of send allowed before adjustments are made to the pagesize in % on loaded systems"""
+
+    request_timeout: int = 60
+    """timeout for api-requests"""
+    loaded_request_timeout: int = 360
+    """timeout on loaded systems"""
+
+    timeout_reduction: float = 0.7
+    """reduce of the actual pagesize on timeout in percent"""
+    loaded_timeout_reduction: float = 0.95
+    """reduce of the actual pagesize on timeout in percent on loaded systems"""
+
+    send_retries: int = 3
+    """Count of retries before failing request. Last one is min size. 0 to disable."""
+    loaded_send_retries: int = 1
+    """Count of retries before failing request on loaded systems. Last one is min size. 0 to disable."""
+
+    starting_page_size: int = 50
+    """starting page size for dynamical change within rest_client"""
+    loaded_starting_page_size: int = 10
+    """starting page size for dynamical change within rest_client on loaded systems"""
+
+    min_page_size: int = 5
     """minimum size of a rest-api page"""
-    send_retries = 3
-    """How much retries are made before failing, last one is on min-size"""
+    loaded_min_page_size: int = 1
+    """minimum size of a rest-api page on loaded systems"""
 
-
-    # minimum settings
-    loaded_preferred_time = 40
-    """perfect query send time in seconds for loaded systems"""
-    minimum_timeout = 90
-    """increased timeout on loaded systems."""
-    minLogs_joblog_type = '["SUMMARY"]'
-    """reduced types to be requested on loaded systems."""
-
-    # default settings
-    default_joblog_type = '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
+    # possible options: '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
+    joblog_types: str = '["INFO","DEBUG","ERROR","SUMMARY","WARN"]'
     """regular joblog query types on normal running systems"""
-    default_timeout = 60
-    """regular timeout on normal running systems"""
-    preferred_time = 30
-    """perfect query send time in seconds"""
+    loaded_joblog_types: str = '["DEBUG","ERROR","SUMMARY","WARN"]'
+    """jobLog types to be requested on loaded systems."""
+
+    # String, cause of days etc
+    # ### DATALOSS if turned down ###
+    job_log_retention_time = "60d"
+    """Configured spp log rentation time, logs get deleted after this time."""
 
     # set later in each method, here to avoid missing attribute
     influx_client = None
@@ -202,10 +259,6 @@ class SppMon:
         """path to logger, set in set_logger."""
         self.pid_file_path: str = ""
         """path to pid_file, set in check_pid_file."""
-
-        # String, cause of days etc
-        self.job_log_retention_time = "60d"
-        """Configured spp log rentation time, logs get deleted after this time."""
 
         self.set_logger()
 
@@ -391,21 +444,40 @@ class SppMon:
 
             self.job_log_retention_time = auth_rest.get("jobLog_rentation", "60d")
 
+
             ConnectionUtils.verbose = OPTIONS.verbose
-            ConnectionUtils.timeout_reduction = self.timeout_reduction
-            ConnectionUtils.allowed_time_diff_quota = self.allowed_time_diff_quota
-            ConnectionUtils.maximum_increase_pagesize = self.maximum_increase_pagesize
+            # ### Loaded Systems part 1/2 ### #
+            if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
+                # Setting pagesize scaling settings
+                ConnectionUtils.timeout_reduction = self.loaded_timeout_reduction
+                ConnectionUtils.allowed_send_delta = self.loaded_allowed_send_delta
+                ConnectionUtils.max_scaling_factor = self.loaded_max_scaling_factor
 
-
-            if(OPTIONS.minimumLogs):
-                rest_time_out = self.minimum_timeout
-                rest_preferred_time = self.loaded_preferred_time
+                # Setting RestClient request settings.
+                self.rest_client = RestClient(
+                    auth_rest=auth_rest,
+                    pref_send_time=self.loaded_pref_send_time,
+                    request_timeout=self.loaded_request_timeout,
+                    send_retries=self.loaded_send_retries,
+                    starting_page_size=self.loaded_starting_page_size,
+                    min_page_size=self.loaded_min_page_size,
+                    verbose=OPTIONS.verbose
+                )
             else:
-                rest_time_out = self.default_timeout
-                rest_preferred_time = self.preferred_time
+                ConnectionUtils.timeout_reduction = self.timeout_reduction
+                ConnectionUtils.allowed_send_delta = self.allowed_send_delta
+                ConnectionUtils.max_scaling_factor = self.max_scaling_factor
 
-            self.rest_client = RestClient(auth_rest, rest_time_out, rest_preferred_time, self.page_size,
-                                          self.min_page_size, self.send_retries, OPTIONS.verbose)
+                # Setting RestClient request settings.
+                self.rest_client = RestClient(
+                    auth_rest=auth_rest,
+                    pref_send_time=self.pref_send_time,
+                    request_timeout=self.request_timeout,
+                    send_retries=self.send_retries,
+                    starting_page_size=self.starting_page_size,
+                    min_page_size=self.min_page_size,
+                    verbose=OPTIONS.verbose
+                )
 
             self.api_queries = ApiQueries(self.rest_client)
             self.rest_client.login()
@@ -422,12 +494,16 @@ class SppMon:
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
 
+        # ### Loaded Systems part 2/2 ### #
+        if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
+            given_log_types = self.loaded_joblog_types
+        else:
+            given_log_types = self.joblog_types
+
         try:
             self.job_methods = JobMethods(
                 self.influx_client, self.api_queries, self.job_log_retention_time,
-                self.minLogs_joblog_type,
-                self.default_joblog_type,
-                OPTIONS.verbose, OPTIONS.minimumLogs)
+                given_log_types, OPTIONS.verbose)
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
 
@@ -476,6 +552,12 @@ class SppMon:
         """This method set up all required parameters and transforms arg groups into individual args.
         """
         # ## call functions based on cmdline parameters
+
+        # Temporary features / Depricated
+
+        if(OPTIONS.minimumLogs):
+            ExceptionUtils.error_message(
+                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystem'.")
 
         # incremental setup, higher executes all below
         all_args: bool = OPTIONS.all

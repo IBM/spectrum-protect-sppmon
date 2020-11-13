@@ -294,7 +294,7 @@ class Definitions:
             name='jobs',
             fields={  # FIELDS
                 'duration':         Datatype.INT,
-                'start':            Datatype.TIMESTAMP, 
+                'start':            Datatype.TIMESTAMP,
                 'end':              Datatype.TIMESTAMP,
                 'jobLogsCount':     Datatype.INT,
                 'id':               Datatype.INT
@@ -418,7 +418,8 @@ class Definitions:
                 "transfer_data",
                 "old_database",
                 "create_dashboard",
-                "dashboard_folder_path"
+                "dashboard_folder_path",
+                "loadedSystem"
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
@@ -487,7 +488,7 @@ class Definitions:
                         "mean(cpu) as cpu",
                         "mean(coresPerCpu) as coresPerCpu",
                         "mean(memory) as memory"
-                    ], 
+                    ],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
                     group_args=[

@@ -94,8 +94,7 @@ class JobMethods:
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
     def __init__(self, influx_client: Optional[InfluxClient], api_queries: Optional[ApiQueries],
-                 job_log_retention_time: str, minLogs_joblog_type: str,
-                 default_joblog_type: str, verbose: bool, minimum_logs: bool):
+                 job_log_retention_time: str, job_log_type: str, verbose: bool):
 
         if(not influx_client):
             raise ValueError("Job Methods are not available, missing influx_client")
@@ -105,13 +104,11 @@ class JobMethods:
         self.__influx_client = influx_client
         self.__api_queries = api_queries
         self.__verbose = verbose
-        self.__minimum_logs = minimum_logs
 
         self.__job_log_retention_time = job_log_retention_time
         """used to limit the time jobLogs are queried, only interestig for init call"""
 
-        self.__min_logs_joblog_type = minLogs_joblog_type
-        self.__default_joblog_type = default_joblog_type
+        self.__job_log_type = job_log_type
 
     def get_all_jobs(self) -> None:
         """incrementally saves all stored jobsessions, even before first execution of sppmon"""
@@ -320,13 +317,6 @@ class JobMethods:
 
         job_log_dict: Dict[int, List[Dict[str, Any]]] = {}
 
-        if(self.__minimum_logs):
-            job_logs_type = self.__min_logs_joblog_type
-            LOGGER.debug("Using minimum Logs")
-        else:
-            job_logs_type = self.__default_joblog_type
-
-
         # request all jobLogs from REST-API
         # if errors occur, skip single row and debug
         for row in result_list:
@@ -351,13 +341,13 @@ class JobMethods:
             # request job_session_id
             try:
                 if(self.__verbose):
-                    LOGGER.info(f"requesting jobLogs {job_logs_type} for session {job_session_id}.")
-                LOGGER.debug(f"requesting jobLogs {job_logs_type} for session {job_session_id}.")
+                    LOGGER.info(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
+                LOGGER.debug(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
 
                 # cant use query something like everwhere due the extra params needed
                 job_log_list = self.__api_queries.get_job_log_details(
                     jobsession_id=job_session_id,
-                    job_logs_type=job_logs_type)
+                    job_logs_type=self.__job_log_type)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,

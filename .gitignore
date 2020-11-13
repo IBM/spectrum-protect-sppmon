@@ -7,5 +7,6 @@
 /python/python.pyproj
 /python/python.sln
 
+.config_files
 config_files/*.conf
 !config_files/sppconnections_default.conf
