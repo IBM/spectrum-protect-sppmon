@@ -168,8 +168,8 @@ class SppMon:
 
     # ## Recommend changes for loaded systems ##
 
-    # Use --loaded_systems if sppmon causes big CPU spikes on your SPP-Server
-    # CAUTION: using --loaded_systems causes some data to not be recorded.
+    # Use --loadedSystem if sppmon causes big CPU spikes on your SPP-Server
+    # CAUTION: using --loadedSystem causes some data to not be recorded.
     # all changes adjusts settings to avoid double running mongodb jobs.
     # Hint: make sure SPP-mongodb tables are correctly indexed.
 
@@ -185,7 +185,7 @@ class SppMon:
     # Critical/Big Spikes:
 
     # CAUTION DATALOSS: causes only SUMMARY-Joblogs to be recorded
-    # 1. Enable `--loaded_systems`
+    # 1. Enable `--loadedSystem`
     # 2. finetune `loaded`-variables (see medium spikes 1-3)
 
     # Other finetuning mechanics (no data-loss):
@@ -556,7 +556,7 @@ class SppMon:
 
         if(OPTIONS.minimumLogs):
             ExceptionUtils.error_message(
-                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystems'.")
+                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystem'.")
 
         # incremental setup, higher executes all below
         all_args: bool = OPTIONS.all
