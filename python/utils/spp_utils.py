@@ -155,8 +155,8 @@ class SppUtils:
 
 
     @staticmethod
-    def epoch_time_to_seconds(time_stamp: Union[str, int, float]) -> int:
-        """Converts timestamp from any epoch-format into epoch-seconds.
+    def to_epoch_secs(time_stamp: Union[str, int, float]) -> int:
+        """Converts timestamp from any epoch-format into epoch-seconds precision.
 
         Arguments:
             time_stamp {Union[str, int, float]} -- timestamp to be converted.
@@ -240,19 +240,19 @@ class SppUtils:
         'b':                pow(2, 0) / __display_datatype,
 
         'k':                pow(2, 10) / __display_datatype,
-        'kb':               pow(10, 1) / __display_datatype,
+        'kb':               pow(10, 3) / __display_datatype,
         'kib':              pow(2, 10) / __display_datatype,
 
         #'m':               pow(2, 20) / __display_datatype, NOTE: Duplicate key, unused anyway
-        'mb':               pow(10, 2) / __display_datatype,
+        'mb':               pow(10, 6) / __display_datatype,
         'mib':              pow(2, 20) / __display_datatype,
 
         'g':                pow(2, 30) / __display_datatype,
-        'gb':               pow(10, 3) / __display_datatype,
+        'gb':               pow(10, 9) / __display_datatype,
         'gib':              pow(2, 30) / __display_datatype,
 
         't':                pow(2, 40) / __display_datatype,
-        'tb':               pow(10, 4) / __display_datatype,
+        'tb':               pow(10, 12) / __display_datatype,
         'tib':              pow(2, 40) / __display_datatype,
 
         # TIME

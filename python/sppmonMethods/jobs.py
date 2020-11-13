@@ -94,8 +94,7 @@ class JobMethods:
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
     def __init__(self, influx_client: Optional[InfluxClient], api_queries: Optional[ApiQueries],
-                 job_log_retention_time: str, minLogs_joblog_type: str,
-                 default_joblog_type: str, verbose: bool, minimum_logs: bool):
+                 job_log_retention_time: str, job_log_type: str, verbose: bool):
 
         if(not influx_client):
             raise ValueError("Job Methods are not available, missing influx_client")
@@ -105,13 +104,11 @@ class JobMethods:
         self.__influx_client = influx_client
         self.__api_queries = api_queries
         self.__verbose = verbose
-        self.__minimum_logs = minimum_logs
 
         self.__job_log_retention_time = job_log_retention_time
         """used to limit the time jobLogs are queried, only interestig for init call"""
 
-        self.__min_logs_joblog_type = minLogs_joblog_type
-        self.__default_joblog_type = default_joblog_type
+        self.__job_log_type = job_log_type
 
     def get_all_jobs(self) -> None:
         """incrementally saves all stored jobsessions, even before first execution of sppmon"""
@@ -231,8 +228,11 @@ class JobMethods:
         """
 
         # only continue with joblogs we want to save
-        supported_log_list = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
-        for job_log in supported_log_list:
+        supported_log_iterator = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
+        sorted_log_iterator = sorted(supported_log_iterator, key=lambda entry: entry['logTime'])
+        max_sec_timestamp = 0 # required for preventing duplicates
+
+        for job_log in sorted_log_iterator:
             message_id = job_log['messageId']
 
             table_func_tuple = self.__supported_ids[message_id]
@@ -250,7 +250,28 @@ class JobMethods:
                 continue
 
             row_dict['messageId'] = message_id
-            row_dict['time'] = job_log['logTime']
+            # Issue 9, In case where all tag values duplicate another record, including the timestamp, Influx will throw the insert
+            # out as a duplicate.  In some cases, the changing of epoch timestamps from millisecond to second precision is
+            # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to
+            # ensure uniqueness.  Only use this when some innacuracy of the timestamps is acceptable
+            cur_timestamp = job_log['logTime']
+            if(table_name == 'vmBackupSummary'):
+
+                if(cur_timestamp is None): # prevent None
+                    ExceptionUtils.error_message(f"Warning: logTime is None, duplicate may be purged. Log: {job_log}")
+
+                if(isinstance(cur_timestamp, str)): # make sure its int
+                    cur_timestamp = int(cur_timestamp)
+
+                cur_sec_timestamp = SppUtils.to_epoch_secs(cur_timestamp)
+                if(cur_sec_timestamp <= max_sec_timestamp):
+                    digits = (int)(cur_timestamp / cur_sec_timestamp)
+                    max_sec_timestamp += 1 # increase by 1 second
+                    cur_timestamp = max_sec_timestamp * digits
+                else:
+                    max_sec_timestamp = cur_sec_timestamp
+
+            row_dict['time'] = cur_timestamp
 
             for(key, item) in row_dict.items():
                 if(item in ('null', 'null(null)')):
@@ -296,13 +317,6 @@ class JobMethods:
 
         job_log_dict: Dict[int, List[Dict[str, Any]]] = {}
 
-        if(self.__minimum_logs):
-            job_logs_type = self.__min_logs_joblog_type
-            LOGGER.debug("Using minimum Logs")
-        else:
-            job_logs_type = self.__default_joblog_type
-
-
         # request all jobLogs from REST-API
         # if errors occur, skip single row and debug
         for row in result_list:
@@ -327,13 +341,13 @@ class JobMethods:
             # request job_session_id
             try:
                 if(self.__verbose):
-                    LOGGER.info(f"requesting jobLogs {job_logs_type} for session {job_session_id}.")
-                LOGGER.debug(f"requesting jobLogs {job_logs_type} for session {job_session_id}.")
+                    LOGGER.info(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
+                LOGGER.debug(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
 
                 # cant use query something like everwhere due the extra params needed
                 job_log_list = self.__api_queries.get_job_log_details(
                     jobsession_id=job_session_id,
-                    job_logs_type=job_logs_type)
+                    job_logs_type=self.__job_log_type)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,

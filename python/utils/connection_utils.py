@@ -26,11 +26,11 @@ class ConnectionUtils:
 
     """
 
-    allowed_time_diff_quota: float
+    allowed_send_delta: float
     """How much % difference is allowed in both directions before adjustments are made"""
     timeout_reduction: float
     """How much % the pagesize is reduced after a timeout"""
-    maximum_increase_pagesize: float
+    max_scaling_factor: float
     """maximum factor for the pagesize to be increased in one go"""
     verbose = False
 
@@ -212,7 +212,7 @@ class ConnectionUtils:
 
         time_difference_quota = send_time / preferred_time
 
-        if(abs(time_difference_quota-1) > cls.allowed_time_diff_quota):
+        if(abs(time_difference_quota-1) > cls.allowed_send_delta):
             LOGGER.debug(f"adjusting page size due too high time difference, actual: {send_time}, preferred: {preferred_time}")
             if(cls.verbose):
                 LOGGER.info(f"adjusting page size due too high time difference, actual: {send_time}, preferred: {preferred_time}")
@@ -222,8 +222,8 @@ class ConnectionUtils:
             new_page_size = int(new_page_size)
 
             # limit the maximum grow, with bonus for very low areas
-            if(new_page_size > cls.maximum_increase_pagesize * (page_size + 5)):
-                new_page_size = int(cls.maximum_increase_pagesize * (page_size + 5))
+            if(new_page_size > cls.max_scaling_factor * (page_size + 5)):
+                new_page_size = int(cls.max_scaling_factor * (page_size + 5))
 
             # avoid getting stuck on 1
             if(new_page_size < min_page_size + 5):
