@@ -174,27 +174,28 @@ class ApiQueries:
             add_time_stamp=True
         )
 
-    def get_jobs_by_id(self, job_id: Any, timestamp_min: int = None) -> List[Dict[str, Any]]:
+    def get_jobs_by_id(self, job_id: Any) -> List[Dict[str, Any]]:
         """retrieves job sessions by a certain job ID.
 
         Arguments:
             jobId {int} -- Sessions of this jobId should get retrieved.
 
-        Keyword Arguments:
-            timestamp_min {int} -- Only save sessions which occured after this timestamp in EPOCH time (default: {None})
-
         Raises:
             ValueError: No JobID given
 
         Returns:
-            List[Dict[str, Any]] -- Either all jobs or all unsaved (after timestamp) jobs.
+            List[Dict[str, Any]] -- all jobs saved on spp for with this job_id
         """
 
         if(not job_id):
             raise ValueError("no jobId is provived but required to query data")
 
         endpoint = "/api/endeavour/jobsession/history/jobid/" + str(job_id)
-        white_list = ["id", "jobId", "jobName", "start", "end", "duration", "status", "subPolicyType", 'type']
+        white_list = [
+            "id", "jobId", "jobName", "start", "end", "duration", "status",
+            "indexStatus", "subPolicyType", 'type', 'numTasks', 'percent',
+            'properties.statistics'
+            ]
         array_name = "sessions"
 
         # endpoint /api/endeavour/jobsession/history/jobid/ supports no filter parameter
@@ -207,13 +208,26 @@ class ApiQueries:
             add_time_stamp=False
         )
 
-        if(not timestamp_min):
-            return all_jobs_list
+        for job in filter(lambda x: x.get("statistics", None), all_jobs_list):
+            statistic_list = job.pop('statistics')
+            for stats in statistic_list:
+                try:
+                    ress_type = stats["resourceType"]
 
-        # filter all jobs where start time is not bigger then timestamp min
-        unsaved_jobs = list(filter(lambda job: job['start'] > timestamp_min, all_jobs_list))
+                    for key in ['total', 'success', 'failed']:
+                        job[ress_type+"_"+key] = stats.get(key, 0)
 
-        return unsaved_jobs
+                    # Skipped is sometimes none, but other do not add up.
+                    skipped = stats.get('skipped', None)
+                    if(skipped is None):
+                       skipped = job[ress_type+"_total"] - job[ress_type+"_success"] - job[ress_type+"_failed"]
+                    job[ress_type+"_skipped"] = skipped
+
+                except KeyError as error:
+                    ExceptionUtils.exception_info(error=error, extra_message=
+                    f"failed to compute job-individual statistics due key error. report to developer: {job}")
+
+        return all_jobs_list
 
 
     def get_job_log_details(self, job_logs_type: str, jobsession_id: int) -> List[Dict[str, Any]]:

@@ -297,11 +297,22 @@ class Definitions:
                 'start':            Datatype.TIMESTAMP,
                 'end':              Datatype.TIMESTAMP,
                 'jobLogsCount':     Datatype.INT,
-                'id':               Datatype.INT
+                'id':               Datatype.INT,
+                'numTasks':         Datatype.INT,
+                'percent':          Datatype.FLOAT,
+                'datastore_total':  Datatype.INT,
+                'datastore_success':    Datatype.INT,
+                'datastore_failed':     Datatype.INT,
+                'datastore_skipped':    Datatype.INT,
+                'vm_total':         Datatype.INT,
+                'vm_success':       Datatype.INT,
+                'vm_failed':        Datatype.INT,
+                'vm_skipped':       Datatype.INT
             },
             tags=[  # TAGS
                 'jobId',
                 'status',
+                'indexStatus',
                 'jobName',
                 'subPolicyType',
                 'type',

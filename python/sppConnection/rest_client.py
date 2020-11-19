@@ -3,6 +3,7 @@
 Classes:
     RestClient
 """
+from __future__ import annotations
 import logging
 import json
 from typing import Optional, Tuple, Dict, List, Any
@@ -44,7 +45,7 @@ class RestClient():
     def __init__(self, auth_rest: Dict[str, Any],
                  initial_connection_timeout: float,
                  pref_send_time: int,
-                 request_timeout: Optional[int],
+                 request_timeout: int | None,
                  send_retries: int,
                  starting_page_size: int,
                  min_page_size: int,
@@ -259,7 +260,7 @@ class RestClient():
 
         failed_trys: int = 0
         response_query: Optional[Response] = None
-        send_time: int = -1 # prevent unbound var
+        send_time: float = -1 # prevent unbound var
 
         while(response_query is None):
 

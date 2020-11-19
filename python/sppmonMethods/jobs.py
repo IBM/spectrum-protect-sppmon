@@ -175,12 +175,12 @@ class JobMethods:
 
         # retrieve all jobs in this category from REST API, filter to avoid drops due RP
         LOGGER.debug(f">>> requesting job sessions for id {job_id}")
-        all_saved_jobs = self.__api_queries.get_jobs_by_id(
-            job_id=job_id,
-            timestamp_min=unixtime
-            )
+        all_jobs = self.__api_queries.get_jobs_by_id(job_id=job_id)
 
-        missing_jobs = list(filter(lambda job_api: int(job_api['id']) not in id_list, all_saved_jobs))
+        # filter all jobs where start time is not bigger then the retention time limit
+        latest_jobs = list(filter(lambda job: job['start'] > unixtime, all_jobs))
+
+        missing_jobs = list(filter(lambda job_api: int(job_api['id']) not in id_list, latest_jobs))
 
         if(len(missing_jobs) > 0):
             LOGGER.info(f">>> {len(missing_jobs)} datasets missing in DB for jobId: {job_id}")
