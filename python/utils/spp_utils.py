@@ -217,15 +217,15 @@ class SppUtils:
         for key in key_list:
 
             # path is available -> go on
-            if(key in sub_dict):
+            if(sub_dict):
 
                 # sub_dict is now either another sub_dict or the result
-                sub_dict = sub_dict[key]
+                sub_dict = sub_dict.get(key, None)
 
             # path is wrong or not existent
             else:
                 # return wanted key and None
-                return key_list[-1], None
+                return (key_list[-1], None)
 
         # key is now lowest level with right value
         return (key_list[-1], sub_dict)
