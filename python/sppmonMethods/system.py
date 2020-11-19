@@ -23,7 +23,7 @@ class SystemMethods:
     Methods:
         sppcatalog - Saves the spp filesystem catalog information in the influxdb.
         cpuram - Saves the cpu and ram usage of the spp system.
-        def site_name_by_id - Returns a site_name by a associated site_id.
+        site_name_by_id - Returns a site_name by a associated site_id.
         sites - Collects all site informations including throttle rate.
 
     """
