@@ -254,7 +254,7 @@ class SshClient:
         LOGGER.debug(f">> excecuting command:   {ssh_command}")
 
         try:
-            (ssh_stdin, ssh_stdout, ssh_stderr) = self.__client_ssh.exec_command(ssh_command) # type: ignore
+            (_, ssh_stdout, _) = self.__client_ssh.exec_command(ssh_command) # type: ignore
 
             response_cmd = ssh_stdout.read() # type: ignore
 

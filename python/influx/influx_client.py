@@ -373,11 +373,11 @@ class InfluxClient:
         if(dropped_count):
             LOGGER.info(f"Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
         if(critical_drop):
-            LOGGER.info(
-                f"Could not transfer data of {critical_drop} tables, check messages above to retry manually!" +
-                "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
-                f"Adjust other values as required. Drop due Retention Policy is 'OK' until 10.000.\n"+
-                "if it reaches 10.000 you need to cut the query into smaller bits.")
+            msg: str = (f"Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
+                        "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
+                        "Adjust other values as required. Drop due Retention Policy is 'OK' until 10.000.\n"+
+                        "if it reaches 10.000 you need to cut the query into smaller bits.")
+            LOGGER.info(msg)
 
 
     def insert_dicts_to_buffer(self, table_name: str, list_with_dicts: List[Dict[str, Any]]) -> None:
@@ -434,7 +434,7 @@ class InfluxClient:
         # safeguard to avoid memoryError
         if(len(self.__insert_buffer[table]) > 5 * self.__query_max_batch_size):
             self.flush_insert_buffer()
-        
+
         LOGGER.debug(f"Exit insert_dicts for table: {table_name}")
 
     def flush_insert_buffer(self) -> None:

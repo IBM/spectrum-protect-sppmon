@@ -259,6 +259,7 @@ class RestClient():
 
         failed_trys: int = 0
         response_query: Optional[Response] = None
+        send_time: int = -1 # prevent unbound var
 
         while(response_query is None):
 
@@ -321,7 +322,7 @@ class RestClient():
                     self.__page_size = self.__min_page_size
                     # repeat with minimal possible size
 
-                elif(self.__send_retries > failed_trys): # more then 1 try left
+                else: # (self.__send_retries > failed_trys): # more then 1 try left
                     LOGGER.debug(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesizefor url: {url}")
                     if(self.__verbose):
                         LOGGER.info(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesize for url: {url}")
