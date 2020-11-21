@@ -175,10 +175,13 @@ class SppMon:
 
     # Priority list for manual changes:
 
+    # Only if unable to connect at all:
+    # 1. Increase initial_connection_timeout
+
     # Small/Medium Spikes:
 
     # finetune `default` variables:
-    # 1. increase timeout while decreasing preferred send time
+    # 1. increase timeout while decreasing preferred send time (timeout disable: None)
     # 2. increase timeout reduction (0-0.99)
     # 3. decrease scaling factor (>1)
 
@@ -193,6 +196,8 @@ class SppMon:
     # 1. decrease allowed_send_delta (>=0)
     # 2. decrease starting pagesize (>1)
 
+    initial_connection_timeout: float = 6.05
+    """Time spend waiting for the initial connection, slightly larger than 3 multiple"""
 
     pref_send_time: int = 30
     """preferred query send time in seconds"""
@@ -209,9 +214,9 @@ class SppMon:
     loaded_allowed_send_delta: float = 0.1
     """delta of send allowed before adjustments are made to the pagesize in % on loaded systems"""
 
-    request_timeout: int = 60
+    request_timeout: int | None = 60
     """timeout for api-requests"""
-    loaded_request_timeout: int = 360
+    loaded_request_timeout: int | None = 360
     """timeout on loaded systems"""
 
     timeout_reduction: float = 0.7
@@ -262,6 +267,7 @@ class SppMon:
 
         self.set_logger()
 
+        LOGGER.info("Starting SPPMon")
         if(not self.check_pid_file()):
             ExceptionUtils.error_message("Another instance of sppmon with the same args is running")
             self.exit(ERROR_CODE_CMD_LINE)
@@ -287,6 +293,7 @@ class SppMon:
             ExceptionUtils.exception_info(error=error, extra_message="Syntax Error in Config file, unable to read")
             self.exit(error_code=ERROR_CODE_CMD_LINE)
 
+        LOGGER.info("Setting up configurations")
         self.setup_args()
         self.set_critial_configs(config_file)
         self.set_optional_configs(config_file)
@@ -328,7 +335,8 @@ class SppMon:
         logger.addHandler(stream_handler)
 
     def check_pid_file(self) -> bool:
-
+        if(OPTIONS.verbose):
+            LOGGER.info("Checking for other SPPMon instances")
         self.pid_file_path = SppUtils.filename_of_config(OPTIONS.confFileJSON, ".pid_file")
         try:
             try:
@@ -456,6 +464,7 @@ class SppMon:
                 # Setting RestClient request settings.
                 self.rest_client = RestClient(
                     auth_rest=auth_rest,
+                    initial_connection_timeout=self.initial_connection_timeout,
                     pref_send_time=self.loaded_pref_send_time,
                     request_timeout=self.loaded_request_timeout,
                     send_retries=self.loaded_send_retries,
@@ -471,6 +480,7 @@ class SppMon:
                 # Setting RestClient request settings.
                 self.rest_client = RestClient(
                     auth_rest=auth_rest,
+                    initial_connection_timeout=self.initial_connection_timeout,
                     pref_send_time=self.pref_send_time,
                     request_timeout=self.request_timeout,
                     send_retries=self.send_retries,
@@ -697,6 +707,8 @@ class SppMon:
         sys.exit(error_code)
 
     def main(self):
+
+        LOGGER.info("Starting argument execution")
 
         if(not self.influx_client):
             ExceptionUtils.error_message("somehow no influx client is present even after init")
