@@ -307,7 +307,11 @@ class Definitions:
                 'vm_total':         Datatype.INT,
                 'vm_success':       Datatype.INT,
                 'vm_failed':        Datatype.INT,
-                'vm_skipped':       Datatype.INT
+                'vm_skipped':       Datatype.INT,
+                'unknownType_total':         Datatype.INT,
+                'unknownType_success':       Datatype.INT,
+                'unknownType_failed':        Datatype.INT,
+                'unknownType_skipped':       Datatype.INT,
             },
             tags=[  # TAGS
                 'jobId',

@@ -213,6 +213,8 @@ class ApiQueries:
             for stats in statistic_list:
                 try:
                     ress_type = stats["resourceType"]
+                    if(ress_type is None):
+                        ress_type = "unknownType"
 
                     for key in ['total', 'success', 'failed']:
                         job[ress_type+"_"+key] = stats.get(key, 0)
