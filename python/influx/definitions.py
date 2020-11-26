@@ -704,11 +704,11 @@ class Definitions:
             name='vadps',
             fields={
                 'state':            Datatype.STRING,
+                'vadpName':         Datatype.STRING,
+                'vadpId':           Datatype.INT,
+                'ipAddr':           Datatype.STRING,
             },
             tags=[
-                'vadpName',
-                'vadpId',
-                'ipAddr',
                 'siteId',
                 'siteName',
                 'version'
@@ -717,45 +717,39 @@ class Definitions:
             continuous_queries=[
                 # cls._CQ_TRNSF(cls._RP_DAYS_14())
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 )
             ]
