@@ -299,19 +299,7 @@ class Definitions:
                 'jobLogsCount':     Datatype.INT,
                 'id':               Datatype.INT,
                 'numTasks':         Datatype.INT,
-                'percent':          Datatype.FLOAT,
-                'datastore_total':  Datatype.INT,
-                'datastore_success':    Datatype.INT,
-                'datastore_failed':     Datatype.INT,
-                'datastore_skipped':    Datatype.INT,
-                'vm_total':         Datatype.INT,
-                'vm_success':       Datatype.INT,
-                'vm_failed':        Datatype.INT,
-                'vm_skipped':       Datatype.INT,
-                'unknownType_total':         Datatype.INT,
-                'unknownType_success':       Datatype.INT,
-                'unknownType_failed':        Datatype.INT,
-                'unknownType_skipped':       Datatype.INT,
+                'percent':          Datatype.FLOAT
             },
             tags=[  # TAGS
                 'jobId',
@@ -326,7 +314,35 @@ class Definitions:
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
                 cls._CQ_DWSMPL([
-                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount"
+                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount",
+                    "mean(numTasks) as numTasks", "mean(\"percent\") as \"percent\""
+                    ], cls._RP_INF(), "1w")
+            ]
+        )
+
+        cls.__add_predef_table(
+            name='jobs_statistics',
+            fields={
+                'total':            Datatype.INT,
+                'success':          Datatype.INT,
+                'failed':           Datatype.INT,
+                'skipped':          Datatype.INT,
+            },
+            tags=[
+                'resourceType',
+                'jobId',
+                'status',
+                'indexStatus',
+                'jobName',
+                'type',
+                'subPolicyType',
+            ],
+            time_key='start',
+            retention_policy=cls._RP_DAYS_90(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "mean(\"total\") as \"total\"", "mean(\"success\") as \"success\"",
+                    "mean(\"failed\") as \"failed\"", "mean(\"skipped\") as \"skipped\""
                     ], cls._RP_INF(), "1w")
             ]
         )

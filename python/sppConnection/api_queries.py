@@ -208,27 +208,6 @@ class ApiQueries:
             add_time_stamp=False
         )
 
-        for job in filter(lambda x: x.get("statistics", None), all_jobs_list):
-            statistic_list = job.pop('statistics')
-            for stats in statistic_list:
-                try:
-                    ress_type = stats["resourceType"]
-                    if(ress_type is None):
-                        ress_type = "unknownType"
-
-                    for key in ['total', 'success', 'failed']:
-                        job[ress_type+"_"+key] = stats.get(key, 0)
-
-                    # Skipped is sometimes none, but other do not add up.
-                    skipped = stats.get('skipped', None)
-                    if(skipped is None):
-                       skipped = job[ress_type+"_total"] - job[ress_type+"_success"] - job[ress_type+"_failed"]
-                    job[ress_type+"_skipped"] = skipped
-
-                except KeyError as error:
-                    ExceptionUtils.exception_info(error=error, extra_message=
-                    f"failed to compute job-individual statistics due key error. report to developer: {job}")
-
         return all_jobs_list
 
 
