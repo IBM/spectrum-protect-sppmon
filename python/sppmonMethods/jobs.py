@@ -253,12 +253,12 @@ class JobMethods:
                     # time key
                     insert_dict['start'] = job['start']
                     # regular tag values for grouping:
-                    insert_dict['jobId'] = job_stats.get('jobId', None)
-                    insert_dict['status'] = job_stats.get('status', None)
-                    insert_dict['indexStatus'] = job_stats.get('indexStatus', None)
-                    insert_dict['jobName'] = job_stats.get('jobName', None)
-                    insert_dict['type'] = job_stats.get('type', None)
-                    insert_dict['subPolicyType'] = job_stats.get('subPolicyType', None)
+                    insert_dict['jobId'] = job.get('jobId', None)
+                    insert_dict['status'] = job.get('status', None)
+                    insert_dict['indexStatus'] = job.get('indexStatus', None)
+                    insert_dict['jobName'] = job.get('jobName', None)
+                    insert_dict['type'] = job.get('type', None)
+                    insert_dict['subPolicyType'] = job.get('subPolicyType', None)
 
                     insert_list.append(insert_dict)
                 except KeyError as error:
