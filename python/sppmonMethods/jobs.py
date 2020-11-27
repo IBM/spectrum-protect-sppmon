@@ -266,7 +266,6 @@ class JobMethods:
                     f"failed to compute job-individual statistics due key error. report to developer: {job}")
 
         if(len(insert_list) > 0):
-            LOGGER.info(f">>> inserting additional job information of {len(insert_list)} jobs into jobs_statistics table")
             self.__influx_client.insert_dicts_to_buffer(
                 list_with_dicts=insert_list,
                 table_name="jobs_statistics")
