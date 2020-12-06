@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 29,
+  "id": 31,
   "links": [],
   "panels": [
     {
@@ -5017,6 +5017,369 @@
         "x": 0,
         "y": 72
       },
+      "id": 162,
+      "panels": [],
+      "title": "Additional Job Statistics",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 73
+      },
+      "hiddenSeries": false,
+      "id": 164,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1307",
+          "alias": "/ratio/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType total count",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "$tag_jobName $tag_resourceType sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SucessRatio by ResourceType",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1238",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1239",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 73
+      },
+      "hiddenSeries": false,
+      "id": 165,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1307",
+          "alias": "/ratio/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName total count",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        },
+        {
+          "alias": "$tag_jobName sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "VM Backup Statistics",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1238",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1239",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 81
+      },
       "id": 75,
       "panels": [],
       "title": "VMware & Hyper-V Statistics",
@@ -5040,7 +5403,7 @@
         "h": 8,
         "w": 9,
         "x": 0,
-        "y": 73
+        "y": 82
       },
       "hiddenSeries": false,
       "id": 4,
@@ -5213,7 +5576,7 @@
         "h": 8,
         "w": 7,
         "x": 9,
-        "y": 73
+        "y": 82
       },
       "hiddenSeries": false,
       "id": 11,
@@ -5343,7 +5706,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 73
+        "y": 82
       },
       "hiddenSeries": false,
       "id": 12,
@@ -5674,7 +6037,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 81
+        "y": 90
       },
       "hiddenSeries": false,
       "id": 81,
@@ -5979,7 +6342,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 81
+        "y": 90
       },
       "id": 6,
       "links": [],
@@ -6070,7 +6433,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 89
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 160,
@@ -6260,7 +6623,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 96
+        "y": 105
       },
       "hiddenSeries": false,
       "id": 84,
@@ -6412,7 +6775,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 96
+        "y": 105
       },
       "hiddenSeries": false,
       "id": 86,
@@ -6578,7 +6941,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 96
+        "y": 105
       },
       "hiddenSeries": false,
       "id": 85,
@@ -6730,7 +7093,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 103
+        "y": 112
       },
       "hiddenSeries": false,
       "id": 104,
@@ -6876,7 +7239,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 103
+        "y": 112
       },
       "hiddenSeries": false,
       "id": 148,
@@ -7022,7 +7385,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 103
+        "y": 112
       },
       "hiddenSeries": false,
       "id": 149,
@@ -7157,7 +7520,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 110
+        "y": 119
       },
       "id": 70,
       "panels": [],
@@ -7183,7 +7546,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 111
+        "y": 120
       },
       "hiddenSeries": false,
       "id": 158,
@@ -7320,7 +7683,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 111
+        "y": 120
       },
       "hiddenSeries": false,
       "id": 71,
@@ -7492,7 +7855,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 118
+        "y": 127
       },
       "hiddenSeries": false,
       "id": 14,
@@ -7636,7 +7999,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 118
+        "y": 127
       },
       "hiddenSeries": false,
       "id": 159,
@@ -7775,7 +8138,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 125
+        "y": 134
       },
       "hiddenSeries": false,
       "id": 48,
@@ -7970,7 +8333,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 125
+        "y": 134
       },
       "hiddenSeries": false,
       "id": 92,
@@ -8176,7 +8539,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 139
       },
       "id": 77,
       "panels": [],
@@ -8225,7 +8588,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 131
+        "y": 140
       },
       "id": 79,
       "options": {
@@ -8327,7 +8690,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 131
+        "y": 140
       },
       "hiddenSeries": false,
       "id": 157,
@@ -8537,7 +8900,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 139
+        "y": 148
       },
       "hiddenSeries": false,
       "id": 91,
@@ -8743,7 +9106,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 147
+        "y": 156
       },
       "id": 132,
       "panels": [],
@@ -8826,7 +9189,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 148
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 134,
@@ -9038,7 +9401,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 156
+        "y": 165
       },
       "id": 112,
       "panels": [],
@@ -9079,7 +9442,7 @@
         "h": 16,
         "w": 5,
         "x": 0,
-        "y": 157
+        "y": 166
       },
       "id": 109,
       "interval": "24h",
@@ -9137,7 +9500,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 157
+        "y": 166
       },
       "hiddenSeries": false,
       "id": 107,
@@ -9390,7 +9753,7 @@
         "h": 16,
         "w": 5,
         "x": 14,
-        "y": 157
+        "y": 166
       },
       "id": 62,
       "limit": "100",
@@ -9427,7 +9790,7 @@
         "h": 16,
         "w": 5,
         "x": 19,
-        "y": 157
+        "y": 166
       },
       "id": 147,
       "limit": "100",
@@ -9606,7 +9969,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 165
+        "y": 174
       },
       "hiddenSeries": false,
       "id": 108,
@@ -9938,7 +10301,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 173
+        "y": 182
       },
       "id": 143,
       "options": {
@@ -10054,7 +10417,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 173
+        "y": 182
       },
       "id": 145,
       "options": {
@@ -10170,7 +10533,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 173
+        "y": 182
       },
       "id": 146,
       "options": {
@@ -10279,7 +10642,7 @@
         "h": 6,
         "w": 13,
         "x": 0,
-        "y": 181
+        "y": 190
       },
       "id": 153,
       "options": {
@@ -10373,7 +10736,7 @@
         "h": 6,
         "w": 11,
         "x": 13,
-        "y": 181
+        "y": 190
       },
       "id": 154,
       "options": {
@@ -10468,7 +10831,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 187
+        "y": 196
       },
       "id": 65,
       "panels": [],
@@ -10603,7 +10966,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 188
+        "y": 197
       },
       "hiddenSeries": false,
       "id": 41,
@@ -10897,7 +11260,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 197
+        "y": 206
       },
       "hiddenSeries": false,
       "id": 21,
@@ -11028,7 +11391,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 197
+        "y": 206
       },
       "hiddenSeries": false,
       "id": 23,
@@ -11160,7 +11523,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 197
+        "y": 206
       },
       "hiddenSeries": false,
       "id": 22,
@@ -11300,5 +11663,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 2
+  "version": 6
 }
