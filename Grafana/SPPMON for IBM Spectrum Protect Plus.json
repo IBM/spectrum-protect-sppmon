@@ -2330,7 +2330,7 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT mean(*) FROM (SELECT sum(\"%CPU\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") GROUP BY time($interval), \"COMMAND\"  fill(none)",
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%CPU\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2933,8 +2933,8 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"%MEM\") FROM (SELECT sum(\"%MEM\") as \"%MEM\" FROM \"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") WHERE time < 1596621600s GROUP BY time($__interval), COMMAND ",
-          "rawQuery": false,
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%MEM\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -3094,8 +3094,8 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT sum(mem) FROM (SELECT mean(\"MEM_ABS\") as mem FROM \"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($__interval), \"COMMAND\", \"PID\") GROUP BY time($__interval), \"COMMAND\" fill(none)",
-          "rawQuery": false,
+          "query": "SELECT sum(*) FROM (SELECT mean(\"MEM_ABS\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
+          "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
           "select": [
@@ -6053,7 +6053,7 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 4,
       "nullPointMode": "null",
       "options": {
         "alertThreshold": true
@@ -7670,7 +7670,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "description": "",
+      "description": "Selects mean of each unique storage, sums up to total per site",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -7730,6 +7730,12 @@
             },
             {
               "params": [
+                "storageId"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "previous"
               ],
               "type": "fill"
@@ -7739,6 +7745,8 @@
           "measurement": "storages",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
+          "query": "SELECT sum(used_mean) FROM (SELECT mean(\"used\") AS \"used_mean\" FROM \"rp_days_14\".\"storages\" WHERE $timeFilter GROUP BY time($__interval), \"siteName\", \"storageId\") GROUP BY  time($__interval), \"siteName\" fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -7752,6 +7760,12 @@
               {
                 "params": [],
                 "type": "mean"
+              },
+              {
+                "params": [
+                  "used_mean"
+                ],
+                "type": "alias"
               }
             ]
           ],
@@ -7768,6 +7782,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -7809,7 +7824,7 @@
           {
             "evaluator": {
               "params": [
-                90
+                65
               ],
               "type": "gt"
             },
@@ -7935,7 +7950,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 90
+          "value": 65
         }
       ],
       "timeFrom": null,
@@ -11276,6 +11291,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -11407,6 +11425,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -11539,6 +11560,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -11663,5 +11687,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 6
+  "version": 11
 }
