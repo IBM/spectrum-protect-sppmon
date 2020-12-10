@@ -300,6 +300,7 @@ class Definitions:
                 'id':               Datatype.INT,
                 'numTasks':         Datatype.INT,
                 'percent':          Datatype.FLOAT
+                # count(id) -> "count": Int -> RP INF
             },
             tags=[  # TAGS
                 'jobId',
@@ -315,7 +316,8 @@ class Definitions:
             continuous_queries=[
                 cls._CQ_DWSMPL([
                     "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount",
-                    "mean(numTasks) as numTasks", "mean(\"percent\") as \"percent\""
+                    "mean(numTasks) as numTasks", "mean(\"percent\") as \"percent\"",
+                    "count(id) as \"count\""
                     ], cls._RP_INF(), "1w")
             ]
         )
@@ -328,6 +330,7 @@ class Definitions:
                 'failed':           Datatype.INT,
                 'skipped':          Datatype.INT,
                 'id':               Datatype.INT,
+                # count(id) -> "count": Int -> RP INF
             },
             tags=[
                 'resourceType',
@@ -343,7 +346,8 @@ class Definitions:
             continuous_queries=[
                 cls._CQ_DWSMPL([
                     "mean(\"total\") as \"total\"", "mean(\"success\") as \"success\"",
-                    "mean(\"failed\") as \"failed\"", "mean(\"skipped\") as \"skipped\""
+                    "mean(\"failed\") as \"failed\"", "mean(\"skipped\") as \"skipped\"",
+                    "count(id) as \"count\""
                     ], cls._RP_INF(), "1w")
             ]
         )

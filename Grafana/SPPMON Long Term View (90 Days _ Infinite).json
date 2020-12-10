@@ -18,7 +18,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 30,
-  "iteration": 1607429443910,
+  "iteration": 1607606951346,
   "links": [],
   "panels": [
     {
@@ -4582,13 +4582,330 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 134
+      },
+      "hiddenSeries": false,
+      "id": 164,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 142
+      },
+      "hiddenSeries": false,
+      "id": 165,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": true,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "1w"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Failed Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 134
+        "y": 150
       },
       "id": 75,
       "panels": [],
@@ -4613,7 +4930,7 @@
         "h": 11,
         "w": 9,
         "x": 0,
-        "y": 135
+        "y": 151
       },
       "hiddenSeries": false,
       "id": 4,
@@ -4767,7 +5084,7 @@
         "h": 11,
         "w": 7,
         "x": 9,
-        "y": 135
+        "y": 151
       },
       "hiddenSeries": false,
       "id": 11,
@@ -4898,7 +5215,7 @@
         "h": 11,
         "w": 8,
         "x": 16,
-        "y": 135
+        "y": 151
       },
       "hiddenSeries": false,
       "id": 6,
@@ -5016,7 +5333,7 @@
         "h": 10,
         "w": 9,
         "x": 0,
-        "y": 146
+        "y": 162
       },
       "hiddenSeries": false,
       "id": 12,
@@ -5176,7 +5493,7 @@
         "h": 10,
         "w": 15,
         "x": 9,
-        "y": 146
+        "y": 162
       },
       "hiddenSeries": false,
       "id": 81,
@@ -5441,7 +5758,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 156
+        "y": 172
       },
       "hiddenSeries": false,
       "id": 84,
@@ -5587,7 +5904,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 156
+        "y": 172
       },
       "hiddenSeries": false,
       "id": 86,
@@ -5753,7 +6070,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 156
+        "y": 172
       },
       "hiddenSeries": false,
       "id": 85,
@@ -5899,7 +6216,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 164
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 104,
@@ -6045,7 +6362,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 164
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 148,
@@ -6191,7 +6508,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 164
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 149,
@@ -6310,7 +6627,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 172
+        "y": 188
       },
       "id": 70,
       "panels": [],
@@ -6335,7 +6652,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 173
+        "y": 189
       },
       "hiddenSeries": false,
       "id": 14,
@@ -6472,7 +6789,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 173
+        "y": 189
       },
       "hiddenSeries": false,
       "id": 71,
@@ -6595,7 +6912,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 181
+        "y": 197
       },
       "hiddenSeries": false,
       "id": 162,
@@ -6732,7 +7049,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 181
+        "y": 197
       },
       "hiddenSeries": false,
       "id": 163,
@@ -6873,7 +7190,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 189
+        "y": 205
       },
       "hiddenSeries": false,
       "id": 48,
@@ -7016,7 +7333,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 189
+        "y": 205
       },
       "hiddenSeries": false,
       "id": 92,
@@ -7220,7 +7537,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 197
+        "y": 213
       },
       "id": 77,
       "panels": [],
@@ -7245,7 +7562,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 198
+        "y": 214
       },
       "hiddenSeries": false,
       "id": 79,
@@ -7388,7 +7705,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 198
+        "y": 214
       },
       "hiddenSeries": false,
       "id": 156,
@@ -7525,7 +7842,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 206
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 91,
@@ -7729,7 +8046,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 214
+        "y": 230
       },
       "id": 132,
       "panels": [],
@@ -7754,7 +8071,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 215
+        "y": 231
       },
       "hiddenSeries": false,
       "id": 134,
@@ -7958,7 +8275,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 223
+        "y": 239
       },
       "id": 65,
       "panels": [],
@@ -7989,7 +8306,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 224
+        "y": 240
       },
       "hiddenSeries": false,
       "id": 41,
@@ -8360,7 +8677,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 233
+        "y": 249
       },
       "hiddenSeries": false,
       "id": 21,
@@ -8493,7 +8810,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 233
+        "y": 249
       },
       "hiddenSeries": false,
       "id": 23,
@@ -8627,7 +8944,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 233
+        "y": 249
       },
       "hiddenSeries": false,
       "id": 22,
@@ -8751,9 +9068,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "default",
-          "value": "default"
+          "selected": true,
+          "text": "dmw_202_new",
+          "value": "dmw_202_new"
         },
         "error": null,
         "hide": 0,
@@ -8818,5 +9135,5 @@
   "timezone": "",
   "title": "SPPMON Long Term View (90 Days / Infinite)",
   "uid": "8pQ8jDSGk",
-  "version": 5
+  "version": 7
 }

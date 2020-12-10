@@ -5372,13 +5372,604 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 0,
+        "y": 81
+      },
+      "hiddenSeries": false,
+      "id": 167,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:350",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:351",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false,
+            "width": 120
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Times of Failure / 14 Days"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "jobName"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 14,
+        "x": 10,
+        "y": 81
+      },
+      "id": 168,
+      "options": {
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobId"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "DESC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last Percent"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "numTasks"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last numTasks"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last Duration"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              },
+              {
+                "params": [
+                  "Times of Failure / 14 Days"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobId"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "DESC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Percent"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "num"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "numTasks"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Duration"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Unsuccessful jobs overview",
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 0,
+        "y": 89
+      },
+      "hiddenSeries": false,
+      "id": 169,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Failed Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:350",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:351",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 81
+        "y": 97
       },
       "id": 75,
       "panels": [],
@@ -5403,7 +5994,7 @@
         "h": 8,
         "w": 9,
         "x": 0,
-        "y": 82
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 4,
@@ -5576,7 +6167,7 @@
         "h": 8,
         "w": 7,
         "x": 9,
-        "y": 82
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 11,
@@ -5706,7 +6297,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 82
+        "y": 98
       },
       "hiddenSeries": false,
       "id": 12,
@@ -6037,7 +6628,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 90
+        "y": 106
       },
       "hiddenSeries": false,
       "id": 81,
@@ -6342,7 +6933,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 90
+        "y": 106
       },
       "id": 6,
       "links": [],
@@ -6433,7 +7024,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 98
+        "y": 114
       },
       "hiddenSeries": false,
       "id": 160,
@@ -6623,7 +7214,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 105
+        "y": 121
       },
       "hiddenSeries": false,
       "id": 84,
@@ -6775,7 +7366,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 105
+        "y": 121
       },
       "hiddenSeries": false,
       "id": 86,
@@ -6941,7 +7532,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 105
+        "y": 121
       },
       "hiddenSeries": false,
       "id": 85,
@@ -7093,7 +7684,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 112
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 104,
@@ -7239,7 +7830,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 112
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 148,
@@ -7385,7 +7976,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 112
+        "y": 128
       },
       "hiddenSeries": false,
       "id": 149,
@@ -7520,7 +8111,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 119
+        "y": 135
       },
       "id": 70,
       "panels": [],
@@ -7546,7 +8137,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 120
+        "y": 136
       },
       "hiddenSeries": false,
       "id": 158,
@@ -7683,7 +8274,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 120
+        "y": 136
       },
       "hiddenSeries": false,
       "id": 71,
@@ -7870,7 +8461,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 127
+        "y": 143
       },
       "hiddenSeries": false,
       "id": 14,
@@ -8014,7 +8605,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 127
+        "y": 143
       },
       "hiddenSeries": false,
       "id": 159,
@@ -8153,7 +8744,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 134
+        "y": 150
       },
       "hiddenSeries": false,
       "id": 48,
@@ -8348,7 +8939,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 134
+        "y": 150
       },
       "hiddenSeries": false,
       "id": 92,
@@ -8554,7 +9145,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 139
+        "y": 155
       },
       "id": 77,
       "panels": [],
@@ -8603,7 +9194,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 140
+        "y": 156
       },
       "id": 79,
       "options": {
@@ -8705,7 +9296,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 140
+        "y": 156
       },
       "hiddenSeries": false,
       "id": 157,
@@ -8915,7 +9506,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 148
+        "y": 164
       },
       "hiddenSeries": false,
       "id": 91,
@@ -9121,7 +9712,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 156
+        "y": 172
       },
       "id": 132,
       "panels": [],
@@ -9204,7 +9795,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 157
+        "y": 173
       },
       "hiddenSeries": false,
       "id": 134,
@@ -9416,7 +10007,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 165
+        "y": 181
       },
       "id": 112,
       "panels": [],
@@ -9457,7 +10048,7 @@
         "h": 16,
         "w": 5,
         "x": 0,
-        "y": 166
+        "y": 182
       },
       "id": 109,
       "interval": "24h",
@@ -9515,7 +10106,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 166
+        "y": 182
       },
       "hiddenSeries": false,
       "id": 107,
@@ -9768,7 +10359,7 @@
         "h": 16,
         "w": 5,
         "x": 14,
-        "y": 166
+        "y": 182
       },
       "id": 62,
       "limit": "100",
@@ -9805,7 +10396,7 @@
         "h": 16,
         "w": 5,
         "x": 19,
-        "y": 166
+        "y": 182
       },
       "id": 147,
       "limit": "100",
@@ -9984,7 +10575,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 174
+        "y": 190
       },
       "hiddenSeries": false,
       "id": 108,
@@ -10316,7 +10907,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 182
+        "y": 198
       },
       "id": 143,
       "options": {
@@ -10432,7 +11023,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 182
+        "y": 198
       },
       "id": 145,
       "options": {
@@ -10548,7 +11139,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 182
+        "y": 198
       },
       "id": 146,
       "options": {
@@ -10657,7 +11248,7 @@
         "h": 6,
         "w": 13,
         "x": 0,
-        "y": 190
+        "y": 206
       },
       "id": 153,
       "options": {
@@ -10751,7 +11342,7 @@
         "h": 6,
         "w": 11,
         "x": 13,
-        "y": 190
+        "y": 206
       },
       "id": 154,
       "options": {
@@ -10846,7 +11437,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 196
+        "y": 212
       },
       "id": 65,
       "panels": [],
@@ -10981,7 +11572,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 197
+        "y": 213
       },
       "hiddenSeries": false,
       "id": 41,
@@ -11275,7 +11866,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 206
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 21,
@@ -11409,7 +12000,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 206
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 23,
@@ -11544,7 +12135,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 206
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 22,
@@ -11670,7 +12261,7 @@
   },
   "time": {
     "from": "now-14d",
-    "to": "now-5m"
+    "to": "now"
   },
   "timepicker": {
     "nowDelay": "",
@@ -11687,5 +12278,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 11
+  "version": 18
 }
