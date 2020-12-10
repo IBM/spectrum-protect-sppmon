@@ -253,6 +253,7 @@ class JobMethods:
                     # time key
                     insert_dict['start'] = job['start']
                     # regular tag values for grouping:
+                    insert_dict['id'] = job.get('id', None)
                     insert_dict['jobId'] = job.get('jobId', None)
                     insert_dict['status'] = job.get('status', None)
                     insert_dict['indexStatus'] = job.get('indexStatus', None)

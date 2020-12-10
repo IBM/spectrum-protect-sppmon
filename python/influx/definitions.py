@@ -327,6 +327,7 @@ class Definitions:
                 'success':          Datatype.INT,
                 'failed':           Datatype.INT,
                 'skipped':          Datatype.INT,
+                'id':               Datatype.INT,
             },
             tags=[
                 'resourceType',
