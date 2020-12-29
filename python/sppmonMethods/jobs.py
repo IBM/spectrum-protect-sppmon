@@ -20,6 +20,7 @@ from utils.spp_utils import SppUtils
 
 LOGGER = logging.getLogger("sppmon")
 
+
 class JobMethods:
     """Wrapper for all job related functionality. You may implement new methods in here.
 
@@ -37,7 +38,7 @@ class JobMethods:
         "CTGGA2315",
         "CTGGA0550",
         "CTGGA2384"
-        ]
+    ]
 
     # to be moved somewhere else
     # ######### Add new logs to be parsed here #######################################
@@ -62,8 +63,8 @@ class JobMethods:
                  "protectedVMDKs": params[8],
                  "TotalVMDKs": params[9],
                  "status": params[10]
-                 }
-            ),
+             }
+             ),
         'CTGGA0071':
             ('vmBackupSummary',
              lambda params: {
@@ -72,8 +73,8 @@ class JobMethods:
                  'transferredBytes': SppUtils.parse_unit(params[2]),
                  'throughputBytes/s': SppUtils.parse_unit(params[3]),
                  'queueTimeSec': SppUtils.parse_unit(params[4])
-                 }
-            ),
+             }
+             ),
         'CTGGA0072':
             ('vmReplicateSummary',
              lambda params: {
@@ -81,7 +82,7 @@ class JobMethods:
                  'failed': params[1],
                  'duration': SppUtils.parse_unit(params[2])
              }
-            ),
+             ),
         'CTGGA0398':
             ('vmReplicateStats',
              lambda params: {
@@ -89,7 +90,7 @@ class JobMethods:
                  'throughputBytes/sec': SppUtils.parse_unit(params[1]),
                  'duration': SppUtils.parse_unit(params[2], delimiter=':')
              }
-            )
+             )
     }
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
@@ -97,9 +98,11 @@ class JobMethods:
                  job_log_retention_time: str, job_log_type: str, verbose: bool):
 
         if(not influx_client):
-            raise ValueError("Job Methods are not available, missing influx_client")
+            raise ValueError(
+                "Job Methods are not available, missing influx_client")
         if(not api_queries):
-            raise ValueError("Job Methods are not available, missing api_queries")
+            raise ValueError(
+                "Job Methods are not available, missing api_queries")
 
         self.__influx_client = influx_client
         self.__api_queries = api_queries
@@ -124,9 +127,11 @@ class JobMethods:
 
             # this way to make sure we also catch empty strings
             if(not job_id or not job_name):
-                ExceptionUtils.error_message(f"skipping, missing name or id for job {job}")
+                ExceptionUtils.error_message(
+                    f"skipping, missing name or id for job {job}")
                 continue
-            LOGGER.info(">> capturing Job information for Job \"{}\"".format(job_name))
+            LOGGER.info(
+                ">> capturing Job information for Job \"{}\"".format(job_name))
 
             try:
                 self.__job_by_id(job_id=job_id)
@@ -134,7 +139,6 @@ class JobMethods:
                 ExceptionUtils.exception_info(
                     error=error, extra_message=f"error when getting jobs for {job_name}, skipping it")
                 continue
-
 
     def __job_by_id(self, job_id: str) -> None:
         """Requests and saves all jobsessions for a jobID"""
@@ -151,11 +155,12 @@ class JobMethods:
             # unnecessary filter?
         )
         LOGGER.debug(query)
-        result = self.__influx_client.send_selection_query(query) # type: ignore
+        result = self.__influx_client.send_selection_query(  # type: ignore
+            query)
         id_list: List[int] = []
-        row: Dict[str, Any] = {} # make sure the var exists
-        for row  in result.get_points(): # type: ignore
-            id_list.append(row['id']) # type: ignore
+        row: Dict[str, Any] = {}  # make sure the var exists
+        for row in result.get_points():  # type: ignore
+            id_list.append(row['id'])  # type: ignore
 
         if(not row):
             LOGGER.info(
@@ -168,7 +173,7 @@ class JobMethods:
             hours=float(rp_hours),
             minutes=float(rp_mins),
             seconds=float(rp_secs)
-            )
+        )
         unixtime = int(time.mktime(max_request_timestamp.timetuple()))
         # make it ms instead of s
         unixtime *= 1000
@@ -178,14 +183,17 @@ class JobMethods:
         all_saved_jobs = self.__api_queries.get_jobs_by_id(
             job_id=job_id,
             timestamp_min=unixtime
-            )
+        )
 
-        missing_jobs = list(filter(lambda job_api: int(job_api['id']) not in id_list, all_saved_jobs))
+        missing_jobs = list(filter(lambda job_api: int(
+            job_api['id']) not in id_list, all_saved_jobs))
 
         if(len(missing_jobs) > 0):
-            LOGGER.info(f">>> {len(missing_jobs)} datasets missing in DB for jobId: {job_id}")
+            LOGGER.info(
+                f">>> {len(missing_jobs)} datasets missing in DB for jobId: {job_id}")
 
-            LOGGER.info(f">>> inserting job information of {len(missing_jobs)} jobs into jobs table")
+            LOGGER.info(
+                f">>> inserting job information of {len(missing_jobs)} jobs into jobs table")
             self.__influx_client.insert_dicts_to_buffer(
                 list_with_dicts=missing_jobs,
                 table_name="jobs")
@@ -207,8 +215,10 @@ class JobMethods:
                 order_direction='DESC',
                 limit=display_number_of_jobs
             )
-            result = self.__influx_client.send_selection_query(query) # type: ignore
-            result_list: List[str, Any] = list(result.get_points()) # type: ignore
+            result = self.__influx_client.send_selection_query( # type: ignore
+                query)  # type: ignore
+            result_list: List[str] = list(
+                result.get_points())  # type: ignore
 
             job_list_to_print: List[str] = []
             for row_str in result_list:
@@ -228,9 +238,11 @@ class JobMethods:
         """
 
         # only continue with joblogs we want to save
-        supported_log_iterator = filter(lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
-        sorted_log_iterator = sorted(supported_log_iterator, key=lambda entry: entry['logTime'])
-        max_sec_timestamp = 0 # required for preventing duplicates
+        supported_log_iterator = filter(
+            lambda log: log['messageId'] in self.__supported_ids.keys(), list_with_logs)
+        sorted_log_iterator = sorted(
+            supported_log_iterator, key=lambda entry: entry['logTime'])
+        max_sec_timestamp = 0  # required for preventing duplicates
 
         for job_log in sorted_log_iterator:
             message_id = job_log['messageId']
@@ -257,16 +269,17 @@ class JobMethods:
             cur_timestamp = job_log['logTime']
             if(table_name == 'vmBackupSummary'):
 
-                if(cur_timestamp is None): # prevent None
-                    ExceptionUtils.error_message(f"Warning: logTime is None, duplicate may be purged. Log: {job_log}")
+                if(cur_timestamp is None):  # prevent None
+                    ExceptionUtils.error_message(
+                        f"Warning: logTime is None, duplicate may be purged. Log: {job_log}")
 
-                if(isinstance(cur_timestamp, str)): # make sure its int
+                if(isinstance(cur_timestamp, str)):  # make sure its int
                     cur_timestamp = int(cur_timestamp)
 
                 cur_sec_timestamp = SppUtils.to_epoch_secs(cur_timestamp)
                 if(cur_sec_timestamp <= max_sec_timestamp):
                     digits = (int)(cur_timestamp / cur_sec_timestamp)
-                    max_sec_timestamp += 1 # increase by 1 second
+                    max_sec_timestamp += 1  # increase by 1 second
                     cur_timestamp = max_sec_timestamp * digits
                 else:
                     max_sec_timestamp = cur_sec_timestamp
@@ -306,11 +319,12 @@ class JobMethods:
             where_str=where_str
         )
         # send query and compute
-        result = self.__influx_client.send_selection_query(query) # type: ignore
-        result_list: List[Dict[str, Any]] = list(result.get_points()) # type: ignore
+        result = self.__influx_client.send_selection_query( # type: ignore
+            query)
+        result_list: List[Dict[str, Any]] = list(
+            result.get_points())  # type: ignore
 
         rows_affected = len(result_list)
-
 
         LOGGER.info(">>> number of jobs with no joblogs stored in Influx database: {}"
                     .format(rows_affected))
@@ -324,11 +338,13 @@ class JobMethods:
 
             # if somehow id is missing: skip
             if(job_session_id is None):
-                ExceptionUtils.error_message(f"Error: joblogId missing for row {row}")
+                ExceptionUtils.error_message(
+                    f"Error: joblogId missing for row {row}")
                 continue
 
             if(job_session_id in job_log_dict):
-                ExceptionUtils.error_message(f"Error: joblogId duplicate, skipping.{job_session_id}")
+                ExceptionUtils.error_message(
+                    f"Error: joblogId duplicate, skipping.{job_session_id}")
                 continue
 
             if(self.__verbose):
@@ -341,8 +357,10 @@ class JobMethods:
             # request job_session_id
             try:
                 if(self.__verbose):
-                    LOGGER.info(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
-                LOGGER.debug(f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
+                    LOGGER.info(
+                        f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
+                LOGGER.debug(
+                    f"requesting jobLogs {self.__job_log_type} for session {job_session_id}.")
 
                 # cant use query something like everwhere due the extra params needed
                 job_log_list = self.__api_queries.get_job_log_details(
@@ -355,9 +373,11 @@ class JobMethods:
                 continue
 
             if(self.__verbose):
-                LOGGER.info(f">>> Found {len(job_log_list)} logs for jobsessionId {job_session_id}")
+                LOGGER.info(
+                    f">>> Found {len(job_log_list)} logs for jobsessionId {job_session_id}")
 
-            LOGGER.debug(f"Found {len(job_log_list)} logs for jobsessionId {job_session_id}")
+            LOGGER.debug(
+                f"Found {len(job_log_list)} logs for jobsessionId {job_session_id}")
             # default empty list if no details available -> should not happen, in for safty reasons
             # if this is none, go down to rest client and fix it. Should be empty list.
             if(job_log_list is None):
@@ -373,7 +393,8 @@ class JobMethods:
         # Results from first select query above
         for row in result_list:
             job_id: int = row['id']
-            job_log_list: Optional[List[Dict[str, Any]]] = job_log_dict.get(job_id, None)
+            job_log_list: Optional[List[Dict[str, Any]]
+                                   ] = job_log_dict.get(job_id, None)
 
             if(job_log_list is None):
                 ExceptionUtils.error_message(
@@ -407,7 +428,6 @@ class JobMethods:
             self.__influx_client.insert_dicts_to_buffer(
                 list_with_dicts=job_log_list, table_name="jobLogs")
 
-
             jobs_updated += 1
             logs_total_count += job_logs_count
             # update job table and set jobsLogsStored = True, jobLogsCount = len(jobLogDetails)
@@ -430,7 +450,7 @@ class JobMethods:
         )
 
         # now send remove query to prevent data loss
-        self.__influx_client.send_selection_query(delete_query)
+        self.__influx_client.send_selection_query(delete_query) # type: ignore
 
         # Insert data after everything is completed
         self.__influx_client.insert_dicts_to_buffer(table.name, insert_list)
