@@ -59,7 +59,7 @@ class MethodUtils:
             return []
 
         ssh_cmd_response_list = []
-        result_list = []
+        result_list: List[Tuple[str, List[Dict[str, Any]]]] = []
         for client in client_list:
 
             if(cls.verbose):
@@ -88,7 +88,8 @@ class MethodUtils:
 
                 try:
                     table_result_tuple = ssh_command.parse_result(ssh_type=ssh_type)
-                    result_list.append(table_result_tuple)
+                    if(table_result_tuple):
+                        result_list.append(table_result_tuple)
                 except ValueError as error:
                     ExceptionUtils.exception_info(error=error, extra_message="Error when parsing result, skipping parsing of this result")
 

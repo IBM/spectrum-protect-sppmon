@@ -116,7 +116,7 @@ class SshMethods:
         for grep_name in top_grep_list:
             self.__client_commands[SshTypes.SERVER].append(
                 SshCommand(
-                    command=f"top -b -n1 -p $(pgrep -d',' -f {grep_name})",
+                    command=f"top -bs -w 512 -n1 -p $(pgrep -d',' -f {grep_name})",
                     parse_function=SshMethods._parse_top_cmd,
                     table_name="processStats"
                 )
@@ -195,6 +195,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
 
@@ -259,6 +261,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pool_result_list: List[Dict[str, Any]] = []
 
@@ -341,6 +345,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         try:
             insert_dict: Dict[str, Any] = json.loads(ssh_command.result)
@@ -377,6 +383,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
@@ -419,6 +427,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pattern = re.compile(r"(.*)\s+\((.*)\)\s+(\d{2}\/\d{2}\/\d{4})\s+(\S*)\s+\((\d+)\sCPU\)")
 
@@ -477,6 +487,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
