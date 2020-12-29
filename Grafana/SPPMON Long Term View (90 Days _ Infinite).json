@@ -18,7 +18,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 30,
-  "iteration": 1607606951346,
+  "iteration": 1609280991251,
   "links": [],
   "panels": [
     {
@@ -4239,6 +4239,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$SPP_Server",
+      "decimals": 0,
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -4259,7 +4260,7 @@
         "avg": true,
         "current": false,
         "hideEmpty": true,
-        "hideZero": true,
+        "hideZero": false,
         "max": false,
         "min": false,
         "show": true,
@@ -4275,53 +4276,13 @@
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
-      "points": true,
+      "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:280",
-          "alias": "/ratio/",
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
-        {
-          "alias": "$tag_jobName $tag_resourceType total count",
-          "groupBy": [
-            {
-              "params": [
-                "resourceType"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "jobName"
-              ],
-              "type": "tag"
-            }
-          ],
-          "hide": false,
-          "measurement": "jobs_statistics",
-          "orderByTime": "ASC",
-          "policy": "$rp",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "total"
-                ],
-                "type": "field"
-              }
-            ]
-          ],
-          "tags": []
-        },
         {
           "alias": "$tag_jobName $tag_resourceType sucess ratio",
           "groupBy": [
@@ -4366,7 +4327,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Sucess Ratio by resource type",
+      "title": "Success ratio by resource type",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4384,7 +4345,7 @@
         {
           "$$hashKey": "object:293",
           "decimals": 0,
-          "format": "short",
+          "format": "percent",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -4399,7 +4360,7 @@
           "logBase": 1,
           "max": "100",
           "min": "0",
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -4583,6 +4544,135 @@
     },
     {
       "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 134
+      },
+      "hiddenSeries": false,
+      "id": 166,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": false
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType total count",
+          "groupBy": [
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total count by resource type",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -4600,7 +4690,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 134
+        "y": 142
       },
       "hiddenSeries": false,
       "id": 164,
@@ -4752,7 +4842,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 142
+        "y": 150
       },
       "hiddenSeries": false,
       "id": 165,
@@ -4905,7 +4995,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 150
+        "y": 158
       },
       "id": 75,
       "panels": [],
@@ -4930,7 +5020,7 @@
         "h": 11,
         "w": 9,
         "x": 0,
-        "y": 151
+        "y": 159
       },
       "hiddenSeries": false,
       "id": 4,
@@ -5084,7 +5174,7 @@
         "h": 11,
         "w": 7,
         "x": 9,
-        "y": 151
+        "y": 159
       },
       "hiddenSeries": false,
       "id": 11,
@@ -5215,7 +5305,7 @@
         "h": 11,
         "w": 8,
         "x": 16,
-        "y": 151
+        "y": 159
       },
       "hiddenSeries": false,
       "id": 6,
@@ -5333,7 +5423,7 @@
         "h": 10,
         "w": 9,
         "x": 0,
-        "y": 162
+        "y": 170
       },
       "hiddenSeries": false,
       "id": 12,
@@ -5493,7 +5583,7 @@
         "h": 10,
         "w": 15,
         "x": 9,
-        "y": 162
+        "y": 170
       },
       "hiddenSeries": false,
       "id": 81,
@@ -5758,7 +5848,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 172
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 84,
@@ -5904,7 +5994,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 172
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 86,
@@ -6070,7 +6160,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 172
+        "y": 180
       },
       "hiddenSeries": false,
       "id": 85,
@@ -6216,7 +6306,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 180
+        "y": 188
       },
       "hiddenSeries": false,
       "id": 104,
@@ -6362,7 +6452,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 180
+        "y": 188
       },
       "hiddenSeries": false,
       "id": 148,
@@ -6508,7 +6598,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 180
+        "y": 188
       },
       "hiddenSeries": false,
       "id": 149,
@@ -6627,7 +6717,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 188
+        "y": 196
       },
       "id": 70,
       "panels": [],
@@ -6652,7 +6742,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 189
+        "y": 197
       },
       "hiddenSeries": false,
       "id": 14,
@@ -6789,7 +6879,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 189
+        "y": 197
       },
       "hiddenSeries": false,
       "id": 71,
@@ -6912,7 +7002,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 197
+        "y": 205
       },
       "hiddenSeries": false,
       "id": 162,
@@ -7049,7 +7139,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 197
+        "y": 205
       },
       "hiddenSeries": false,
       "id": 163,
@@ -7190,7 +7280,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 205
+        "y": 213
       },
       "hiddenSeries": false,
       "id": 48,
@@ -7333,7 +7423,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 205
+        "y": 213
       },
       "hiddenSeries": false,
       "id": 92,
@@ -7537,7 +7627,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 213
+        "y": 221
       },
       "id": 77,
       "panels": [],
@@ -7562,7 +7652,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 214
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 79,
@@ -7705,7 +7795,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 214
+        "y": 222
       },
       "hiddenSeries": false,
       "id": 156,
@@ -7842,7 +7932,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 222
+        "y": 230
       },
       "hiddenSeries": false,
       "id": 91,
@@ -8046,7 +8136,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 230
+        "y": 238
       },
       "id": 132,
       "panels": [],
@@ -8071,7 +8161,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 231
+        "y": 239
       },
       "hiddenSeries": false,
       "id": 134,
@@ -8275,7 +8365,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 239
+        "y": 247
       },
       "id": 65,
       "panels": [],
@@ -8306,7 +8396,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 240
+        "y": 248
       },
       "hiddenSeries": false,
       "id": 41,
@@ -8677,7 +8767,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 249
+        "y": 257
       },
       "hiddenSeries": false,
       "id": 21,
@@ -8693,6 +8783,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -8810,7 +8903,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 249
+        "y": 257
       },
       "hiddenSeries": false,
       "id": 23,
@@ -8826,6 +8919,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -8944,7 +9040,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 249
+        "y": 257
       },
       "hiddenSeries": false,
       "id": 22,
@@ -8960,6 +9056,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
       "pluginVersion": "7.3.3",
       "pointradius": 2,
@@ -9068,9 +9167,9 @@
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "dmw_202_new",
-          "value": "dmw_202_new"
+          "selected": false,
+          "text": "default",
+          "value": "default"
         },
         "error": null,
         "hide": 0,
@@ -9135,5 +9234,5 @@
   "timezone": "",
   "title": "SPPMON Long Term View (90 Days / Infinite)",
   "uid": "8pQ8jDSGk",
-  "version": 7
+  "version": 8
 }
