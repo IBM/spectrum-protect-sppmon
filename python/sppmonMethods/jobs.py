@@ -44,11 +44,18 @@ class JobMethods:
     # ######### Add new logs to be parsed here #######################################
     # Structure:
     # Dict with messageID of log as name
-    # value is a tuple of #1 the tablename
+    # value is a tuple of
+    # #1 the tablename
     # #2 a lambda which maps each elem to a name
+    # #3 list with keys of additional informations to be saved: (#1: key, #2: rename)
     # the values are delived by the param_list of the joblog
     # if the value is something like 10sec or 10gb use `parse_unit` to parse it.
-    __supported_ids: Dict[str, Tuple[str, Callable[[List[Any]], Dict[str, Any]]]] = {
+    __supported_ids: Dict[str,
+                          Tuple[
+                                str,
+                                Callable[[List[Any]], Dict[str, Any]],
+                                List[Tuple[str, str]]
+                                ]] = {
         'CTGGA2384':
             ('vmBackupSummary',
              lambda params: {
@@ -63,7 +70,8 @@ class JobMethods:
                  "protectedVMDKs": params[8],
                  "TotalVMDKs": params[9],
                  "status": params[10]
-             }
+             },
+             []
              ),
         'CTGGA0071':
             ('vmBackupSummary',
@@ -73,7 +81,8 @@ class JobMethods:
                  'transferredBytes': SppUtils.parse_unit(params[2]),
                  'throughputBytes/s': SppUtils.parse_unit(params[3]),
                  'queueTimeSec': SppUtils.parse_unit(params[4])
-             }
+             },
+             []
              ),
         'CTGGA0072':
             ('vmReplicateSummary',
@@ -81,7 +90,8 @@ class JobMethods:
                  'total': params[0],
                  'failed': params[1],
                  'duration': SppUtils.parse_unit(params[2])
-             }
+             },
+             []
              ),
         'CTGGA0398':
             ('vmReplicateStats',
@@ -89,8 +99,32 @@ class JobMethods:
                  'replicatedBytes': SppUtils.parse_unit(params[0]),
                  'throughputBytes/sec': SppUtils.parse_unit(params[1]),
                  'duration': SppUtils.parse_unit(params[2], delimiter=':')
-             }
-             )
+             },
+             []
+             ),
+        'CTGGR0003':
+            ('office365Stats',
+             lambda params: {
+                 'imported365Users': int(params[0]),
+             },
+             [
+                 ("jobSessionId", "jobId"),
+                 ("jobsessionId", "jobSessionId"),
+                 ("jobSessionName", "jobName")
+             ]
+             ),
+        'CTGGA2444':
+            ('office365Stats',
+             lambda params: {
+                 'protectedItems': int(params[0]),
+                 'selectedItems': int(params[0]),
+             },
+             [
+                 ("jobSessionId", "jobId"),
+                 ("jobsessionId", "jobSessionId"),
+                 ("jobSessionName", "jobName")
+             ]
+             ),
     }
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
@@ -247,15 +281,17 @@ class JobMethods:
         for job_log in sorted_log_iterator:
             message_id = job_log['messageId']
 
-            table_func_tuple = self.__supported_ids[message_id]
+            table_func_triple = self.__supported_ids[message_id]
 
-            (table_name, row_dict_func) = table_func_tuple
+            (table_name, row_dict_func, additional_fields) = table_func_triple
 
             if(not table_name):
                 table_name = message_id
 
             try:
                 row_dict = row_dict_func(job_log['messageParams'])
+                for (key, rename) in additional_fields:
+                    row_dict[rename] = job_log[key]
             except KeyError as error:
                 ExceptionUtils.exception_info(
                     error, extra_message="MessageID params wrong defined. Skipping one MessageId")
