@@ -419,7 +419,8 @@ class Definitions:
                 "old_database",
                 "create_dashboard",
                 "dashboard_folder_path",
-                "loadedSystem"
+                "loadedSystem",
+                "processStats"
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
@@ -970,18 +971,13 @@ class Definitions:
             fields={
                 '%CPU':                     Datatype.FLOAT,
                 '%MEM':                     Datatype.FLOAT,
-                'RES':                      Datatype.INT,
-                'SHR':                      Datatype.INT,
                 'TIME+':                    Datatype.INT,
                 'VIRT':                     Datatype.INT,
                 'MEM_ABS':                  Datatype.INT
             },
             tags=[
                 'COMMAND',
-                'NI',
                 'PID',
-                'PR',
-                'S',
                 'USER',
                 'hostName',
                 'ssh_type'

@@ -110,14 +110,13 @@ class SshMethods:
         # ################ MULTI COMMAND ADD ##########################
 
         # SERVER
-
         # add server later due multiple processes
-        top_grep_list = ["mongod", "beam.smp", "java"] # be aware this is double declared below
-        for grep_name in top_grep_list:
+        self.__ps_grep_list = ["mongod", "beam.smp", "java"] # be aware this is double declared below
+        for grep_name in self.__ps_grep_list:
             self.__client_commands[SshTypes.SERVER].append(
                 SshCommand(
-                    command=f"top -b -n1 -p $(pgrep -d',' -f {grep_name})",
-                    parse_function=SshMethods._parse_top_cmd,
+                    command=f"ps -o \"%cpu,%mem,comm,rss,vsz,user,pid,etimes\" -p $(pgrep -d',' -f {grep_name}) S -ww",
+                    parse_function=self._parse_ps_cmd,
                     table_name="processStats"
                 )
             )
@@ -176,9 +175,8 @@ class SshMethods:
                 ExceptionUtils.exception_info(
                     error=error, extra_message=f"Top-level-error when excecuting {ssh_type.value} ssh commands, skipping them all")
 
-    @staticmethod
-    def _parse_top_cmd(ssh_command: SshCommand, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
-        """Parses the result of the `top` command, splitting it into its parts.
+    def _parse_ps_cmd(self, ssh_command: SshCommand, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
+        """Parses the result of the `df` command, splitting it into its parts.
 
         Arguments:
             ssh_command {SshCommand} -- command with saved result
@@ -195,23 +193,15 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
-
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
         result_lines = ssh_command.result.splitlines()
-
-        header = result_lines[6].split()
+        header = result_lines[0].split()
         values: List[Dict[str, Any]] = list(
-            map(lambda row: dict(zip(header, row.split())), result_lines[7:])) # type: ignore
-
-        ram_line = result_lines[3].split()
-        total_mem = SppUtils.parse_unit(
-            data=ram_line[3],
-            given_unit="KiB"
-        )
-
-        time_pattern = re.compile(r"(\d+):(\d{2})(?:\.(\d{2}))?")
+            map(lambda row: dict(zip(header, row.split())), result_lines[1:])) # type: ignore
 
         # remove top statistic itself to avoid spam with useless information
-        values = list(filter(lambda row: row["COMMAND"] in ["mongod", "beam.smp", "java"], values))
+        values = list(filter(lambda row: row["COMMAND"] in self.__ps_grep_list, values))
 
         for row in values:
             # set default needed fields
@@ -220,23 +210,10 @@ class SshMethods:
             (time_key, time_value) = SppUtils.get_capture_timestamp_sec()
             row[time_key] = time_value
 
-            # split time into seconds
-            match = re.match(time_pattern, row['TIME+'])
-            if(match):
-                time_list = match.groups()
-                (hours, minutes, seconds) = time_list
-                if(seconds is None):
-                    seconds = 0
-                time = int(hours)*pow(60, 2) + int(minutes)*pow(60, 1) + int(seconds)*pow(60, 0)
-            else:
-                time = None
-            row['TIME+'] = time
+            row['TIME+'] = row.pop('ELAPSED')
 
-            row['MEM_ABS'] = int((float(row['%MEM']) * total_mem) / 100 )
-
-            row['SHR'] = SppUtils.parse_unit(row['SHR'])
-            row['RES'] = SppUtils.parse_unit(row['RES'])
-            row['VIRT'] = SppUtils.parse_unit(row['VIRT'])
+            row['MEM_ABS'] = SppUtils.parse_unit(row.pop("RSS"),"kib")
+            row['VIRT'] = SppUtils.parse_unit(row.pop('VSZ'), "kib")
 
         return (ssh_command.table_name, values)
 
@@ -259,6 +236,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pool_result_list: List[Dict[str, Any]] = []
 
@@ -341,6 +320,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         try:
             insert_dict: Dict[str, Any] = json.loads(ssh_command.result)
@@ -377,6 +358,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
@@ -419,6 +402,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pattern = re.compile(r"(.*)\s+\((.*)\)\s+(\d{2}\/\d{2}\/\d{4})\s+(\S*)\s+\((\d+)\sCPU\)")
 
@@ -477,6 +462,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
