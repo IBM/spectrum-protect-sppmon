@@ -52,7 +52,7 @@ class SshCommand:
         return self.__cmd
 
     @property
-    def table_name(self) -> str:
+    def table_name(self) -> Optional[str]:
         """name of table the result should be saved in"""
         return self.__table_name
 
@@ -75,7 +75,7 @@ class SshCommand:
         self.__result: Optional[str] = result
         self.__host_name: Optional[str] = host_name
 
-    def parse_result(self, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
+    def parse_result(self, ssh_type: SshTypes) -> Optional[Tuple[str, List[Dict[str, Any]]]]:
         """Use the function saved within this query to parse the result once existent.
 
         Arguments:
@@ -84,7 +84,10 @@ class SshCommand:
         Returns:
             Tuple[str, List[Dict[Any, Any]]] -- [description]
         """
-        return self.__parse_function(self, ssh_type)
+        if(self.__parse_function):
+            return self.__parse_function(self, ssh_type)
+        else:
+            return None
 
     def save_result(self, result: Optional[str], host_name: str) -> SshCommand:
         """Creates a new SshCommand with optional hostname and result saved.

@@ -42,6 +42,7 @@ Author:
  09/01/2020 version 0.10.2 Parse_Unit fixes (JobLogs) and adjustments on timeout
  11/10/2020 version 0.10.3 Introduced --loadedSystem argument and moved --minimumLogs to depricated
  12/07/2020 version 0.10.4 Included SPP 10.1.6 addtional job information features and some bugfixes
+ 12/29/2020 version 0.10.5 Replaced ssh 'top' command by 'ps' command to bugfix truncating data
 """
 from __future__ import annotations
 import functools
@@ -70,7 +71,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.4  (2020/12/07)"
+VERSION = "0.10.5  (2020/12/29)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
