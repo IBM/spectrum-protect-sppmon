@@ -3,6 +3,7 @@
 Classes:
     RestClient
 """
+from __future__ import annotations
 import logging
 import json
 from typing import Optional, Tuple, Dict, List, Any
@@ -44,7 +45,7 @@ class RestClient():
     def __init__(self, auth_rest: Dict[str, Any],
                  initial_connection_timeout: float,
                  pref_send_time: int,
-                 request_timeout: Optional[int],
+                 request_timeout: int | None,
                  send_retries: int,
                  starting_page_size: int,
                  min_page_size: int,
@@ -259,6 +260,7 @@ class RestClient():
 
         failed_trys: int = 0
         response_query: Optional[Response] = None
+        send_time: float = -1 # prevent unbound var
 
         while(response_query is None):
 
@@ -322,7 +324,7 @@ class RestClient():
                     self.__page_size = self.__min_page_size
                     # repeat with minimal possible size
 
-                elif(self.__send_retries > failed_trys): # more then 1 try left
+                else: # (self.__send_retries > failed_trys): # more then 1 try left
                     LOGGER.debug(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesizefor url: {url}")
                     if(self.__verbose):
                         LOGGER.info(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesize for url: {url}")

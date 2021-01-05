@@ -484,7 +484,7 @@ class SshMethods:
 
             # recalculate values to be more usefull
             if('available' in row):
-                row['free'] = int(row.pop('available')) + int(row['free'])
+                row['free'] = int(row.pop('available'))
                 row['used'] = int(row['total']) - int(row['free'])
 
         return (ssh_command.table_name, values)
