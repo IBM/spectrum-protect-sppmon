@@ -214,20 +214,21 @@ class JobMethods:
 
         # retrieve all jobs in this category from REST API, filter to avoid drops due RP
         LOGGER.debug(f">>> requesting job sessions for id {job_id}")
-        all_saved_jobs = self.__api_queries.get_jobs_by_id(
-            job_id=job_id,
-            timestamp_min=unixtime
-        )
+        all_jobs = self.__api_queries.get_jobs_by_id(job_id=job_id)
 
-        missing_jobs = list(filter(lambda job_api: int(
-            job_api['id']) not in id_list, all_saved_jobs))
+        # filter all jobs where start time is not bigger then the retention time limit
+        latest_jobs = list(filter(lambda job: job['start'] > unixtime, all_jobs))
+
+        missing_jobs = list(filter(lambda job_api: int(job_api['id']) not in id_list, latest_jobs))
 
         if(len(missing_jobs) > 0):
             LOGGER.info(
                 f">>> {len(missing_jobs)} datasets missing in DB for jobId: {job_id}")
 
-            LOGGER.info(
-                f">>> inserting job information of {len(missing_jobs)} jobs into jobs table")
+            # Removes `statistics` from jobs
+            self.__compute_job_statistics(missing_jobs, job_id)
+
+            LOGGER.info(f">>> inserting job information of {len(missing_jobs)} jobs into jobs table")
             self.__influx_client.insert_dicts_to_buffer(
                 list_with_dicts=missing_jobs,
                 table_name="jobs")
@@ -261,6 +262,60 @@ class JobMethods:
             print("displaying last {} jobs for job with ID {} from database (as available)".format(
                 display_number_of_jobs, job_id))
             MethodUtils.my_print(data=job_list_to_print)
+
+    def __compute_job_statistics(self, list_with_jobs: List[Dict[str, Any]], job_id: str) -> None:
+        """Extracts additional `statistic` list from jobs and removes it from the original list.
+
+        Computes an additional table out of the data.
+
+        Args:
+            list_with_jobs (List[Dict[str, Any]]): list with all jobs
+        """
+
+        LOGGER.info(f">>> computing additional job statistics for jobId: {job_id}")
+
+        insert_list: List[Dict[str, Any]] = []
+        for job in filter(lambda x: x.get("statistics", None), list_with_jobs):
+            job_statistics_list = job.pop('statistics')
+
+            for job_stats in job_statistics_list:
+                try:
+                    insert_dict: Dict[str, Any] = {}
+
+                    insert_dict['resourceType'] = job_stats['resourceType']
+                    insert_dict['total'] = job_stats.get('total', 0)
+                    insert_dict['success'] = job_stats.get('success', 0)
+                    insert_dict['failed'] = job_stats.get('failed', 0)
+
+                    skipped = job_stats.get('skipped', None)
+                    if(skipped is None):
+                       skipped = insert_dict["total"] - insert_dict["success"] - insert_dict["failed"]
+                    insert_dict["skipped"] = skipped
+
+                    # time key
+                    insert_dict['start'] = job['start']
+                    # regular tag values for grouping:
+                    insert_dict['id'] = job.get('id', None)
+                    insert_dict['jobId'] = job.get('jobId', None)
+                    insert_dict['status'] = job.get('status', None)
+                    insert_dict['indexStatus'] = job.get('indexStatus', None)
+                    insert_dict['jobName'] = job.get('jobName', None)
+                    insert_dict['type'] = job.get('type', None)
+                    insert_dict['subPolicyType'] = job.get('subPolicyType', None)
+
+                    insert_list.append(insert_dict)
+                except KeyError as error:
+                    ExceptionUtils.exception_info(error=error, extra_message=
+                    f"failed to compute job-individual statistics due key error. report to developer: {job}")
+
+        if(len(insert_list) > 0):
+            self.__influx_client.insert_dicts_to_buffer(
+                list_with_dicts=insert_list,
+                table_name="jobs_statistics")
+        else:
+            LOGGER.info(
+                f">>> no additional job statistics to insert into DB for jobId: {job_id}")
+
 
     def __job_logs_to_stats(self, list_with_logs: List[Dict[str, Any]]) -> None:
         """Parses joblogs into their own statisic table, using declared supported ID's

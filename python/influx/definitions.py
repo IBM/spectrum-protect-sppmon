@@ -297,11 +297,15 @@ class Definitions:
                 'start':            Datatype.TIMESTAMP,
                 'end':              Datatype.TIMESTAMP,
                 'jobLogsCount':     Datatype.INT,
-                'id':               Datatype.INT
+                'id':               Datatype.INT,
+                'numTasks':         Datatype.INT,
+                'percent':          Datatype.FLOAT
+                # count(id) -> "count": Int -> RP INF
             },
             tags=[  # TAGS
                 'jobId',
                 'status',
+                'indexStatus',
                 'jobName',
                 'subPolicyType',
                 'type',
@@ -311,7 +315,39 @@ class Definitions:
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
                 cls._CQ_DWSMPL([
-                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount"
+                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount",
+                    "mean(numTasks) as numTasks", "mean(\"percent\") as \"percent\"",
+                    "count(id) as \"count\""
+                    ], cls._RP_INF(), "1w")
+            ]
+        )
+
+        cls.__add_predef_table(
+            name='jobs_statistics',
+            fields={
+                'total':            Datatype.INT,
+                'success':          Datatype.INT,
+                'failed':           Datatype.INT,
+                'skipped':          Datatype.INT,
+                'id':               Datatype.INT,
+                # count(id) -> "count": Int -> RP INF
+            },
+            tags=[
+                'resourceType',
+                'jobId',
+                'status',
+                'indexStatus',
+                'jobName',
+                'type',
+                'subPolicyType',
+            ],
+            time_key='start',
+            retention_policy=cls._RP_DAYS_90(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "mean(\"total\") as \"total\"", "mean(\"success\") as \"success\"",
+                    "mean(\"failed\") as \"failed\"", "mean(\"skipped\") as \"skipped\"",
+                    "count(id) as \"count\""
                     ], cls._RP_INF(), "1w")
             ]
         )
@@ -419,7 +455,8 @@ class Definitions:
                 "old_database",
                 "create_dashboard",
                 "dashboard_folder_path",
-                "loadedSystem"
+                "loadedSystem",
+                "processStats"
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
@@ -689,11 +726,11 @@ class Definitions:
             name='vadps',
             fields={
                 'state':            Datatype.STRING,
+                'vadpName':         Datatype.STRING,
+                'vadpId':           Datatype.INT,
+                'ipAddr':           Datatype.STRING,
             },
             tags=[
-                'vadpName',
-                'vadpId',
-                'ipAddr',
                 'siteId',
                 'siteName',
                 'version'
@@ -702,45 +739,39 @@ class Definitions:
             continuous_queries=[
                 # cls._CQ_TRNSF(cls._RP_DAYS_14())
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 )
             ]
@@ -970,18 +1001,13 @@ class Definitions:
             fields={
                 '%CPU':                     Datatype.FLOAT,
                 '%MEM':                     Datatype.FLOAT,
-                'RES':                      Datatype.INT,
-                'SHR':                      Datatype.INT,
                 'TIME+':                    Datatype.INT,
                 'VIRT':                     Datatype.INT,
                 'MEM_ABS':                  Datatype.INT
             },
             tags=[
                 'COMMAND',
-                'NI',
                 'PID',
-                'PR',
-                'S',
                 'USER',
                 'hostName',
                 'ssh_type'
