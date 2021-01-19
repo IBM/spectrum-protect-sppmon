@@ -260,40 +260,45 @@ class InfluxClient:
         queries: List[str] = []
         # all tables into their respective, data will be dropped if over RP-Time
         for table in self.database.tables.values():
-            query_str = f"SELECT * INTO {table} FROM {old_database_name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
-            queries.append(query_str)
+            rp_query_str = f"SELECT * INTO {table} FROM {old_database_name}.{table.retention_policy.name}.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
+            autogen_query_str = f"SELECT * INTO {table} FROM {old_database_name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
+            queries.append(autogen_query_str)
+            queries.append(rp_query_str)
         # Commpute the dropped data CQ-Like into the new tables.
         for con_query in self.database.continuous_queries:
-            if(con_query.select_query):
-                query_str: str = con_query.select_query.to_query()
+            if(not con_query.select_query): # only for select query's
+                continue
 
-                # replacing the rp of the string is easier then everything else
+            query_str: str = con_query.select_query.to_query()
 
-                match = re.search(r"(FROM ((.+)\.(.+)\..+) GROUP BY)", query_str)
-                if(not match):
-                    raise ValueError("error when matching")
+            # replacing the rp of the string is easier then everything else
 
-                from_clause = match.group(1)
-                full_qualified_table = match.group(2)
-                database_str = match.group(3)
-                rp_str = match.group(4)
+            match = re.search(r"(FROM ((.+)\.(.+)\..+) GROUP BY)", query_str)
+            if(not match):
+                raise ValueError("error when matching")
 
-                new_f_q_t = full_qualified_table.replace(database_str, old_database_name)
-                new_f_q_t = new_f_q_t.replace(rp_str, "autogen")
+            from_clause = match.group(1)
+            new_db_full_qualified_table = match.group(2)
+            database_str = match.group(3)
+            rp_str = match.group(4)
+
+            old_db_f_q_t = new_db_full_qualified_table.replace(database_str, old_database_name)
+            for old_db_tablename in (old_db_f_q_t, old_db_f_q_t.replace(rp_str, "autogen")):
+                # transfer for both autogen and the new tablename
 
                 if(con_query.select_query.into_table is None):
                     ExceptionUtils.error_message(f"unable to process the query due an internal error: {query_str}")
                     continue
                 if(con_query.select_query.into_table.retention_policy.duration != '0s'):
                     # add where clause to prevent dataloss due overflowing retention drop.
-                    if(re.search("WHERE", new_f_q_t)):
-                        new_f_q_t += " AND "
+                    if(re.search("WHERE", old_db_tablename)):
+                        old_db_tablename += " AND "
                     else:
-                        new_f_q_t += " WHERE "
-                    new_f_q_t += f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
+                        old_db_tablename += " WHERE "
+                    old_db_tablename += f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
 
                 # insert new where clause into the match
-                new_from_clause = from_clause.replace(full_qualified_table, new_f_q_t)
+                new_from_clause = from_clause.replace(new_db_full_qualified_table, old_db_tablename)
                 new_query_str = query_str.replace(from_clause, new_from_clause)
 
                 queries.append(new_query_str)
@@ -367,17 +372,20 @@ class InfluxClient:
         version: str = self.__client.ping()
         LOGGER.info(f"Connected again to influxdb with old timeout of {self.__client._timeout}, version: {version}")
 
-
-        LOGGER.info("transfer of data sucessfully")
         LOGGER.info(f"Total transfered {line_count} lines of results.")
         if(dropped_count):
-            LOGGER.info(f"Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
+            LOGGER.info(f"WARNING: Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
         if(critical_drop):
-            msg: str = (f"Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
+            msg: str = (f"ERROR: Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
                         "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
                         "Adjust other values as required. Drop due Retention Policy is 'OK' until 10.000.\n"+
                         "if it reaches 10.000 you need to cut the query into smaller bits.")
-            LOGGER.info(msg)
+            ExceptionUtils.error_message(msg)
+        elif(line_count == 0):
+            ExceptionUtils.error_message("ERROR: No data was transferred, make sure your database name is correct and the db is not empty.")
+        else:
+            LOGGER.info("transfer of data sucessfully")
+
 
 
     def insert_dicts_to_buffer(self, table_name: str, list_with_dicts: List[Dict[str, Any]]) -> None:
