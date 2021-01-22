@@ -43,6 +43,7 @@ Author:
  11/10/2020 version 0.10.3 Introduced --loadedSystem argument and moved --minimumLogs to depricated
  12/07/2020 version 0.10.4 Included SPP 10.1.6 addtional job information features and some bugfixes
  12/29/2020 version 0.10.5 Replaced ssh 'top' command by 'ps' command to bugfix truncating data
+ 01/22/2021 version 0.10.6 Replaced `transfer_data` by `copy_database` with improvements
 """
 from __future__ import annotations
 import functools
@@ -71,7 +72,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.5  (2020/12/29)"
+VERSION = "0.10.6  (2021/01/22)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
@@ -119,8 +120,8 @@ parser.add_option("--sppcatalog", dest="sppcatalog", action="store_true", help="
 parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
                   help="DEPRICATED, use '--loadedSystem' instead. To be removed in v1.1")
 
-parser.add_option("--rename_database", dest="rename_database",
-                  help="Copy all data from .cfg database into a new database, specified by `rename_database=newName`. Delete old database with caution.")
+parser.add_option("--copy_database", dest="copy_database",
+                  help="Copy all data from .cfg database into a new database, specified by `copy_database=newName`. Delete old database with caution.")
 parser.add_option("--create_dashboard", dest="create_dashboard", action="store_true",
                   help="Create a server unique dashboard with alerts. Option `--cfg` required.")
 parser.add_option("--dashboard_folder_path", dest="dashboard_folder_path",
@@ -846,13 +847,13 @@ class SppMon:
                     error=error,
                     extra_message="Top-level-error when creating dashboards")
 
-        if(OPTIONS.rename_database):
+        if(OPTIONS.copy_database):
             try:
-                self.influx_client.copy_database(OPTIONS.rename_database)
+                self.influx_client.copy_database(OPTIONS.copy_database)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
-                    extra_message="Top-level-error when transfering data storages.")
+                    extra_message="Top-level-error when coping database.")
 
         self.exit()
 

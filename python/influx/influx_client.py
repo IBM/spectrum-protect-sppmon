@@ -251,7 +251,7 @@ class InfluxClient:
         if(not new_database_name):
             raise ValueError("copy_database requires a new database name to copy to.")
         LOGGER.info(f"transfering the data from database {self.database.name} into {new_database_name}.")
-        LOGGER.info("This also includes all data from `autogen` retention policy, sorted into new retention policies.")
+        LOGGER.info("This also includes all data from `autogen` retention policy, sorted into the correct retention policies.")
         LOGGER.info("Computing queries to be send to the server.")
 
         queries: List[str] = []
@@ -319,7 +319,6 @@ class InfluxClient:
         send_time_collection: float = 0
         # line count since last print
         line_collection: int = 0
-        LOGGER.info("starting transfer of data")
 
         # disable timeout
         old_timeout = self.__client._timeout
@@ -334,7 +333,8 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Connected again to influxdb with new timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(f"Connected to influxdb with new timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info("starting transfer of data")
         i = 0
 
         for query in queries:
@@ -387,7 +387,7 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Connected again to influxdb with old timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(f"Changed timeout of influxDB to old timeout of {self.__client._timeout}, version: {version}")
 
         LOGGER.info(f"Total transfered {line_count} lines of results.")
         if(dropped_count):
