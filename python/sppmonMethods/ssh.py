@@ -71,6 +71,9 @@ class SshMethods:
             # SEVER
             SshTypes.SERVER: [
                 # added later due function, check below
+
+                ## df -h /
+                ## df -h /opt/IBM/SPP
             ],
 
             # VSnap
@@ -85,6 +88,8 @@ class SshMethods:
                     parse_function=SshMethods._parse_system_stats_cmd,
                     table_name="vsnap_system_stats"
                 )
+                ##  zpool list
+                ##  df -h /
             ],
 
             # VADP
