@@ -167,24 +167,10 @@ class SshMethods:
                 list_with_dicts=insert_list
             )
 
-    def process_stats(self) -> None:
-        """Executes all server-process stats related functionality."""
-        try:
-            LOGGER.info(f"> executing process_stats ssh commands")
-            self.__exec_save_commands(
-                ssh_type=SshTypes.SERVER,
-                command_list=self.__client_commands[SshTypes.SERVER] + self.__all_command_list
-            )
-        except ValueError as error:
-            ExceptionUtils.exception_info(
-                error=error, extra_message="Top-level-error when process_stats ssh commands, skipping them all")
-
     def ssh(self) -> None:
         """Executes all ssh related functionality for each type of client each."""
         LOGGER.info(f"> executing ssh commands for each sshclient-type individually.")
         for ssh_type in SshTypes:
-            if(ssh_type is SshTypes.SERVER):
-                continue # skip due the method process_stats, already collected there
             try:
                 LOGGER.info(f">> executing ssh commands, which are labled to be executed for {ssh_type.value} ssh clients")
                 self.__exec_save_commands(
