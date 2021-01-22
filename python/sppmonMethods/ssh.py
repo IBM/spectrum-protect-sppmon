@@ -72,6 +72,16 @@ class SshMethods:
             SshTypes.SERVER: [
                 # added later due function, check below
 
+                SshCommand(
+                    command='df -h / --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
+                SshCommand(
+                    command='df -h /opt/IBM/SPP --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
                 ## df -h /
                 ## df -h /opt/IBM/SPP
             ],
@@ -87,7 +97,12 @@ class SshMethods:
                     command='sudo vsnap --json system stats',
                     parse_function=SshMethods._parse_system_stats_cmd,
                     table_name="vsnap_system_stats"
-                )
+                ),
+                SshCommand(
+                    command='df -h / --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
                 ##  zpool list
                 ##  df -h /
             ],
@@ -105,7 +120,7 @@ class SshMethods:
             # OTHER
             SshTypes.OTHER: [
                 SshCommand(
-                    command="df -h -P",
+                    command="df -h --block-size=G",
                     parse_function=SshMethods._parse_df_cmd,
                     table_name="df_ssh"
                 )
@@ -375,8 +390,12 @@ class SshMethods:
             map(lambda row: dict(zip(header, row.split())), result_lines[1:])) # type: ignore
 
         for row in values:
+            if("1G-blocks" in row):
+                row["Size"] = row.pop("1G-blocks")
             row["Size"] = SppUtils.parse_unit(row['Size'])
-            row["Avail"] = SppUtils.parse_unit(row['Avail'])
+            if("Avail" in row):
+                row["Available"] = row.pop("Avail")
+            row["Available"] = SppUtils.parse_unit(row['Available'])
             row["Used"] = SppUtils.parse_unit(row['Used'])
             row["Use%"] = row["Use%"][:-1]
 

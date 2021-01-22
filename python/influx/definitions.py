@@ -1163,12 +1163,12 @@ class Definitions:
             fields={
                 "Size":                     Datatype.INT,
                 "Used":                     Datatype.INT,
-                "Avail":                    Datatype.INT,
+                "Available":                Datatype.INT,
                 "Use%":                     Datatype.INT,
             },
             tags=[
                 "Filesystem",
-                "Mounted"
+                "Mounted",
                 "hostName",
                 "ssh_type"
             ],
@@ -1176,13 +1176,13 @@ class Definitions:
             continuous_queries=[
                 cls._CQ_DWSMPL([
                     "mean(\"Use%\") as \"Use%\"",
-                    "mean(Avail) as Avail",
+                    "mean(Available) as Available",
                     "mean(Used) as Used",
                     "mean(Size) as Size"
                     ], cls._RP_DAYS_90(), "6h"),
                 cls._CQ_DWSMPL([
                     "mean(\"Use%\") as \"Use%\"",
-                    "mean(Avail) as Avail",
+                    "mean(Available) as Available",
                     "mean(Used) as Used",
                     "mean(Size) as Size"
                     ], cls._RP_INF(), "1w")
