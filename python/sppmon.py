@@ -123,7 +123,7 @@ parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
 parser.add_option("--copy_database", dest="copy_database",
                   help="Copy all data from .cfg database into a new database, specified by `copy_database=newName`. Delete old database with caution.")
 parser.add_option("--create_dashboard", dest="create_dashboard", action="store_true",
-                  help="Create a server unique dashboard with alerts. Option `--cfg` required.")
+                  help="Create a server unique dashboard with alerts. Option `--cfg` and `--dashboard_folder_path` required.")
 parser.add_option("--dashboard_folder_path", dest="dashboard_folder_path",
                   help="Used only with`--create_dashboard` option. Specifies changed folder-path of the template \"SPPMON for IBM Spectrum Protect Plus\" dashboard.")
 
@@ -839,13 +839,17 @@ class SppMon:
 
         if(OPTIONS.create_dashboard):
             try:
-                OtherMethods.create_dashboard(
-                    dashboard_folder_path=OPTIONS.dashboard_folder_path,
-                    database_name=self.influx_client.database.name)
+                if(not OPTIONS.dashboard_folder_path):
+                    ExceptionUtils.error_message(
+                        "Only use --create_dashboard in combination with --dashboard_folder_path=\"PATH/TO/GRAFANA/FOLDER/\"")
+                else:
+                    OtherMethods.create_dashboard(
+                        dashboard_folder_path=OPTIONS.dashboard_folder_path,
+                        database_name=self.influx_client.database.name)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
-                    extra_message="Top-level-error when creating dashboards")
+                    extra_message="Top-level-error when creating dashboard")
 
         if(OPTIONS.copy_database):
             try:
