@@ -115,17 +115,16 @@ parser.add_option("--cpu", dest="cpu", action="store_true", help="capture SPP se
 parser.add_option("--sppcatalog", dest="sppcatalog", action="store_true", help="capture Spp-Catalog Storage usage")
 
 ##########################
-#TODO Remove minimum Logs on next version.
+#TODO Minimum Logs is depricated, to be removed in Version 1.1.
 parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
-                  help="DEPRICATED, use '--loadedSystem' instead")
-parser.add_option("--transfer_data", dest="transfer_data", action="store_true",
-                  help="TEMPORARY FEATURE:transfer data into retention policies, BACKUP before doing so")
-parser.add_option("--old_database", dest="old_database",
-                  help="TEMPORARY FEATURE:transfer data of this db into the cfg-database")
+                  help="DEPRICATED, use '--loadedSystem' instead. To be removed in v1.1")
+
+parser.add_option("--rename_database", dest="rename_database",
+                  help="Copy all data from .cfg database into a new database, specified by `rename_database=newName`. Delete old database with caution.")
 parser.add_option("--create_dashboard", dest="create_dashboard", action="store_true",
-                  help="Create a 14-day dashboard with alerts for the given spp-server. CFG and dashboard path required")
+                  help="Create a server unique dashboard with alerts. Option `--cfg` required.")
 parser.add_option("--dashboard_folder_path", dest="dashboard_folder_path",
-                  help="Only in use with create_dashboard. Path to the folder of the \"SPPMON for IBM Spectrum Protect Plus\" dashboard")
+                  help="Used only with`--create_dashboard` option. Specifies changed folder-path of the template \"SPPMON for IBM Spectrum Protect Plus\" dashboard.")
 
 
 (OPTIONS, ARGS) = parser.parse_args()
@@ -847,14 +846,9 @@ class SppMon:
                     error=error,
                     extra_message="Top-level-error when creating dashboards")
 
-        # ######################   DISCLAMER   #######################
-        # ###################  TEMPORARY FEATURE  ####################
-        # this part is deleted once all old versions of SPPMon have been migrated
-        # use at own caution
-        # ############################################################
-        if(OPTIONS.transfer_data):
+        if(OPTIONS.rename_database):
             try:
-                self.influx_client.transfer_data(OPTIONS.old_database)
+                self.influx_client.copy_database(OPTIONS.rename_database)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,

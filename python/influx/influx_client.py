@@ -37,6 +37,7 @@ class InfluxClient:
         insert_dicts_to_buffer - Method to insert data into influxb
         flush_insert_buffer - flushes buffer, send querys to influxdb
         send_selection_query - sends a single `SelectionQuery` to influxdb
+        copy_database - copies whole database into a new one
 
         @depricated
         update_row - updates values and tags of already saved data
@@ -246,62 +247,63 @@ class InfluxClient:
             ExceptionUtils.exception_info(error=error) # type: ignore
             raise ValueError("Continuous Query check failed")
 
-    def transfer_data(self, old_database_name: str = None) -> None:
-        # ######################   DISCLAMER   #######################
-        # ###################  TEMPORARY FEATURE  ####################
-        # this part is deleted once all old versions of SPPMon have been migrated
-        # use at own caution
-        # ############################################################
-        if(not old_database_name):
-            old_database_name = self.database.name
-        LOGGER.info(f"transfering the data from database {old_database_name} into {self.database.name}.")
+    def copy_database(self, new_database_name: str = None) -> None:
+        if(not new_database_name):
+            raise ValueError("copy_database requires a new database name to copy to.")
+        LOGGER.info(f"transfering the data from database {self.database.name} into {new_database_name}.")
+        LOGGER.info("This also includes all data from `autogen` retention policy, sorted into new retention policies.")
         LOGGER.info("Computing queries to be send to the server.")
 
         queries: List[str] = []
-        # all tables into their respective, data will be dropped if over RP-Time
+        # copies all tables into their respective duplicate, data over RP-time will be dropped.
         for table in self.database.tables.values():
-            rp_query_str = f"SELECT * INTO {table} FROM {old_database_name}.{table.retention_policy.name}.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
-            autogen_query_str = f"SELECT * INTO {table} FROM {old_database_name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
+            autogen_query_str = f"SELECT * INTO {new_database_name}.{table.retention_policy.name}.{table.name} FROM {table.database.name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
             queries.append(autogen_query_str)
+
+            rp_query_str = f"SELECT * INTO {new_database_name}.{table.retention_policy.name}.{table.name} FROM {table} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
             queries.append(rp_query_str)
-        # Commpute the dropped data CQ-Like into the new tables.
+
+        # Compute data with a timestamp over the initial RP-duration into other RP's.
         for con_query in self.database.continuous_queries:
-            if(not con_query.select_query): # only for select query's
-                continue
+            cq_query_str: str = con_query.to_query()
 
-            query_str: str = con_query.select_query.to_query()
-
-            # replacing the rp of the string is easier then everything else
-
-            match = re.search(r"(FROM ((.+)\.(.+)\..+) GROUP BY)", query_str)
+            # replacing the rp inside of the toString representation
+            # this is easier than individual matching/code replacement
+            # Not every database name should be replaced
+            match = re.search(r"BEGIN(.*(INTO\s+(.+)\..+\..+)\s+(FROM\s+\w+\.(\w+)\.\w+)(?:\s+WHERE\s+(.+))?\s+GROUP BY.*)END", cq_query_str)
             if(not match):
-                raise ValueError("error when matching")
+                raise ValueError(f"error when matching continous query {cq_query_str}. Aborting.")
 
-            from_clause = match.group(1)
-            new_db_full_qualified_table = match.group(2)
-            database_str = match.group(3)
-            rp_str = match.group(4)
+            full_match = match.group(1)
+            into_clause = match.group(2)
+            old_database_str = match.group(3)
+            from_clause = match.group(4)
+            from_rp = match.group(5)
+            where_clause = match.group(6)
 
-            old_db_f_q_t = new_db_full_qualified_table.replace(database_str, old_database_name)
-            for old_db_tablename in (old_db_f_q_t, old_db_f_q_t.replace(rp_str, "autogen")):
-                # transfer for both autogen and the new tablename
-
-                if(con_query.select_query.into_table is None):
-                    ExceptionUtils.error_message(f"unable to process the query due an internal error: {query_str}")
-                    continue
-                if(con_query.select_query.into_table.retention_policy.duration != '0s'):
-                    # add where clause to prevent dataloss due overflowing retention drop.
-                    if(re.search("WHERE", old_db_tablename)):
-                        old_db_tablename += " AND "
+            # Add timelimit in where clause to prevent massive truncation due the rentention-policy time limit
+            new_full_match = full_match
+            if(not con_query.select_query or con_query.select_query.into_table is None):
+                    ExceptionUtils.error_message(f"Into table of continous query is none. Adjust query manually! {full_match}")
+            elif(con_query.select_query.into_table.retention_policy.duration != '0s'):
+                    # Caution: if truncation of a query is above 10.000 it won't be saved!
+                    clause = f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
+                    if(where_clause):
+                        new_full_match = new_full_match.replace(where_clause, where_clause + " AND " + clause)
                     else:
-                        old_db_tablename += " WHERE "
-                    old_db_tablename += f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
+                        new_full_match = new_full_match.replace(from_clause, from_clause + " WHERE " + clause)
 
-                # insert new where clause into the match
-                new_from_clause = from_clause.replace(new_db_full_qualified_table, old_db_tablename)
-                new_query_str = query_str.replace(from_clause, new_from_clause)
+            # replace old dbname with new one
+            new_into_clause = into_clause.replace(old_database_str, new_database_name)
+            new_full_match = new_full_match.replace(into_clause, new_into_clause)
 
-                queries.append(new_query_str)
+            # case 1: keep retention policy
+            queries.append(new_full_match)
+
+            # case 2: autogen as from RP
+            new_from_clause = from_clause.replace(from_rp, "autogen")
+            auto_gen_match = new_full_match.replace(from_clause, new_from_clause)
+            queries.append(auto_gen_match)
 
         LOGGER.info("Finished Computing, starting to send.")
 
@@ -311,6 +313,12 @@ class InfluxClient:
         dropped_count: int = 0
         # how often was data dropped above the 10.000 limit?
         critical_drop: int = 0
+
+        # print statistics
+        # send time since last print
+        send_time_collection: float = 0
+        # line count since last print
+        line_collection: int = 0
         LOGGER.info("starting transfer of data")
 
         # disable timeout
@@ -341,7 +349,16 @@ class InfluxClient:
                 for result in result.get_points():
                     i += 1
                     line_count += result["written"]
-                    LOGGER.info(f'query {i}/{len(queries)}: {result["written"]} lines in {end_time-start_time}')
+
+                    # print statistics
+                    send_time_collection += end_time-start_time
+                    line_collection += result["written"]
+
+                    # Print only all 10 queries
+                    if(i % 10 == 0):
+                        LOGGER.info(f'query {i}/{len(queries)}: {line_collection} new lines in {send_time_collection}s.')
+                        line_collection = 0
+                        send_time_collection = 0
 
             except InfluxDBClientError as error:
                 # only raise if the error is unexpected

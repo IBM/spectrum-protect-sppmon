@@ -356,13 +356,14 @@ class SelectionQuery:
 class ContinuousQuery:
     """Structure for a Continuous Query with a SELECT-INTO-Query inside.
 
-    Use `to_query` to format data into a string. Do not create a instance outside of module definitons.py
+    Use `to_query` to format data into a string. Do not create a instance outside of module `definitons.py`
     __eq__ and __hash__ implemented for SET-use.
 
     Attributes:
         name - name of the CQ
         database - database affected by CQ
         select - SELECT-Query as str to be send to influxdb
+        select_query - SelectionQuery used to generate CQ if not done by string.
         resample_opts - RESAMPLE-Clause as str to be send to influxdb
 
     Methods:
@@ -385,11 +386,11 @@ class ContinuousQuery:
         """SELECT-Query as str to be send to influxdb"""
         if(self.select_query):
             return self.select_query.to_query()
-        return self.__select_str # this is clearyl not None, execption catch in __init__
+        return self.__select_str
 
     @property
     def select_query(self) -> Optional[SelectionQuery]:
-        """SelectionQuery if used to create, be aware its optional."""
+        """SelectionQuery used to create query, None if query is given as str."""
         return self.__select_query
 
     @property
