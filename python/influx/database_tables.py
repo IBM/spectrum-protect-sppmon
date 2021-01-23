@@ -188,6 +188,8 @@ class Table:
         fields - dict of field name with datatype
         tags - tags as list of str
         time_key - key name of the timestamp field
+        retention_policy - retention policy associated with this table
+        database - table is declared within this database
 
     Methods
         split_by_table_def - Split the given dict into a pre-defined set of tags, fields and a timestamp.

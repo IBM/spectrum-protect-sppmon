@@ -5,6 +5,7 @@ Classes:
     OtherMethods
 """
 import logging
+import os
 import re
 
 from utils.execption_utils import ExceptionUtils
@@ -29,20 +30,23 @@ class OtherMethods:
             ValueError: error when reading or writing files
         """
         if(not dashboard_folder_path):
-            raise ValueError("need a path to the dashboard template to create a new dashboard")
+            raise ValueError("a path to the dashboard template is required to create a new dashboard")
         if(not database_name):
             raise ValueError("need the name of the database to create the new dashboard")
 
-        tmpl_path = dashboard_folder_path + "SPPMON for IBM Spectrum Protect Plus.json"
-        LOGGER.info(f"trying to open template dashboard on path {tmpl_path}")
+        real_path = os.path.realpath(dashboard_folder_path)
+        tmpl_path = os.path.join(real_path, "SPPMON for IBM Spectrum Protect Plus.json")
+
+        LOGGER.info(f"> trying to open template dashboard on path {tmpl_path}")
+
         try:
             tmpl_file = open(tmpl_path, "rt")
             file_str = tmpl_file.read()
             tmpl_file.close()
         except Exception as error:
             ExceptionUtils.exception_info(error)
-            raise ValueError("Error opening template dashboard. Make sure you've entered only the path to the folder.")
-        LOGGER.info("Sucessfully opened. Starting replacing")
+            raise ValueError("Error opening dashboard template. Make sure you've the path to the correct folder (Grafana).")
+        LOGGER.info("> Sucessfully opened. Creating new Dashboard")
         # replace name by new one
         name_str = file_str.replace(
             "\"title\": \"SPPMON for IBM Spectrum Protect Plus\"",
@@ -60,13 +64,14 @@ class OtherMethods:
             f"\"datasource\": \"{database_name}\"",
         )
 
-        dashboard_path = dashboard_folder_path + f"SPPMON for IBM Spectrum Protect Plus {database_name}.json"
-        LOGGER.info(f"trying to create new dashboard on path {dashboard_path}")
+        LOGGER.info("> finished creating content of dashboard")
+        write_path = os.path.join(real_path, f"SPPMON for IBM Spectrum Protect Plus {database_name}.json")
+        LOGGER.info(f"> trying to create dashboard file on path {write_path}")
         try:
-            dashboard_file = open(dashboard_path, "wt")
+            dashboard_file = open(write_path, "wt")
             dashboard_file.write(datasource_str)
             dashboard_file.close()
         except Exception as error:
             ExceptionUtils.exception_info(error)
             raise ValueError("Error creating new dashboard file.")
-        LOGGER.info("Sucessfully created.")
+        LOGGER.info("> Sucessfully created new dashboard file.")
