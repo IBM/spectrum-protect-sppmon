@@ -42,7 +42,7 @@ class RestClient():
         'Content-type': 'application/json'}
     """Headers send to the REST-API. SessionId added after login."""
 
-    def __init__(self, auth_rest: Dict[str, Any],
+    def __init__(self, config_file: Dict[str, Any],
                  initial_connection_timeout: float,
                  pref_send_time: int,
                  request_timeout: int | None,
@@ -51,8 +51,15 @@ class RestClient():
                  min_page_size: int,
                  verbose: bool):
 
-        if(not auth_rest):
-            raise ValueError("REST API parameters are not specified")
+        if(not config_file):
+            raise ValueError("A config file is required to setup the InfluxDB client.")
+
+        auth_rest = SppUtils.get_cfg_params(
+            param_dict=config_file,
+            param_name="sppServer")
+        if(not isinstance(auth_rest, dict)):
+            raise ValueError("The REST-API config is corrupted within the file: Needs to be a dictionary.")
+
         self.__timeout = request_timeout
         self.__initial_connection_timeout = initial_connection_timeout
 

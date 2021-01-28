@@ -55,7 +55,7 @@ class InfluxClient:
     __query_max_batch_size = 10000
     """Maximum amount of querys sent at once to the influxdb. Recommended is 5000-10000."""
 
-    def __init__(self, auth_influx: Dict[str, Any]):
+    def __init__(self, config_file: Dict[str, Any]):
         """Initalize the influx client from a config dict. Call `connect` before using the client.
 
         Arguments:
@@ -64,6 +64,13 @@ class InfluxClient:
         Raises:
             ValueError: Raises a ValueError if any important parameters are missing within the file
         """
+        if(not config_file):
+            raise ValueError("A config file is required to setup the InfluxDB client.")
+
+        auth_influx = SppUtils.get_cfg_params(param_dict=config_file, param_name="influxDB")
+        if(not isinstance(auth_influx, dict)):
+            raise ValueError("The InfluxDB config is corrupted within the file: Needs to be a dictionary.")
+
         try:
             self.__user: str = auth_influx["username"]
             self.__password: str = auth_influx["password"]
@@ -510,7 +517,7 @@ class InfluxClient:
                     retention_policy=table.retention_policy.name,
                     batch_size=self.__query_max_batch_size,
                     time_precision='s', protocol='line')
-            except (InfluxDBServerError, InfluxDBClientError) as error: # type: ignore
+            except (InfluxDBServerError, InfluxDBClientError, ConnectionError) as error: # type: ignore
                 ExceptionUtils.exception_info(error=error, extra_message="Error when sending Insert Buffer") # type: ignore
             end_time = time.perf_counter()
 

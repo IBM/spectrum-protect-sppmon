@@ -4,6 +4,11 @@ You may implement new methods here if they do not fit anywhere else
 Classes:
     OtherMethods
 """
+from sppConnection.rest_client import RestClient
+from sppConnection.ssh_client import SshClient, SshTypes
+from sppmonMethods.ssh import SshMethods
+from influx.influx_client import InfluxClient
+from typing import Dict, Any, List
 import logging
 import os
 import re
@@ -14,6 +19,82 @@ LOGGER = logging.getLogger("sppmon")
 
 
 class OtherMethods:
+
+    @staticmethod
+    def test_connection(influx_client: InfluxClient, rest_client: RestClient, config_file: Dict[str, Any]):
+        if(not config_file):
+            raise ValueError("SPPmon does not work without a config file")
+
+        LOGGER.info("Testing all connections required for SPPMon to work")
+
+        # ## InfluxDB ##
+        working: bool = True
+        LOGGER.info("> Testing and configuring InfluxDB")
+        try:
+            influx_client.connect()
+            influx_client.disconnect()
+            LOGGER.info("> InfluxDB is ready for use")
+        except ValueError as error:
+            ExceptionUtils.exception_info(error, extra_message="> Testing of the InfluxDB failed. This is a crictial component of SPPMon.")
+            working = False
+
+        # ## REST-API ##
+        LOGGER.info("> Testing REST-API of SPP.")
+        try:
+            rest_client.login()
+            (version_nr, build_nr) = rest_client.get_spp_version_build()
+            LOGGER.info(f">> Sucessfully connected to SPP V{version_nr}, build {build_nr}.")
+            rest_client.logout()
+            LOGGER.info("> REST-API is ready for use")
+        except ValueError as error:
+            ExceptionUtils.exception_info(error, extra_message="> Testing of the REST-API failed. This is a crictial component of SPPMon.")
+            working = False
+
+        # ## SSH-CLIENTS ##
+        LOGGER.info("> Testing SSH-Clients: Server, VAPDs, vSnaps and others")
+        # Count of clients checks
+        ssh_working = True
+        ssh_clients: List[SshClient] = SshMethods.setup_ssh_clients(config_file)
+        if(not ssh_clients):
+            ExceptionUtils.error_message(">> No SSH-clients detected at all. At least the server itself should be added for process-statistics.")
+            ssh_working = False
+
+        if(not list(filter(lambda client: client.client_type == SshTypes.SERVER , ssh_clients))):
+            ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
+            ssh_working = False
+
+        if(not list(filter(lambda client: client.client_type == SshTypes.VSNAP , ssh_clients))):
+            LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
+
+        if(not list(filter(lambda client: client.client_type == SshTypes.VADP , ssh_clients))):
+            LOGGER.info(">> No VADPs detected.")
+        if(not list(filter(lambda client: client.client_type == SshTypes.CLOUDPROXY , ssh_clients))):
+            LOGGER.info(">> No Cloudproxies detected.")
+        if(not list(filter(lambda client: client.client_type == SshTypes.OTHER , ssh_clients))):
+            LOGGER.info(">> No other SSH-clients detected.")
+
+        # Connection check
+        LOGGER.info(f">> Testing now connection of {len(ssh_clients)} registered ssh-clients.")
+        for client in ssh_clients:
+            try:
+                client.connect()
+                client.disconnect()
+            except ValueError as error:
+                ExceptionUtils.exception_info(error, extra_message=f"Connection failed for client {client.host_name} with type: {client.client_type}.")
+                ssh_working = False
+
+        if(ssh_working):
+            LOGGER.info("> Testing of SSH-clients sucessfull.")
+        else:
+            LOGGER.info("> Testing of SSH-clients failed! SPPMon will still work, not all informations are available.")
+
+        if(working and ssh_working):
+            LOGGER.info("> All components tested sucessfully. SPPMon is ready to be used!")
+        elif(working):
+            LOGGER.info("> Testing partially sucessful. SPPMon will work but some information might be missing.")
+        else:
+            LOGGER.info("> Testing failed. SPPMon is not ready to be used. Please fix the connection issues.")
+
 
     @staticmethod
     def create_dashboard(dashboard_folder_path: str, database_name: str) -> None:
