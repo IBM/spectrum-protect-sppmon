@@ -113,7 +113,7 @@ class InfluxClient:
             self.__client.create_database(self.database.name)
 
             # check for exisiting retention policies and continuous queries in the influxdb
-            self.check_create_rp()
+            self.check_create_rp(self.database.name)
             self.check_create_cq()
 
         except (ValueError, InfluxDBClientError, InfluxDBServerError, requests.exceptions.ConnectionError) as error: # type: ignore
@@ -135,7 +135,7 @@ class InfluxClient:
         self.__client.close()
 
 
-    def check_create_rp(self) -> None:
+    def check_create_rp(self, database_name: str) -> None:
         """Checks if any retention policy needs to be altered or added
 
         Raises:
@@ -143,7 +143,7 @@ class InfluxClient:
             ValueError: Check failed due Database error
         """
         try:
-            results: List[Dict[str, Any]] = self.__client.get_list_retention_policies(self.database.name)
+            results: List[Dict[str, Any]] = self.__client.get_list_retention_policies(database_name)
 
             rp_dict: Dict[str, Dict[str, Any]] = {}
             for result in results:
@@ -172,7 +172,7 @@ class InfluxClient:
                     name=retention_policy.name,
                     duration=retention_policy.duration,
                     replication=retention_policy.replication,
-                    database=retention_policy.database.name,
+                    database=database_name,
                     default=retention_policy.default,
                     shard_duration=retention_policy.shard_duration
                 )
@@ -182,7 +182,7 @@ class InfluxClient:
                     name=retention_policy.name,
                     duration=retention_policy.duration,
                     replication=retention_policy.replication,
-                    database=retention_policy.database.name,
+                    database=database_name,
                     default=retention_policy.default,
                     shard_duration=retention_policy.shard_duration
                 )
@@ -257,12 +257,12 @@ class InfluxClient:
 
         # create db, nothing happens if it already exists
         LOGGER.info("> Creating the new database if it didn't already exist")
-        self.__client.create_database(self.database.name)
+        self.__client.create_database(new_database_name)
 
         # check for exisiting retention policies and continuous queries in the influxdb
         LOGGER.info(">> Checking and creating retention policies for the new database. Ignoring continuous queries.")
-        self.check_create_rp()
-        #self.check_create_cq()
+        self.check_create_rp(new_database_name)
+        # self.check_create_cq() # Note: Not possible due full qualified statements. this would also not truly conserve the data
 
         LOGGER.info("> Computing queries to be send to the server.")
         queries: List[str] = []
@@ -404,10 +404,10 @@ class InfluxClient:
         if(dropped_count):
             LOGGER.info(f"> WARNING: Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
         if(critical_drop):
-            msg: str = (f"ERROR: Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
+            msg: str = (f"ERROR: Could not transfer data of {critical_drop} tables, check messages above to retry manually!\n"+
                         "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
                         "Adjust other values as required. Drop due Retention Policy is 'OK' until 10.000.\n"+
-                        "if it reaches 10.000 you need to cut the query into smaller bits.")
+                        "If the drop count reaches 10.000 you need to cut the query into smaller bits.")
             ExceptionUtils.error_message(msg)
         elif(line_count == 0):
             ExceptionUtils.error_message("ERROR: No data was transferred, make sure your database name is correct and the db is not empty.")

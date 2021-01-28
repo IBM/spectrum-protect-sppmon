@@ -45,6 +45,7 @@ Author:
  12/29/2020 version 0.10.5 Replaced ssh 'top' command by 'ps' command to bugfix truncating data
  01/22/2021 version 0.10.6 Removed `--processStats`, integrated in `--ssh` plus Server/vSnap `df` root recording
  01/22/2021 version 0.10.7 Replaced `transfer_data` by `copy_database` with improvements
+ 01/28/2021 version 0.11   Copy_database now also creates the database with RP's if missing.
 """
 from __future__ import annotations
 import functools
@@ -73,7 +74,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.7  (2021/01/22)"
+VERSION = "0.11  (2021/01/28)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
