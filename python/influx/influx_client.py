@@ -109,7 +109,7 @@ class InfluxClient:
             version: str = self.__client.ping()
             LOGGER.debug(f"Connected to influxdb, version: {version}")
 
-            # create db, nothing happens if already existend
+            # create db, nothing happens if it already exists
             self.__client.create_database(self.database.name)
 
             # check for exisiting retention policies and continuous queries in the influxdb
@@ -250,10 +250,21 @@ class InfluxClient:
     def copy_database(self, new_database_name: str = None) -> None:
         if(not new_database_name):
             raise ValueError("copy_database requires a new database name to copy to.")
-        LOGGER.info(f"transfering the data from database {self.database.name} into {new_database_name}.")
-        LOGGER.info("This also includes all data from `autogen` retention policy, sorted into the correct retention policies.")
-        LOGGER.info("Computing queries to be send to the server.")
 
+        # Programm information
+        LOGGER.info(f"Copy Database: transfering the data from database {self.database.name} into {new_database_name}.")
+        LOGGER.info("> Info: This also includes all data from `autogen` retention policy, sorted into the correct retention policies.")
+
+        # create db, nothing happens if it already exists
+        LOGGER.info("> Creating the new database if it didn't already exist")
+        self.__client.create_database(self.database.name)
+
+        # check for exisiting retention policies and continuous queries in the influxdb
+        LOGGER.info(">> Checking and creating retention policies for the new database. Ignoring continuous queries.")
+        self.check_create_rp()
+        #self.check_create_cq()
+
+        LOGGER.info("> Computing queries to be send to the server.")
         queries: List[str] = []
         # copies all tables into their respective duplicate, data over RP-time will be dropped.
         for table in self.database.tables.values():
@@ -272,7 +283,7 @@ class InfluxClient:
             # Not every database name should be replaced
             match = re.search(r"BEGIN(.*(INTO\s+(.+)\..+\..+)\s+(FROM\s+\w+\.(\w+)\.\w+)(?:\s+WHERE\s+(.+))?\s+GROUP BY.*)END", cq_query_str)
             if(not match):
-                raise ValueError(f"error when matching continous query {cq_query_str}. Aborting.")
+                raise ValueError(f">> error when matching continous query {cq_query_str}. Aborting.")
 
             full_match = match.group(1)
             into_clause = match.group(2)
@@ -284,7 +295,7 @@ class InfluxClient:
             # Add timelimit in where clause to prevent massive truncation due the rentention-policy time limit
             new_full_match = full_match
             if(not con_query.select_query or con_query.select_query.into_table is None):
-                    ExceptionUtils.error_message(f"Into table of continous query is none. Adjust query manually! {full_match}")
+                    ExceptionUtils.error_message(f">> Into table of continous query is none. Adjust query manually! {full_match}")
             elif(con_query.select_query.into_table.retention_policy.duration != '0s'):
                     # Caution: if truncation of a query is above 10.000 it won't be saved!
                     clause = f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
@@ -305,7 +316,7 @@ class InfluxClient:
             auto_gen_match = new_full_match.replace(from_clause, new_from_clause)
             queries.append(auto_gen_match)
 
-        LOGGER.info("Finished Computing, starting to send.")
+        LOGGER.info("> Finished Computing, starting to send.")
 
         # how many lines were transfered
         line_count: int = 0
@@ -333,8 +344,8 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Connected to influxdb with new timeout of {self.__client._timeout}, version: {version}")
-        LOGGER.info("starting transfer of data")
+        LOGGER.info(f">> Connected to influxdb with new timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(">> Starting transfer of data")
         i = 0
 
         for query in queries:
@@ -354,8 +365,8 @@ class InfluxClient:
                     send_time_collection += end_time-start_time
                     line_collection += result["written"]
 
-                    # Print only all 10 queries
-                    if(i % 10 == 0):
+                    # Print only all 10 queries or if the collected send time is too high
+                    if(i % 10 == 0 or send_time_collection >= 2):
                         LOGGER.info(f'query {i}/{len(queries)}: {line_collection} new lines in {send_time_collection}s.')
                         line_collection = 0
                         send_time_collection = 0
@@ -364,15 +375,15 @@ class InfluxClient:
                 # only raise if the error is unexpected
                 if(re.search(f"partial write: points beyond retention policy dropped=10000", error.content)):
                     critical_drop += 1
-                    raise ValueError("transfer of data failed, retry manually with a shorter WHERE-clause", query)
+                    raise ValueError(">> transfer of data failed, retry manually with a shorter WHERE-clause", query)
                 if(re.search(f"partial write: points beyond retention policy dropped=", error.content)):
                     dropped_count += 1
                 else:
-                    ExceptionUtils.exception_info(error=error, extra_message=f"transfer of data failed for query {query}")
+                    ExceptionUtils.exception_info(error=error, extra_message=f">> transfer of data failed for query {query}")
                     critical_drop += 1
 
             except (InfluxDBServerError, requests.exceptions.ConnectionError) as error:
-                ExceptionUtils.exception_info(error=error, extra_message=f"transfer of data failed for query {query}")
+                ExceptionUtils.exception_info(error=error, extra_message=f">> transfer of data failed for query {query}")
                 critical_drop += 1
 
         # reset timeout
@@ -387,11 +398,11 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Changed timeout of influxDB to old timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(f">> Changed timeout of influxDB to old timeout of {self.__client._timeout}, version: {version}")
 
-        LOGGER.info(f"Total transfered {line_count} lines of results.")
+        LOGGER.info(f"> Total transfered {line_count} lines of results.")
         if(dropped_count):
-            LOGGER.info(f"WARNING: Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
+            LOGGER.info(f"> WARNING: Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
         if(critical_drop):
             msg: str = (f"ERROR: Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
                         "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
@@ -401,7 +412,7 @@ class InfluxClient:
         elif(line_count == 0):
             ExceptionUtils.error_message("ERROR: No data was transferred, make sure your database name is correct and the db is not empty.")
         else:
-            LOGGER.info("transfer of data sucessfully")
+            LOGGER.info("Database copied sucessfully")
 
 
 
