@@ -28,6 +28,7 @@ class InfluxClient:
 
     Attributes:
         database - database with predefined tables
+        use_ssl - whether the client should use ssl.
 
     Methods:
         connect - connects the client to remote sever
@@ -43,6 +44,11 @@ class InfluxClient:
         update_row - updates values and tags of already saved data
 
     """
+
+    @property
+    def use_ssl(self):
+        """Whether the client should use ssl"""
+        return self.__use_ssl
 
     @property
     def database(self):

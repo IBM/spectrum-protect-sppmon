@@ -26,14 +26,19 @@ class OtherMethods:
             raise ValueError("SPPmon does not work without a config file")
 
         LOGGER.info("Testing all connections required for SPPMon to work")
+        working: bool = True
+        no_warnings: bool = True
 
         # ## InfluxDB ##
-        working: bool = True
         LOGGER.info("> Testing and configuring InfluxDB")
         try:
             influx_client.connect()
             influx_client.disconnect()
-            LOGGER.info("> InfluxDB is ready for use")
+            if(not influx_client.use_ssl):
+                ExceptionUtils.error_message("> WARNING: Mandatory SSL is disabled. We hightly recommend to enable it!")
+                no_warnings = False
+
+            LOGGER.info("InfluxDB is ready for use")
         except ValueError as error:
             ExceptionUtils.exception_info(error, extra_message="> Testing of the InfluxDB failed. This is a crictial component of SPPMon.")
             working = False
@@ -87,11 +92,12 @@ class OtherMethods:
             LOGGER.info("> Testing of SSH-clients sucessfull.")
         else:
             LOGGER.info("> Testing of SSH-clients failed! SPPMon will still work, not all informations are available.")
+            no_warnings = False
 
-        if(working and ssh_working):
+        if(working and no_warnings):
             LOGGER.info("> All components tested sucessfully. SPPMon is ready to be used!")
         elif(working):
-            LOGGER.info("> Testing partially sucessful. SPPMon will work but some information might be missing.")
+            LOGGER.info("> Testing partially sucessful. SPPMon will work but please check the warnings.")
         else:
             LOGGER.info("> Testing failed. SPPMon is not ready to be used. Please fix the connection issues.")
 
