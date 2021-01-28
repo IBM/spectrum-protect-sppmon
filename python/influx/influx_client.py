@@ -37,6 +37,7 @@ class InfluxClient:
         insert_dicts_to_buffer - Method to insert data into influxb
         flush_insert_buffer - flushes buffer, send querys to influxdb
         send_selection_query - sends a single `SelectionQuery` to influxdb
+        copy_database - copies whole database into a new one
 
         @depricated
         update_row - updates values and tags of already saved data
@@ -108,11 +109,11 @@ class InfluxClient:
             version: str = self.__client.ping()
             LOGGER.debug(f"Connected to influxdb, version: {version}")
 
-            # create db, nothing happens if already existend
+            # create db, nothing happens if it already exists
             self.__client.create_database(self.database.name)
 
             # check for exisiting retention policies and continuous queries in the influxdb
-            self.check_create_rp()
+            self.check_create_rp(self.database.name)
             self.check_create_cq()
 
         except (ValueError, InfluxDBClientError, InfluxDBServerError, requests.exceptions.ConnectionError) as error: # type: ignore
@@ -134,7 +135,7 @@ class InfluxClient:
         self.__client.close()
 
 
-    def check_create_rp(self) -> None:
+    def check_create_rp(self, database_name: str) -> None:
         """Checks if any retention policy needs to be altered or added
 
         Raises:
@@ -142,7 +143,7 @@ class InfluxClient:
             ValueError: Check failed due Database error
         """
         try:
-            results: List[Dict[str, Any]] = self.__client.get_list_retention_policies(self.database.name)
+            results: List[Dict[str, Any]] = self.__client.get_list_retention_policies(database_name)
 
             rp_dict: Dict[str, Dict[str, Any]] = {}
             for result in results:
@@ -171,7 +172,7 @@ class InfluxClient:
                     name=retention_policy.name,
                     duration=retention_policy.duration,
                     replication=retention_policy.replication,
-                    database=retention_policy.database.name,
+                    database=database_name,
                     default=retention_policy.default,
                     shard_duration=retention_policy.shard_duration
                 )
@@ -181,7 +182,7 @@ class InfluxClient:
                     name=retention_policy.name,
                     duration=retention_policy.duration,
                     replication=retention_policy.replication,
-                    database=retention_policy.database.name,
+                    database=database_name,
                     default=retention_policy.default,
                     shard_duration=retention_policy.shard_duration
                 )
@@ -246,59 +247,76 @@ class InfluxClient:
             ExceptionUtils.exception_info(error=error) # type: ignore
             raise ValueError("Continuous Query check failed")
 
-    def transfer_data(self, old_database_name: str = None) -> None:
-        # ######################   DISCLAMER   #######################
-        # ###################  TEMPORARY FEATURE  ####################
-        # this part is deleted once all old versions of SPPMon have been migrated
-        # use at own caution
-        # ############################################################
-        if(not old_database_name):
-            old_database_name = self.database.name
-        LOGGER.info(f"transfering the data from database {old_database_name} into {self.database.name}.")
-        LOGGER.info("Computing queries to be send to the server.")
+    def copy_database(self, new_database_name: str = None) -> None:
+        if(not new_database_name):
+            raise ValueError("copy_database requires a new database name to copy to.")
 
+        # Programm information
+        LOGGER.info(f"Copy Database: transfering the data from database {self.database.name} into {new_database_name}.")
+        LOGGER.info("> Info: This also includes all data from `autogen` retention policy, sorted into the correct retention policies.")
+
+        # create db, nothing happens if it already exists
+        LOGGER.info("> Creating the new database if it didn't already exist")
+        self.__client.create_database(new_database_name)
+
+        # check for exisiting retention policies and continuous queries in the influxdb
+        LOGGER.info(">> Checking and creating retention policies for the new database. Ignoring continuous queries.")
+        self.check_create_rp(new_database_name)
+        # self.check_create_cq() # Note: Not possible due full qualified statements. this would also not truly conserve the data
+
+        LOGGER.info("> Computing queries to be send to the server.")
         queries: List[str] = []
-        # all tables into their respective, data will be dropped if over RP-Time
+        # copies all tables into their respective duplicate, data over RP-time will be dropped.
         for table in self.database.tables.values():
-            query_str = f"SELECT * INTO {table} FROM {old_database_name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
-            queries.append(query_str)
-        # Commpute the dropped data CQ-Like into the new tables.
+            autogen_query_str = f"SELECT * INTO {new_database_name}.{table.retention_policy.name}.{table.name} FROM {table.database.name}.autogen.{table.name} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
+            queries.append(autogen_query_str)
+
+            rp_query_str = f"SELECT * INTO {new_database_name}.{table.retention_policy.name}.{table.name} FROM {table} WHERE time > now() - {table.retention_policy.duration} GROUP BY *"
+            queries.append(rp_query_str)
+
+        # Compute data with a timestamp over the initial RP-duration into other RP's.
         for con_query in self.database.continuous_queries:
-            if(con_query.select_query):
-                query_str: str = con_query.select_query.to_query()
+            cq_query_str: str = con_query.to_query()
 
-                # replacing the rp of the string is easier then everything else
+            # replacing the rp inside of the toString representation
+            # this is easier than individual matching/code replacement
+            # Not every database name should be replaced
+            match = re.search(r"BEGIN(.*(INTO\s+(.+)\..+\..+)\s+(FROM\s+\w+\.(\w+)\.\w+)(?:\s+WHERE\s+(.+))?\s+GROUP BY.*)END", cq_query_str)
+            if(not match):
+                raise ValueError(f">> error when matching continous query {cq_query_str}. Aborting.")
 
-                match = re.search(r"(FROM ((.+)\.(.+)\..+) GROUP BY)", query_str)
-                if(not match):
-                    raise ValueError("error when matching")
+            full_match = match.group(1)
+            into_clause = match.group(2)
+            old_database_str = match.group(3)
+            from_clause = match.group(4)
+            from_rp = match.group(5)
+            where_clause = match.group(6)
 
-                from_clause = match.group(1)
-                full_qualified_table = match.group(2)
-                database_str = match.group(3)
-                rp_str = match.group(4)
-
-                new_f_q_t = full_qualified_table.replace(database_str, old_database_name)
-                new_f_q_t = new_f_q_t.replace(rp_str, "autogen")
-
-                if(con_query.select_query.into_table is None):
-                    ExceptionUtils.error_message(f"unable to process the query due an internal error: {query_str}")
-                    continue
-                if(con_query.select_query.into_table.retention_policy.duration != '0s'):
-                    # add where clause to prevent dataloss due overflowing retention drop.
-                    if(re.search("WHERE", new_f_q_t)):
-                        new_f_q_t += " AND "
+            # Add timelimit in where clause to prevent massive truncation due the rentention-policy time limit
+            new_full_match = full_match
+            if(not con_query.select_query or con_query.select_query.into_table is None):
+                    ExceptionUtils.error_message(f">> Into table of continous query is none. Adjust query manually! {full_match}")
+            elif(con_query.select_query.into_table.retention_policy.duration != '0s'):
+                    # Caution: if truncation of a query is above 10.000 it won't be saved!
+                    clause = f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
+                    if(where_clause):
+                        new_full_match = new_full_match.replace(where_clause, where_clause + " AND " + clause)
                     else:
-                        new_f_q_t += " WHERE "
-                    new_f_q_t += f"time > now() - {con_query.select_query.into_table.retention_policy.duration}"
+                        new_full_match = new_full_match.replace(from_clause, from_clause + " WHERE " + clause)
 
-                # insert new where clause into the match
-                new_from_clause = from_clause.replace(full_qualified_table, new_f_q_t)
-                new_query_str = query_str.replace(from_clause, new_from_clause)
+            # replace old dbname with new one
+            new_into_clause = into_clause.replace(old_database_str, new_database_name)
+            new_full_match = new_full_match.replace(into_clause, new_into_clause)
 
-                queries.append(new_query_str)
+            # case 1: keep retention policy
+            queries.append(new_full_match)
 
-        LOGGER.info("Finished Computing, starting to send.")
+            # case 2: autogen as from RP
+            new_from_clause = from_clause.replace(from_rp, "autogen")
+            auto_gen_match = new_full_match.replace(from_clause, new_from_clause)
+            queries.append(auto_gen_match)
+
+        LOGGER.info("> Finished Computing, starting to send.")
 
         # how many lines were transfered
         line_count: int = 0
@@ -306,7 +324,12 @@ class InfluxClient:
         dropped_count: int = 0
         # how often was data dropped above the 10.000 limit?
         critical_drop: int = 0
-        LOGGER.info("starting transfer of data")
+
+        # print statistics
+        # send time since last print
+        send_time_collection: float = 0
+        # line count since last print
+        line_collection: int = 0
 
         # disable timeout
         old_timeout = self.__client._timeout
@@ -321,7 +344,8 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Connected again to influxdb with new timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(f">> Connected to influxdb with new timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(">> Starting transfer of data")
         i = 0
 
         for query in queries:
@@ -336,21 +360,30 @@ class InfluxClient:
                 for result in result.get_points():
                     i += 1
                     line_count += result["written"]
-                    LOGGER.info(f'query {i}/{len(queries)}: {result["written"]} lines in {end_time-start_time}')
+
+                    # print statistics
+                    send_time_collection += end_time-start_time
+                    line_collection += result["written"]
+
+                    # Print only all 10 queries or if the collected send time is too high
+                    if(i % 10 == 0 or send_time_collection >= 2):
+                        LOGGER.info(f'query {i}/{len(queries)}: {line_collection} new lines in {send_time_collection}s.')
+                        line_collection = 0
+                        send_time_collection = 0
 
             except InfluxDBClientError as error:
                 # only raise if the error is unexpected
                 if(re.search(f"partial write: points beyond retention policy dropped=10000", error.content)):
                     critical_drop += 1
-                    raise ValueError("transfer of data failed, retry manually with a shorter WHERE-clause", query)
+                    raise ValueError(">> transfer of data failed, retry manually with a shorter WHERE-clause", query)
                 if(re.search(f"partial write: points beyond retention policy dropped=", error.content)):
                     dropped_count += 1
                 else:
-                    ExceptionUtils.exception_info(error=error, extra_message=f"transfer of data failed for query {query}")
+                    ExceptionUtils.exception_info(error=error, extra_message=f">> transfer of data failed for query {query}")
                     critical_drop += 1
 
             except (InfluxDBServerError, requests.exceptions.ConnectionError) as error:
-                ExceptionUtils.exception_info(error=error, extra_message=f"transfer of data failed for query {query}")
+                ExceptionUtils.exception_info(error=error, extra_message=f">> transfer of data failed for query {query}")
                 critical_drop += 1
 
         # reset timeout
@@ -365,19 +398,22 @@ class InfluxClient:
         )
         # ping to make sure connection works
         version: str = self.__client.ping()
-        LOGGER.info(f"Connected again to influxdb with old timeout of {self.__client._timeout}, version: {version}")
+        LOGGER.info(f">> Changed timeout of influxDB to old timeout of {self.__client._timeout}, version: {version}")
 
-
-        LOGGER.info("transfer of data sucessfully")
-        LOGGER.info(f"Total transfered {line_count} lines of results.")
+        LOGGER.info(f"> Total transfered {line_count} lines of results.")
         if(dropped_count):
-            LOGGER.info(f"Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
+            LOGGER.info(f"> WARNING: Could not count lines of {dropped_count} queries due an expected error. No need for manual action.")
         if(critical_drop):
-            msg: str = (f"Could not transfer data of {critical_drop} tables, check messages above to retry manually!"+
+            msg: str = (f"ERROR: Could not transfer data of {critical_drop} tables, check messages above to retry manually!\n"+
                         "Please send the query manually with a adjusted 'from table': '$database.autogen.tablename'\n "+
                         "Adjust other values as required. Drop due Retention Policy is 'OK' until 10.000.\n"+
-                        "if it reaches 10.000 you need to cut the query into smaller bits.")
-            LOGGER.info(msg)
+                        "If the drop count reaches 10.000 you need to cut the query into smaller bits.")
+            ExceptionUtils.error_message(msg)
+        elif(line_count == 0):
+            ExceptionUtils.error_message("ERROR: No data was transferred, make sure your database name is correct and the db is not empty.")
+        else:
+            LOGGER.info("Database copied sucessfully")
+
 
 
     def insert_dicts_to_buffer(self, table_name: str, list_with_dicts: List[Dict[str, Any]]) -> None:

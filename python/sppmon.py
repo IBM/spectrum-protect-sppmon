@@ -43,6 +43,9 @@ Author:
  11/10/2020 version 0.10.3 Introduced --loadedSystem argument and moved --minimumLogs to depricated
  12/07/2020 version 0.10.4 Included SPP 10.1.6 addtional job information features and some bugfixes
  12/29/2020 version 0.10.5 Replaced ssh 'top' command by 'ps' command to bugfix truncating data
+ 01/22/2021 version 0.10.6 Removed `--processStats`, integrated in `--ssh` plus Server/vSnap `df` root recording
+ 01/22/2021 version 0.10.7 Replaced `transfer_data` by `copy_database` with improvements
+ 01/28/2021 version 0.11   Copy_database now also creates the database with RP's if missing.
 """
 from __future__ import annotations
 import functools
@@ -71,7 +74,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.5  (2020/12/29)"
+VERSION = "0.11  (2021/01/28)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
@@ -83,7 +86,7 @@ parser.add_option("--verbose", dest="verbose", action="store_true", help="print 
 parser.add_option("--debug", dest="debug", action="store_true", help="save debug messages")
 
 parser.add_option("--constant", dest="constant", action="store_true",
-                  help="execute recommended constant functions: (ssh, processStats, cpu, sppCatalog)")
+                  help="execute recommended constant functions: (ssh, cpu, sppCatalog)")
 
 parser.add_option("--hourly", dest="hourly", action="store_true",
                   help="execute recommended hourly functions: (constant + jobs, vadps, storages)")
@@ -100,8 +103,6 @@ parser.add_option("--loadedSystem", dest="loadedSystem", action="store_true",
                   help="Special settings for loaded systems, reducing API-request loads")
 
 parser.add_option("--ssh", dest="ssh", action="store_true", help="execute monitoring commands via ssh")
-parser.add_option("--processStats", dest="processStats", action="store_true",
-                  help="monitor selected server processes via ssh")
 
 parser.add_option("--vms", dest="vms", action="store_true", help="store vm statistics (hyperV, vmWare)")
 parser.add_option("--vmStats", dest="vmStats", action="store_true", help="calculate vm statistic from catalog data")
@@ -114,18 +115,17 @@ parser.add_option("--sites", dest="sites", action="store_true", help="store site
 parser.add_option("--cpu", dest="cpu", action="store_true", help="capture SPP server CPU and RAM utilization")
 parser.add_option("--sppcatalog", dest="sppcatalog", action="store_true", help="capture Spp-Catalog Storage usage")
 
-##########################
-#TODO Remove minimum Logs on next version.
+#TODO Minimum Logs is depricated, to be removed in Version 1.1.
 parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
-                  help="DEPRICATED, use '--loadedSystem' instead")
-parser.add_option("--transfer_data", dest="transfer_data", action="store_true",
-                  help="TEMPORARY FEATURE:transfer data into retention policies, BACKUP before doing so")
-parser.add_option("--old_database", dest="old_database",
-                  help="TEMPORARY FEATURE:transfer data of this db into the cfg-database")
+                  help="DEPRICATED, use '--loadedSystem' instead. To be removed in v1.1")
+parser.add_option("--processStats", dest="processStats", action="store_true",
+                  help="DEPRICATED, use '--ssh' instead")
+parser.add_option("--copy_database", dest="copy_database",
+                  help="Copy all data from .cfg database into a new database, specified by `copy_database=newName`. Delete old database with caution.")
 parser.add_option("--create_dashboard", dest="create_dashboard", action="store_true",
-                  help="Create a 14-day dashboard with alerts for the given spp-server. CFG and dashboard path required")
+                  help="Create a server unique dashboard with alerts. Option `--cfg` and `--dashboard_folder_path` required.")
 parser.add_option("--dashboard_folder_path", dest="dashboard_folder_path",
-                  help="Only in use with create_dashboard. Path to the folder of the \"SPPMON for IBM Spectrum Protect Plus\" dashboard")
+                  help="Used only with`--create_dashboard` option. Specifies changed folder-path of the template \"SPPMON for IBM Spectrum Protect Plus\" dashboard.")
 
 
 (OPTIONS, ARGS) = parser.parse_args()
@@ -526,7 +526,7 @@ class SppMon:
             ExceptionUtils.exception_info(error=error)
 
         # ############################### SSH #####################################
-        if(self.ssh or self.process_stats):
+        if(self.ssh):
             try:
 
                 auth_ssh = SppUtils.get_cfg_params(
@@ -568,7 +568,10 @@ class SppMon:
 
         if(OPTIONS.minimumLogs):
             ExceptionUtils.error_message(
-                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystem'.")
+                "DEPRICATED: using depricated argument '--minumumLogs'. Use to '--loadedSystem' instead.")
+        if(OPTIONS.processStats):
+            ExceptionUtils.error_message(
+                "DEPRICATED: using depricated argument '--minumumLogs'. Use to '--ssh' instead.")
 
         # incremental setup, higher executes all below
         all_args: bool = OPTIONS.all
@@ -597,7 +600,6 @@ class SppMon:
         # ######## Constant Methods ############
 
         self.ssh: bool = OPTIONS.ssh or constant
-        self.process_stats: bool = OPTIONS.processStats or constant
         self.cpu: bool = OPTIONS.cpu or constant
         self.spp_catalog: bool = OPTIONS.sppcatalog or constant
 
@@ -776,16 +778,6 @@ class SppMon:
                     error=error,
                     extra_message="Top-level-error when excecuting ssh commands, skipping them all")
 
-        if(self.process_stats and self.ssh_methods):
-            # execute process stats for server
-            try:
-                self.ssh_methods.process_stats()
-                self.influx_client.flush_insert_buffer()
-            except ValueError as error:
-                ExceptionUtils.exception_info(
-                    error=error,
-                    extra_message="Top-level-error when excecuting ssh process statistic commands, skipping them all")
-
         # ################### HYPERVISOR METHODS #####################
         if(self.vms and self.hypervisor_methods):
             try:
@@ -839,26 +831,25 @@ class SppMon:
 
         if(OPTIONS.create_dashboard):
             try:
-                OtherMethods.create_dashboard(
-                    dashboard_folder_path=OPTIONS.dashboard_folder_path,
-                    database_name=self.influx_client.database.name)
+                if(not OPTIONS.dashboard_folder_path):
+                    ExceptionUtils.error_message(
+                        "Only use --create_dashboard in combination with --dashboard_folder_path=\"PATH/TO/GRAFANA/FOLDER/\"")
+                else:
+                    OtherMethods.create_dashboard(
+                        dashboard_folder_path=OPTIONS.dashboard_folder_path,
+                        database_name=self.influx_client.database.name)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
-                    extra_message="Top-level-error when creating dashboards")
+                    extra_message="Top-level-error when creating dashboard")
 
-        # ######################   DISCLAMER   #######################
-        # ###################  TEMPORARY FEATURE  ####################
-        # this part is deleted once all old versions of SPPMon have been migrated
-        # use at own caution
-        # ############################################################
-        if(OPTIONS.transfer_data):
+        if(OPTIONS.copy_database):
             try:
-                self.influx_client.transfer_data(OPTIONS.old_database)
+                self.influx_client.copy_database(OPTIONS.copy_database)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
-                    extra_message="Top-level-error when transfering data storages.")
+                    extra_message="Top-level-error when coping database.")
 
         self.exit()
 
