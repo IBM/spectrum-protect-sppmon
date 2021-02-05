@@ -27,18 +27,22 @@ class SshMethods:
     Methods:
         process_stats
         ssh
+        setup_ssh_clients
 
     """
 
-    def __init__(self, influx_client: Optional[InfluxClient], ssh_clients: List[SshClient], verbose: bool = False):
-        if(not ssh_clients):
-            raise ValueError("No ssh-clients are present. Skipping SSH-Methods creation")
+    def __init__(self, influx_client: Optional[InfluxClient], config_file: Dict[str, Any], verbose: bool = False):
+        if(not config_file):
+            raise ValueError("Require config file to setup ssh clients")
         if(not influx_client):
             raise ValueError("need InfluxClient to send data to DB")
 
         self.__influx_client = influx_client
-        self.__ssh_clients = ssh_clients
         self.__verbose = verbose
+
+        self.__ssh_clients = self.setup_ssh_clients(config_file)
+        if(not self.__ssh_clients):
+            raise ValueError("No ssh-clients are present. Skipping SSH-Methods creation")
 
         # ################################################################################################
         # ################################### SSH COMMAND LIST GROUPS ####################################
@@ -142,6 +146,28 @@ class SshMethods:
             )
 
         # ################ END OF SSH COMMAND LIST GROUPS ############################
+
+    @staticmethod
+    def setup_ssh_clients(config_file: Dict[str, Any]) -> List[SshClient]:
+        auth_ssh = SppUtils.get_cfg_params(
+            param_dict=config_file,
+            param_name="sshclients")
+
+        if(not isinstance(auth_ssh, list)):
+            raise ValueError("not a list of sshconfig given", auth_ssh)
+
+        ssh_clients: List[SshClient] = []
+        for client_ssh in auth_ssh:
+            try:
+                ssh_clients.append(SshClient(client_ssh))
+            except ValueError as error:
+                ExceptionUtils.exception_info(
+                    error=error,
+                    extra_message=
+                    f"Setting up one ssh-client failed, skipping it. Client: \
+                    {client_ssh.get('name', 'ERROR WHEN GETTING NAME')}"
+                )
+        return ssh_clients
 
     def __exec_save_commands(self, ssh_type: SshTypes, command_list: List[SshCommand]) -> None:
         """Helper method, executes and saves all commands via ssh for all clients of the given type.

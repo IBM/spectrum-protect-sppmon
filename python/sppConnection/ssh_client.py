@@ -153,7 +153,7 @@ class SshClient:
         self.__client_ssh = paramiko.SSHClient() # type: ignore
         self.__client_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy()) # type: ignore
 
-    def __connect(self) -> None:
+    def connect(self) -> None:
         """Connects to the client via ssh.
 
         Raises:
@@ -177,7 +177,7 @@ class SshClient:
             ExceptionUtils.exception_info(error=error)
             raise ValueError("ssh-login failed due socket error", self.client_name)
 
-    def __disconnect(self) -> None:
+    def disconnect(self) -> None:
         """disconnects from the remote"""
         self.__client_ssh.close()
 
@@ -204,7 +204,7 @@ class SshClient:
             LOGGER.info(f"> connecting to {self.client_type.name} client on host {self.host_name}")
 
 
-        self.__connect()
+        self.connect()
 
         LOGGER.debug("> connection successfull")
         if(verbose):
@@ -229,7 +229,7 @@ class SshClient:
                 new_command = ssh_command.save_result(result=None, host_name=self.host_name)
             new_command_list.append(new_command)
 
-        self.__disconnect()
+        self.disconnect()
 
         return new_command_list
 

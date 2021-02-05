@@ -457,7 +457,8 @@ class Definitions:
                 "dashboard_folder_path",
                 "loadedSystem",
                 "processStats",
-                "copy_database"
+                "copy_database",
+                "test"
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
