@@ -558,8 +558,7 @@ class SppMon:
             OPTIONS.test
                                   )
         if(self.ignore_setup):
-            ExceptionUtils.error_message("> WARNING: Regular setup of SPPMon DISABLED due use of certain arguments.")
-            ExceptionUtils.error_message("> WARNING: Do not combine them with a regular SPPMon execution!")
+            ExceptionUtils.error_message("> WARNING: An option for a utility operation has been specified.  Bypassing normal SPPMON operation.")
 
         if((OPTIONS.create_dashboard or bool(OPTIONS.dashboard_folder_path)) and not
            (OPTIONS.create_dashboard and bool(OPTIONS.dashboard_folder_path))):
