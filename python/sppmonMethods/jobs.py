@@ -247,7 +247,7 @@ class JobMethods:
                 f">>> {len(missing_jobs)} datasets missing in DB for jobId: {job_id}")
 
             # Removes `statistics` from jobs
-            self.__compute_job_statistics(missing_jobs, job_id)
+            self.__compute_extra_job_stats(missing_jobs, job_id)
 
             LOGGER.info(f">>> inserting job information of {len(missing_jobs)} jobs into jobs table")
             self.__influx_client.insert_dicts_to_buffer(
@@ -284,7 +284,7 @@ class JobMethods:
                 display_number_of_jobs, job_id))
             MethodUtils.my_print(data=job_list_to_print)
 
-    def __compute_job_statistics(self, list_with_jobs: List[Dict[str, Any]], job_id: str) -> None:
+    def __compute_extra_job_stats(self, list_with_jobs: List[Dict[str, Any]], job_id: str) -> None:
         """Extracts additional `statistic` list from jobs and removes it from the original list.
 
         Computes an additional table out of the data.
