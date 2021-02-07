@@ -6,9 +6,10 @@ Classes:
 """
 import logging
 import json
+import re
 
 from pprint import pprint
-from typing import Callable, List, Tuple, Dict, Any, Union, Set
+from typing import Callable, List, Match, Tuple, Dict, Any, Union, Set
 from prettytable import PrettyTable
 from sppConnection.ssh_client import SshClient, SshCommand, SshTypes
 
@@ -183,3 +184,10 @@ class MethodUtils:
             table.add_row(row_vals)
         table.align = "l"
         print(table, flush=True) # type: ignore
+
+    @staticmethod
+    def joblogs_parse_params(regex_str: str, parse_string: str, mapping_func: Callable[[Match[Any]], Dict[str, Any]]) -> Dict[str, Any]:
+        match = re.match(regex_str, parse_string)
+        if(not match):
+            return {}
+        return mapping_func(match)

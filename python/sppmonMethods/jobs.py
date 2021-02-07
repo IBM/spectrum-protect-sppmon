@@ -46,7 +46,7 @@ class JobMethods:
     # Dict with messageID of log as name
     # value is a tuple of
     # #1 the tablename
-    # #2 a lambda which maps each elem to a name.
+    # #2 a lambda which maps each elem to a name. Must contain at least one argument!
     # #3 list with keys of additional informations to be saved: (#1: key, #2: rename)
     # the values are delived by the param_list of the joblog
     # if the value is something like 10sec or 10gb use `parse_unit` to parse it.
@@ -104,18 +104,18 @@ class JobMethods:
              ),
         'CTGGR0003':
             ('office365Stats',
-             lambda params: {
-                 'imported365Users': int(params[0]),
-             },
-             [ # Additional Information from job-message itself, including rename
-                 ("jobSessionId", "jobId"),
-                 ("jobsessionId", "jobSessionId"),
-                 ("jobSessionName", "jobName")
-             ]
-             ),
+            lambda params: {
+                'imported365Users': int(params[0]),
+            },
+            [ # Additional Information from job-message itself, including rename
+                ("jobSessionId", "jobId"),
+                ("jobsessionId", "jobSessionId"),
+                ("jobSessionName", "jobName")
+            ]
+            ),
         'CTGGA2444':
             ('office365Stats',
-             lambda params: {
+            lambda params: {
                  'protectedItems': int(params[0]),
                  'selectedItems': int(params[0]),
              },
@@ -124,7 +124,28 @@ class JobMethods:
                  ("jobsessionId", "jobSessionId"),
                  ("jobSessionName", "jobName")
              ]
-             )
+             ),
+        'CTGGA2402':
+            ('office365Stats',
+            lambda params:
+            # If not matching, this will return a empty dict which is going to be ignored
+                MethodUtils.joblogs_parse_params(
+                    r"(\w+)\s*\(Server:\s*([^\s,]+), Transfer Size: (\d+(?:.\d*)?\s*\w*)\)",
+                    params[1],
+                    lambda match_list:
+                        {
+                            "item_name": params[0],
+                            "item_type": match_list[0],
+                            "server_name": match_list[1],
+                            "transferredBytes": match_list[2],
+                        }
+                ),
+            [
+                ("jobSessionId", "jobId"),
+                ("jobsessionId", "jobSessionId"),
+                ("jobSessionName", "jobName")
+            ]
+            ),
     }
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
@@ -347,6 +368,10 @@ class JobMethods:
             try:
                 # Saving information from the message-params list within the job_log
                 row_dict = row_dict_func(job_log['messageParams'])
+                if(not row_dict):
+                    # this was matched incorrectly, therefore skipped.
+                    # No warning cause this will happen often.
+                    continue
                 # Saving additional fields from the job_log struct itself.
                 if(additional_fields):
                     for (key, rename) in additional_fields:
