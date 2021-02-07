@@ -28,7 +28,7 @@ class ExceptionUtils:
 
     @classmethod
     def error_message(cls, message: str):
-        """Prints and saves a error message without raising anything.
+        """Prints and saves a error message without aborting.
 
         Arguments:
             message {str} -- message to be displayed and saved.

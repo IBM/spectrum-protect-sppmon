@@ -46,7 +46,7 @@ class JobMethods:
     # Dict with messageID of log as name
     # value is a tuple of
     # #1 the tablename
-    # #2 a lambda which maps each elem to a name
+    # #2 a lambda which maps each elem to a name.
     # #3 list with keys of additional informations to be saved: (#1: key, #2: rename)
     # the values are delived by the param_list of the joblog
     # if the value is something like 10sec or 10gb use `parse_unit` to parse it.
@@ -71,7 +71,7 @@ class JobMethods:
                  "TotalVMDKs": params[9],
                  "status": params[10]
              },
-             []
+             [] # Additional Information from job-message itself
              ),
         'CTGGA0071':
             ('vmBackupSummary',
@@ -107,7 +107,7 @@ class JobMethods:
              lambda params: {
                  'imported365Users': int(params[0]),
              },
-             [
+             [ # Additional Information from job-message itself, including rename
                  ("jobSessionId", "jobId"),
                  ("jobsessionId", "jobSessionId"),
                  ("jobSessionName", "jobName")
@@ -124,7 +124,7 @@ class JobMethods:
                  ("jobsessionId", "jobSessionId"),
                  ("jobSessionName", "jobName")
              ]
-             ),
+             )
     }
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 
@@ -306,7 +306,7 @@ class JobMethods:
                     insert_list.append(insert_dict)
                 except KeyError as error:
                     ExceptionUtils.exception_info(error=error, extra_message=
-                    f"failed to compute job-individual statistics due key error. report to developer: {job}")
+                    f"failed to compute job-individual statistics due key error. report to developer. Job: {job} ; job_stats: {job_stats}")
 
         if(len(insert_list) > 0):
             self.__influx_client.insert_dicts_to_buffer(
@@ -342,14 +342,18 @@ class JobMethods:
 
             if(not table_name):
                 table_name = message_id
+                ExceptionUtils.error_message(f"Warning: No tablename specified for message_id {message_id}. Please report to developer.")
 
             try:
+                # Saving information from the message-params list within the job_log
                 row_dict = row_dict_func(job_log['messageParams'])
-                for (key, rename) in additional_fields:
-                    row_dict[rename] = job_log[key]
+                # Saving additional fields from the job_log struct itself.
+                if(additional_fields):
+                    for (key, rename) in additional_fields:
+                        row_dict[rename] = job_log[key]
             except KeyError as error:
                 ExceptionUtils.exception_info(
-                    error, extra_message="MessageID params wrong defined. Skipping one MessageId")
+                    error, extra_message=f"MessageID params wrong defined. Skipping message_id {message_id}")
                 continue
 
             row_dict['messageId'] = message_id
