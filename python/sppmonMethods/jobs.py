@@ -108,9 +108,9 @@ class JobMethods:
                 'imported365Users': int(params[0]),
             },
             [ # Additional Information from job-message itself, including rename
-                ("jobSessionId", "jobId"),
-                ("jobsessionId", "jobSessionId"),
-                ("jobSessionName", "jobName")
+                ("jobId", "jobId"),
+                ("jobSessionId", "jobSessionId"),
+                ("jobName", "jobName")
             ]
             ),
         'CTGGA2444':
@@ -120,9 +120,9 @@ class JobMethods:
                  'selectedItems': int(params[0]),
              },
              [
-                 ("jobSessionId", "jobId"),
-                 ("jobsessionId", "jobSessionId"),
-                 ("jobSessionName", "jobName")
+                ("jobId", "jobId"),
+                ("jobSessionId", "jobSessionId"),
+                ("jobName", "jobName")
              ]
              ),
         'CTGGA2402':
@@ -141,9 +141,9 @@ class JobMethods:
                         }
                 ),
             [
-                ("jobSessionId", "jobId"),
-                ("jobsessionId", "jobSessionId"),
-                ("jobSessionName", "jobName")
+                ("jobId", "jobId"),
+                ("jobSessionId", "jobSessionId"),
+                ("jobName", "jobName")
             ]
             ),
     }
@@ -530,6 +530,13 @@ class JobMethods:
             LOGGER.debug(">>> storing {} joblogs for jobsessionId: {} in Influx database".format(
                 len(job_log_list), job_id))
 
+            for job_log in job_log_list:
+                # rename log keys and add additional information
+                job_log["jobId"] = row.get("jobId", None)
+                job_log["jobName"] = row.get("jobName", None)
+                job_log["jobLogId"] = job_log.pop("id")
+                job_log["jobSessionId"] = job_log.pop("jobsessionId")
+
             # compute other stats out of jobList
             try:
                 self.__job_logs_to_stats(job_log_list)
@@ -538,12 +545,8 @@ class JobMethods:
                     error, extra_message=f"Failed to compute stats out of job logs, skipping for jobsessionId {job_id}")
 
             for job_log in job_log_list:
-                # rename key 'id' to jobLogId and reformat messageParams
-                job_log["jobSessionId"] = row.get("jobId", None)
-                job_log["jobSessionName"] = row.get("jobName", None)
-                job_log["jobLogId"] = job_log.pop("id")
-                job_log["messageParams"] = json.dumps(
-                    job_log["messageParams"])
+                # dump message params to allow saving as string
+                job_log["messageParams"] = json.dumps(job_log["messageParams"])
 
             # if list is empty due beeing erased etc it will simply return and do nothing
             self.__influx_client.insert_dicts_to_buffer(

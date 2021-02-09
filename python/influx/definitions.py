@@ -297,6 +297,7 @@ class Definitions:
                 'start':            Datatype.TIMESTAMP,
                 'end':              Datatype.TIMESTAMP,
                 'jobLogsCount':     Datatype.INT,
+                # due high numbers id is saved as field
                 'id':               Datatype.INT,
                 'numTasks':         Datatype.INT,
                 'percent':          Datatype.FLOAT
@@ -357,7 +358,7 @@ class Definitions:
             fields={  # FIELDS
                 # Due high numbers these ID's are saved as fields. Maybe remove ID's?
                 'jobLogId':         Datatype.STRING,
-                'jobsessionId':     Datatype.INT,
+                'jobSessionId':     Datatype.INT,
 
                 # default fields
                 'messageParams':    Datatype.STRING,
@@ -366,8 +367,8 @@ class Definitions:
             tags=[  # TAGS
                 'type',
                 'messageId',
-                'jobSessionName',
-                'jobSessionId'
+                'jobName',
+                'jobId'
             ],
             time_key='logTime',
             retention_policy=cls._RP_HALF_YEAR(),
