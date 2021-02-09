@@ -363,7 +363,7 @@ class Definitions:
                 # default fields
                 'messageParams':    Datatype.STRING,
                 "message":          Datatype.STRING,
-                'start':            Datatype.TIMESTAMP
+                'jobExecutionTime': Datatype.TIMESTAMP
             },
             tags=[  # TAGS
                 'type',

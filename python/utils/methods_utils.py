@@ -187,6 +187,16 @@ class MethodUtils:
 
     @staticmethod
     def joblogs_parse_params(regex_str: str, parse_string: str, mapping_func: Callable[[Match[Any]], Dict[str, Any]]) -> Dict[str, Any]:
+        """Used to parse a string within a joblog to stat transition. Note: match[0] is full match, group 1 is match[1] in lambda.
+
+        Args:
+            regex_str (str): raw regex string used as pattern
+            parse_string (str): string to be matched
+            mapping_func (Callable[[Match[Any]], Dict[str, Any]]): lambda which takes a match object and returns a dict.
+
+        Returns:
+            Dict[str, Any]: [description]
+        """
         match = re.match(regex_str, parse_string)
         if(not match):
             return {}

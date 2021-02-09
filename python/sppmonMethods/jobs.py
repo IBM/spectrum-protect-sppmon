@@ -111,7 +111,7 @@ class JobMethods:
                 ("jobId", "jobId"),
                 ("jobSessionId", "jobSessionId"),
                 ("jobName", "jobName"),
-                ("startTime", "jobExecutionTime") # used to instantly integrate with other stats
+                ("jobExecutionTime", "jobExecutionTime") # used to instantly integrate with other stats
             ]
             ),
         'CTGGA2444':
@@ -137,9 +137,9 @@ class JobMethods:
                     lambda match_list:
                         {
                             "itemName": params[0],
-                            "itemType": match_list[0],
-                            "serverName": match_list[1],
-                            "transferredBytes": SppUtils.parse_unit(match_list[2]),
+                            "itemType": match_list[1],
+                            "serverName": match_list[2],
+                            "transferredBytes": SppUtils.parse_unit(match_list[3]),
                         }
                 ),
                 [
