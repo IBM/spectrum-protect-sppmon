@@ -362,7 +362,8 @@ class Definitions:
 
                 # default fields
                 'messageParams':    Datatype.STRING,
-                "message":          Datatype.STRING
+                "message":          Datatype.STRING,
+                'start':            Datatype.TIMESTAMP
             },
             tags=[  # TAGS
                 'type',
@@ -1191,7 +1192,40 @@ class Definitions:
                     ], cls._RP_INF(), "1w")
             ]
             # capture time
+        ),
+
+        # ################# Other Tables ############################
+
+        cls.__add_predef_table(
+            name="office365Stats",
+            fields={
+                "protectedItems":           Datatype.INT,
+                "selectedItems":            Datatype.INT,
+                "jobSessionId":             Datatype.INT,
+                "imported365Users":         Datatype.INT # dropped in downsampling
+            },
+            tags=[
+                "jobId",
+                'jobName',
+                'ssh_type'
+            ],
+            retention_policy=cls._RP_DAYS_14(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "sum(protectedItems) as sum_protectedItems",
+                    "sum(selectedItems) as sum_selectedItems",
+                    "sum(imported365Users) as sum_imported365Users"
+                    ], cls._RP_DAYS_90(), "6h"),
+                cls._CQ_DWSMPL([
+                    "sum(protectedItems) as sum_protectedItems",
+                    "sum(selectedItems) as sum_selectedItems",
+                    "sum(imported365Users) as sum_imported365Users"
+                    ], cls._RP_INF(), "1w")
+            ],
+            time_key="jobExecutionTime"
         )
+
+
 
         # ################################################################################
         # ################### End of table definitions ###################################

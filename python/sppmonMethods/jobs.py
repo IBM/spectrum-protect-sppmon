@@ -110,7 +110,8 @@ class JobMethods:
             [ # Additional Information from job-message itself, including rename
                 ("jobId", "jobId"),
                 ("jobSessionId", "jobSessionId"),
-                ("jobName", "jobName")
+                ("jobName", "jobName"),
+                ("startTime", "jobExecutionTime") # used to group with other stats
             ]
             ),
         'CTGGA2444':
@@ -122,7 +123,8 @@ class JobMethods:
              [
                 ("jobId", "jobId"),
                 ("jobSessionId", "jobSessionId"),
-                ("jobName", "jobName")
+                ("jobName", "jobName"),
+                ("jobExecutionTime", "jobExecutionTime")  # used to group with other stats
              ]
              ),
         'CTGGA2402':
@@ -534,6 +536,7 @@ class JobMethods:
                 # rename log keys and add additional information
                 job_log["jobId"] = row.get("jobId", None)
                 job_log["jobName"] = row.get("jobName", None)
+                job_log["jobExecutionTime"] = row.get("start", None)
                 job_log["jobLogId"] = job_log.pop("id")
                 job_log["jobSessionId"] = job_log.pop("jobsessionId")
 
