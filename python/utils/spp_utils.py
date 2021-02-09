@@ -277,7 +277,7 @@ class SppUtils:
             delimiter: str = " ") -> Optional[Union[int, Number]]:
         """Parses a str or number into the lowest unit.
 
-        Specify a delimiter if used, default splitting by space.
+        Specify a delimiter if used, default splitting to a single space.
         Only specify `given unit` if the unit is not within the data itself.
         specify `unit_start_pos` if the unit is within data without delimiter.
         check dict `datatypes` for parseable units.

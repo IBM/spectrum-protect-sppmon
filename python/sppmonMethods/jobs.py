@@ -111,7 +111,7 @@ class JobMethods:
                 ("jobId", "jobId"),
                 ("jobSessionId", "jobSessionId"),
                 ("jobName", "jobName"),
-                ("startTime", "jobExecutionTime") # used to group with other stats
+                ("startTime", "jobExecutionTime") # used to instantly integrate with other stats
             ]
             ),
         'CTGGA2444':
@@ -124,11 +124,11 @@ class JobMethods:
                 ("jobId", "jobId"),
                 ("jobSessionId", "jobSessionId"),
                 ("jobName", "jobName"),
-                ("jobExecutionTime", "jobExecutionTime")  # used to group with other stats
+                ("jobExecutionTime", "jobExecutionTime")  # used to instantly integrate with other stats
              ]
              ),
         'CTGGA2402':
-            ('office365Stats',
+            ('office365TransfBytes',
             lambda params:
             # If not matching, this will return a empty dict which is going to be ignored
                 MethodUtils.joblogs_parse_params(
@@ -136,18 +136,18 @@ class JobMethods:
                     params[1],
                     lambda match_list:
                         {
-                            "item_name": params[0],
-                            "item_type": match_list[0],
-                            "server_name": match_list[1],
-                            "transferredBytes": match_list[2],
+                            "itemName": params[0],
+                            "itemType": match_list[0],
+                            "serverName": match_list[1],
+                            "transferredBytes": SppUtils.parse_unit(match_list[2]),
                         }
                 ),
-            [
-                ("jobId", "jobId"),
-                ("jobSessionId", "jobSessionId"),
-                ("jobName", "jobName")
-            ]
-            ),
+                [
+                    ("jobId", "jobId"),
+                    ("jobSessionId", "jobSessionId"),
+                    ("jobName", "jobName")
+                ]
+                ),
     }
     """LogLog messageID's which can be parsed by sppmon. Check detailed summary above the declaration."""
 

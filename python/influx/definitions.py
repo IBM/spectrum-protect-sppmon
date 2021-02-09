@@ -1201,13 +1201,13 @@ class Definitions:
             fields={
                 "protectedItems":           Datatype.INT,
                 "selectedItems":            Datatype.INT,
-                "jobSessionId":             Datatype.INT,
-                "imported365Users":         Datatype.INT # dropped in downsampling
+                "imported365Users":         Datatype.INT
             },
             tags=[
                 "jobId",
                 'jobName',
-                'ssh_type'
+                'ssh_type',
+                "jobSessionId" # dropped in downsampling
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
@@ -1215,14 +1215,60 @@ class Definitions:
                     "sum(protectedItems) as sum_protectedItems",
                     "sum(selectedItems) as sum_selectedItems",
                     "sum(imported365Users) as sum_imported365Users"
-                    ], cls._RP_DAYS_90(), "6h"),
+                    ], cls._RP_DAYS_90(), "6h",
+                    group_args=[
+                        "jobId",
+                        'jobName',
+                        'ssh_type',
+                    ]),
                 cls._CQ_DWSMPL([
                     "sum(protectedItems) as sum_protectedItems",
                     "sum(selectedItems) as sum_selectedItems",
                     "sum(imported365Users) as sum_imported365Users"
-                    ], cls._RP_INF(), "1w")
+                    ], cls._RP_INF(), "1w",
+                    group_args=[
+                        "jobId",
+                        'jobName',
+                        'ssh_type',
+                    ]),
             ],
             time_key="jobExecutionTime"
+        ),
+        cls.__add_predef_table(
+            name="office365TransfBytes",
+            fields={
+                "itemName":                 Datatype.STRING,
+                "transferredBytes":         Datatype.INT
+            },
+            tags=[
+                'itemType',
+                'serverName',
+                "jobId",
+                'jobName',
+                "jobSessionId" # dropped in downsampling
+            ],
+            retention_policy=cls._RP_DAYS_14(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "sum(transferredBytes) as transferredBytes"
+                    ], cls._RP_DAYS_90(), "6h",
+                    group_args=[
+                        "itemType",
+                        "jobId",
+                        'jobName',
+                        'serverName',
+                    ]),
+                cls._CQ_DWSMPL([
+                    "sum(transferredBytes) as transferredBytes"
+                    ], cls._RP_INF(), "1w",
+                    group_args=[
+                        "itemType",
+                        "jobId",
+                        'jobName',
+                        'serverName',
+                    ]),
+            ]
+            # time key unset
         )
 
 
