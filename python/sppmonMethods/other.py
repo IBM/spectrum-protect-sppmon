@@ -27,10 +27,11 @@ class OtherMethods:
             raise ValueError("SPPmon does not work without a config file")
 
         LOGGER.info("Testing all connections required for SPPMon to work")
-        working: bool = True
-        no_warnings: bool = True
+        working: bool = True # SPPMon itself will finish sucessfull (no critical errors)
+        no_warnings: bool = True # SPPMon will finish without any warnings (no errors at all)
 
         # ## InfluxDB ##
+
         LOGGER.info("> Testing and configuring InfluxDB")
         try:
             influx_client.connect()
@@ -45,6 +46,7 @@ class OtherMethods:
             working = False
 
         # ## REST-API ##
+
         LOGGER.info("> Testing REST-API of SPP.")
         try:
             rest_client.login()
@@ -57,28 +59,27 @@ class OtherMethods:
             working = False
 
         # ## SSH-CLIENTS ##
-        LOGGER.info("> Testing SSH-Clients: Server, VAPDs, vSnaps and others")
+
+        LOGGER.info("> Testing all types of SSH-Clients: Server, VAPDs, vSnaps, Cloudproxy and others")
+        ssh_working = True # The arg --ssh will finish without any error at all
+
         # Count of clients checks
-        ssh_working = True
         ssh_clients: List[SshClient] = SshMethods.setup_ssh_clients(config_file)
         if(not ssh_clients):
             ExceptionUtils.error_message(">> No SSH-clients detected at all. At least the server itself should be added for process-statistics.")
             ssh_working = False
         else:
-            if(not list(filter(lambda client: client.client_type == SshTypes.SERVER , ssh_clients))):
-                ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
-                ssh_working = False
+            for type in SshTypes:
+                if(not list(filter(lambda client: client.client_type == type , ssh_clients))):
+                    LOGGER.info(f">> No {type.name} client detected.")
 
-            if(not list(filter(lambda client: client.client_type == SshTypes.VSNAP , ssh_clients))):
-                LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
-                no_warnings = False # This is only a warning, ssh will still work
+                    if(type == SshTypes.SERVER):
+                        ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
+                        ssh_working = False # No error, but still critical
 
-            if(not list(filter(lambda client: client.client_type == SshTypes.VADP , ssh_clients))):
-                LOGGER.info(">> No VADPs detected.")
-            if(not list(filter(lambda client: client.client_type == SshTypes.CLOUDPROXY , ssh_clients))):
-                LOGGER.info(">> No Cloudproxies detected.")
-            if(not list(filter(lambda client: client.client_type == SshTypes.OTHER , ssh_clients))):
-                LOGGER.info(">> No other SSH-clients detected.")
+                    if(type == SshTypes.VSNAP , ssh_clients):
+                        LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
+                        no_warnings = False # ssh will still work, but thats definitly a warning
 
             ssh_methods: SshMethods = SshMethods(influx_client, config_file, False)
             # Connection check
@@ -109,10 +110,12 @@ class OtherMethods:
             LOGGER.info("> Testing of SSH-clients failed! SPPMon will still work, not all informations are available.")
             no_warnings = False
 
+        # #### Conclusion ####
+
         if(working and no_warnings):
             LOGGER.info("> All components tested sucessfully. SPPMon is ready to be used!")
         elif(working):
-            LOGGER.info("> Testing partially sucessful. SPPMon will work but please check the warnings.")
+            LOGGER.info("> Testing partially sucessful. SPPMon will run, but please check the warnings.")
         else:
             LOGGER.info("> Testing failed. SPPMon is not ready to be used. Please fix the connection issues.")
 
