@@ -47,7 +47,9 @@ Author:
  01/22/2021 version 0.10.7 Replaced `transfer_data` by `copy_database` with improvements
  01/28/2021 version 0.11   Copy_database now also creates the database with RP's if missing.
  01/29/2021 version 0.12   Implemented --test function, also disabeling regular setup on certain args
+ 02/09/2021 version 0.12.1 Hotfix job statistic and --test now also checks for all commands individually
  02/07/2021 version 0.13   Implemented additional Office365 Joblog parsing
+
 """
 from __future__ import annotations
 import functools

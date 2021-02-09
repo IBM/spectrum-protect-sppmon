@@ -296,7 +296,8 @@ class JobMethods:
         LOGGER.info(f">>> computing additional job statistics for jobId: {job_id}")
 
         insert_list: List[Dict[str, Any]] = []
-        for job in filter(lambda x: x.get("statistics", None), list_with_jobs):
+        # check for none instead of bool-check: Remove empty statistic lists [].
+        for job in filter(lambda x: x.get("statistics", None) is not None, list_with_jobs):
             job_statistics_list = job.pop('statistics')
 
             for job_stats in job_statistics_list:

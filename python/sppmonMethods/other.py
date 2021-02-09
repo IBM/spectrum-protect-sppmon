@@ -7,6 +7,7 @@ Classes:
 from sppConnection.rest_client import RestClient
 from sppConnection.ssh_client import SshClient, SshTypes
 from sppmonMethods.ssh import SshMethods
+from utils.methods_utils import MethodUtils
 from influx.influx_client import InfluxClient
 from typing import Dict, Any, List
 import logging
@@ -63,30 +64,44 @@ class OtherMethods:
         if(not ssh_clients):
             ExceptionUtils.error_message(">> No SSH-clients detected at all. At least the server itself should be added for process-statistics.")
             ssh_working = False
-
-        if(not list(filter(lambda client: client.client_type == SshTypes.SERVER , ssh_clients))):
-            ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
-            ssh_working = False
-
-        if(not list(filter(lambda client: client.client_type == SshTypes.VSNAP , ssh_clients))):
-            LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
-
-        if(not list(filter(lambda client: client.client_type == SshTypes.VADP , ssh_clients))):
-            LOGGER.info(">> No VADPs detected.")
-        if(not list(filter(lambda client: client.client_type == SshTypes.CLOUDPROXY , ssh_clients))):
-            LOGGER.info(">> No Cloudproxies detected.")
-        if(not list(filter(lambda client: client.client_type == SshTypes.OTHER , ssh_clients))):
-            LOGGER.info(">> No other SSH-clients detected.")
-
-        # Connection check
-        LOGGER.info(f">> Testing now connection of {len(ssh_clients)} registered ssh-clients.")
-        for client in ssh_clients:
-            try:
-                client.connect()
-                client.disconnect()
-            except ValueError as error:
-                ExceptionUtils.exception_info(error, extra_message=f"Connection failed for client {client.host_name} with type: {client.client_type}.")
+        else:
+            if(not list(filter(lambda client: client.client_type == SshTypes.SERVER , ssh_clients))):
+                ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
                 ssh_working = False
+
+            if(not list(filter(lambda client: client.client_type == SshTypes.VSNAP , ssh_clients))):
+                LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
+                no_warnings = False # This is only a warning, ssh will still work
+
+            if(not list(filter(lambda client: client.client_type == SshTypes.VADP , ssh_clients))):
+                LOGGER.info(">> No VADPs detected.")
+            if(not list(filter(lambda client: client.client_type == SshTypes.CLOUDPROXY , ssh_clients))):
+                LOGGER.info(">> No Cloudproxies detected.")
+            if(not list(filter(lambda client: client.client_type == SshTypes.OTHER , ssh_clients))):
+                LOGGER.info(">> No other SSH-clients detected.")
+
+            ssh_methods: SshMethods = SshMethods(influx_client, config_file, False)
+            # Connection check
+            LOGGER.info(f">> Testing now connection and commands of {len(ssh_clients)} registered ssh-clients.")
+            for client in ssh_clients:
+                try:
+                    client.connect()
+                    client.disconnect()
+
+                    error_count: int = len(ExceptionUtils.stored_errors)
+                    MethodUtils.ssh_execute_commands(
+                        ssh_clients=[client],
+                        ssh_type=client.client_type,
+                        command_list=ssh_methods.client_commands[client.client_type] + ssh_methods.all_command_list)
+                    if(len(ExceptionUtils.stored_errors) != error_count):
+                        ssh_working = False
+                        ExceptionUtils.error_message(
+                            f"Not all commands available for client {client.host_name} with type: {client.client_type}.\n" +
+                            "Please check manually if the commands are installed and their output.")
+
+                except ValueError as error:
+                    ExceptionUtils.exception_info(error, extra_message=f"Connection failed for client {client.host_name} with type: {client.client_type}.")
+                    ssh_working = False
 
         if(ssh_working):
             LOGGER.info("> Testing of SSH-clients sucessfull.")

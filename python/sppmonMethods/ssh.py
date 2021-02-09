@@ -7,7 +7,7 @@ Classes:
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from influx.influx_client import InfluxClient
 from sppConnection.ssh_client import SshClient, SshCommand, SshTypes
@@ -24,6 +24,10 @@ class SshMethods:
     Split into parse methods and execute methods. All parse methods are reusable for each type of server.
     Those parse functions need a special signature to be automatically executed in the `SshCommand`s.
 
+    Attributes:
+        all_command_list
+        client_commands
+
     Methods:
         process_stats
         ssh
@@ -31,7 +35,17 @@ class SshMethods:
 
     """
 
-    def __init__(self, influx_client: Optional[InfluxClient], config_file: Dict[str, Any], verbose: bool = False):
+    @property
+    def all_command_list(self) -> List[SshCommand]:
+        """Commands to be executed on every ssh-client"""
+        return self.__all_command_list
+
+    @property
+    def client_commands(self) -> Dict[SshTypes, List[SshCommand]]:
+        """Mapping of ssh commands to be executed on the mapped type"""
+        return self.__client_commands
+
+    def __init__(self, influx_client: InfluxClient, config_file: Dict[str, Any], verbose: bool = False):
         if(not config_file):
             raise ValueError("Require config file to setup ssh clients")
         if(not influx_client):
