@@ -240,6 +240,8 @@ class Table:
             fields = {}
         if(not tags):
             tags = []
+        if(not retention_policy):
+            retention_policy = next(filter(lambda rp: rp.default, database.retention_policies))
 
         self.__database: Database = database
         self.__fields: Dict[str, Datatype] = fields
