@@ -1682,7 +1682,7 @@
     {
       "cacheTimeout": null,
       "datasource": null,
-      "description": "Sum of replicated bytes within the last 24h\nSum of transferred bytes within the last 24h\n",
+      "description": "Sum of replicated bytes (VM) within the last 24h\nSum of transferred bytes (VM) within the last 24h\nSum of transferred bytes (Office365) within the last 24h\n",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1729,7 +1729,7 @@
       "pluginVersion": "7.3.3",
       "targets": [
         {
-          "alias": "Amount Replicated",
+          "alias": "VM Replicated",
           "groupBy": [
             {
               "params": [
@@ -1766,7 +1766,7 @@
           ]
         },
         {
-          "alias": "Amount Protected",
+          "alias": "VM Transferred",
           "groupBy": [
             {
               "params": [
@@ -1801,11 +1801,42 @@
               "value": "CTGGA2384"
             }
           ]
+        },
+        {
+          "alias": "Office Transferred",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            }
+          ],
+          "measurement": "office365TransfBytes",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "transferredBytes"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "VM Statistics (Last 24h)",
+      "title": "Additional Statistics (Last 24h)",
       "type": "stat"
     },
     {
@@ -10513,13 +10544,538 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 181
+      },
+      "hiddenSeries": false,
+      "id": 177,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Selected Items of $tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "selectedItems"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Protected Items of $tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "protectedItems"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Count Protected / Selected Items",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 189
+      },
+      "hiddenSeries": false,
+      "id": 175,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "imported365Users"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Imported Users by Job",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 189
+      },
+      "hiddenSeries": false,
+      "id": 176,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "protectedItems"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "/ selectedItems"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Protected Item Sucess Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 197
+      },
+      "hiddenSeries": false,
+      "id": 178,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_itemType",
+          "groupBy": [
+            {
+              "params": [
+                "itemType"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365TransfBytes",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "transferredBytes"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Transferred Bytes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 189
+        "y": 205
       },
       "id": 112,
       "panels": [],
@@ -10560,7 +11116,7 @@
         "h": 16,
         "w": 5,
         "x": 0,
-        "y": 190
+        "y": 206
       },
       "id": 109,
       "interval": "24h",
@@ -10618,7 +11174,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 190
+        "y": 206
       },
       "hiddenSeries": false,
       "id": 107,
@@ -10871,7 +11427,7 @@
         "h": 16,
         "w": 5,
         "x": 14,
-        "y": 190
+        "y": 206
       },
       "id": 62,
       "limit": "100",
@@ -10908,7 +11464,7 @@
         "h": 16,
         "w": 5,
         "x": 19,
-        "y": 190
+        "y": 206
       },
       "id": 147,
       "limit": "100",
@@ -11087,7 +11643,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 198
+        "y": 214
       },
       "hiddenSeries": false,
       "id": 108,
@@ -11419,7 +11975,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 206
+        "y": 222
       },
       "id": 143,
       "options": {
@@ -11535,7 +12091,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 206
+        "y": 222
       },
       "id": 145,
       "options": {
@@ -11651,7 +12207,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 206
+        "y": 222
       },
       "id": 146,
       "options": {
@@ -11760,7 +12316,7 @@
         "h": 6,
         "w": 13,
         "x": 0,
-        "y": 214
+        "y": 230
       },
       "id": 153,
       "options": {
@@ -11854,7 +12410,7 @@
         "h": 6,
         "w": 11,
         "x": 13,
-        "y": 214
+        "y": 230
       },
       "id": 154,
       "options": {
@@ -11949,7 +12505,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 220
+        "y": 236
       },
       "id": 65,
       "panels": [],
@@ -12084,7 +12640,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 221
+        "y": 237
       },
       "hiddenSeries": false,
       "id": 41,
@@ -12378,7 +12934,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 230
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 21,
@@ -12512,7 +13068,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 230
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 23,
@@ -12647,7 +13203,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 230
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 22,
@@ -12764,7 +13320,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5m",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -12773,7 +13329,7 @@
   },
   "time": {
     "from": "now-14d",
-    "to": "now-5m"
+    "to": "now"
   },
   "timepicker": {
     "nowDelay": "",
@@ -12790,5 +13346,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 33
+  "version": 43
 }
