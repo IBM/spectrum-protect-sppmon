@@ -430,6 +430,7 @@ class Definitions:
             },
             tags=[
                 'sppmon_version',
+                'influxdb_version',
                 'spp_version',
                 'vms',
                 'spp_build',

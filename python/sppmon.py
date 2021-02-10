@@ -49,6 +49,7 @@ Author:
  01/29/2021 version 0.12   Implemented --test function, also disabeling regular setup on certain args
  02/09/2021 version 0.12.1 Hotfix job statistic and --test now also checks for all commands individually
  02/07/2021 version 0.13   Implemented additional Office365 Joblog parsing
+ 02/10/2021 version 0.13.1 Fixes to partial send(influx), including influxdb version into stats
 
 """
 from __future__ import annotations
@@ -611,6 +612,7 @@ class SppMon:
 
             # add version nr, api calls are needed
             insert_dict["sppmon_version"] = VERSION
+            insert_dict["influxdb_version"] = self.influx_client.version
             if(self.rest_client):
                 try:
                     (version_nr, build) = self.rest_client.get_spp_version_build()

@@ -46,6 +46,11 @@ class InfluxClient:
     """
 
     @property
+    def version(self):
+        """Version of the influxdb client"""
+        return self.__version
+
+    @property
     def use_ssl(self):
         """Whether the client should use ssl"""
         return self.__use_ssl
@@ -100,6 +105,7 @@ class InfluxClient:
 
         # declare for later
         self.__client: InfluxDBClient
+        self.__version: str
 
     def connect(self) -> None:
         """Connect client to remote server. Call this before using any other methods.
@@ -119,8 +125,8 @@ class InfluxClient:
             )
 
             # ping to make sure connection works
-            version: str = self.__client.ping()
-            LOGGER.debug(f"Connected to influxdb, version: {version}")
+            self.__version: str = self.__client.ping()
+            LOGGER.debug(f"Connected to influxdb, version: {self.__version}")
 
             # create db, nothing happens if it already exists
             self.__client.create_database(self.database.name)

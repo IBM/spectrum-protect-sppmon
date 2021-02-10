@@ -12261,133 +12261,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "build.Version"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "InfluxDB version"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "runtime.version"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Go runtime version"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "system.started"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "InfluxDB start time"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 13,
-        "x": 0,
-        "y": 230
-      },
-      "id": 153,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/.*/",
-          "values": true
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.3.3",
-      "targets": [
-        {
-          "groupBy": [],
-          "measurement": "sppmon_metrics",
-          "orderByTime": "ASC",
-          "policy": "rp_days_14",
-          "query": "show diagnostics",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "version"
-                ],
-                "type": "field"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "duration"
-                ],
-                "type": "field"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "InfluxDB version",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "build.Version",
-                "runtime.version",
-                "system.started"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
           "custom": {
             "align": "center",
             "filterable": false
@@ -12408,8 +12281,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 11,
-        "x": 13,
+        "w": 24,
+        "x": 0,
         "y": 230
       },
       "id": 154,
@@ -12435,6 +12308,12 @@
             {
               "params": [
                 "sppmon_version"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "influxdb_version"
               ],
               "type": "tag"
             }
@@ -12473,7 +12352,8 @@
                 "Time",
                 "spp_build",
                 "spp_version",
-                "sppmon_version"
+                "sppmon_version",
+                "influxdb_version"
               ]
             }
           }
@@ -12489,8 +12369,9 @@
             },
             "renameByName": {
               "Time": "Last used time",
-              "spp_build": "SPP Build",
-              "spp_version": "SPP Version",
+              "influxdb_version": "InfluxDB version",
+              "spp_build": "SPP build",
+              "spp_version": "SPP version",
               "sppmon_version": "SPPMon version"
             }
           }
@@ -13346,5 +13227,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 43
+  "version": 45
 }
