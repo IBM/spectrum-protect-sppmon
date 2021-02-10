@@ -687,9 +687,7 @@ class Definitions:
                 'failed':                     Datatype.INT,
                 'duration':                   Datatype.INT
             },
-            tags=[
-                'messageId'
-            ],
+            tags=[], # None
             time_key='time',
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
@@ -709,9 +707,7 @@ class Definitions:
                 'throughputBytes/sec':      Datatype.INT,
                 'duration':                 Datatype.INT
             },
-            tags=[
-                'messageId'
-            ],
+            tags=[],# None
             time_key='time',
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[

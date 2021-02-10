@@ -8,7 +8,7 @@ import datetime
 import json
 import logging
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from influx.influx_client import InfluxClient
 from influx.influx_queries import Keyword, SelectionQuery
@@ -47,15 +47,21 @@ class JobMethods:
     # value is a tuple of
     # #1 the tablename
     # #2 a lambda which maps each elem to a name. Must contain at least one argument!
-    # #3 list with keys of additional informations to be saved: (#1: key, #2: rename)
+    # #3 list of tuples: keys of additional informations to be saved: (#1: key, #2: rename). Part 2 optional, only if rename
     # the values are delived by the param_list of the joblog
     # if the value is something like 10sec or 10gb use `parse_unit` to parse it.
     __supported_ids: Dict[str,
                           Tuple[
                                 str,
                                 Callable[[List[Any]], Dict[str, Any]],
-                                List[Tuple[str, str]]
-                                ]] = {
+                                List[
+                                    Union[
+                                        Tuple[str, str],
+                                        str
+                                        ]
+                                    ]
+                                ]
+                        ] = {
         'CTGGA2384':
             ('vmBackupSummary',
              lambda params: {
@@ -71,7 +77,7 @@ class JobMethods:
                  "TotalVMDKs": params[9],
                  "status": params[10]
              },
-             [] # Additional Information from job-message itself
+             [("messageId")] # Additional Information from job-message itself
              ),
         'CTGGA0071':
             ('vmBackupSummary',
@@ -82,7 +88,7 @@ class JobMethods:
                  'throughputBytes/s': SppUtils.parse_unit(params[3]),
                  'queueTimeSec': SppUtils.parse_unit(params[4])
              },
-             []
+             [("messageId")]
              ),
         'CTGGA0072':
             ('vmReplicateSummary',
@@ -108,10 +114,10 @@ class JobMethods:
                 'imported365Users': int(params[0]),
             },
             [ # Additional Information from job-message itself, including rename
-                ("jobId", "jobId"),
-                ("jobSessionId", "jobSessionId"),
-                ("jobName", "jobName"),
-                ("jobExecutionTime", "jobExecutionTime") # used to instantly integrate with other stats
+                ("jobId"),
+                ("jobSessionId"),
+                ("jobName"),
+                ("jobExecutionTime") # used to instantly integrate with other stats
             ]
             ),
         'CTGGA2444':
@@ -121,10 +127,10 @@ class JobMethods:
                  'selectedItems': int(params[0]),
              },
              [
-                ("jobId", "jobId"),
-                ("jobSessionId", "jobSessionId"),
-                ("jobName", "jobName"),
-                ("jobExecutionTime", "jobExecutionTime")  # used to instantly integrate with other stats
+                ("jobId"),
+                ("jobSessionId"),
+                ("jobName"),
+                ("jobExecutionTime")  # used to instantly integrate with other stats
              ]
              ),
         'CTGGA2402':
@@ -143,9 +149,9 @@ class JobMethods:
                         }
                 ),
                 [
-                    ("jobId", "jobId"),
-                    ("jobSessionId", "jobSessionId"),
-                    ("jobName", "jobName")
+                    ("jobId"),
+                    ("jobSessionId"),
+                    ("jobName")
                 ]
                 ),
     }
@@ -379,12 +385,11 @@ class JobMethods:
                 if(additional_fields):
                     for (key, rename) in additional_fields:
                         row_dict[rename] = job_log[key]
-            except KeyError as error:
+            except (KeyError, IndexError) as error:
                 ExceptionUtils.exception_info(
                     error, extra_message=f"MessageID params wrong defined. Skipping message_id {message_id}")
                 continue
 
-            row_dict['messageId'] = message_id
             # Issue 9, In case where all tag values duplicate another record, including the timestamp, Influx will throw the insert
             # out as a duplicate.  In some cases, the changing of epoch timestamps from millisecond to second precision is
             # cause duplicate timestamps.  To avoid this for certain tables, add seconds to the timestamp as needed to
