@@ -77,7 +77,7 @@ class JobMethods:
                  "TotalVMDKs": params[9],
                  "status": params[10]
              },
-             [("messageId")] # Additional Information from job-message itself
+             ["messageId"] # Additional Information from job-message itself
              ),
         'CTGGA0071':
             ('vmBackupSummary',
@@ -88,7 +88,7 @@ class JobMethods:
                  'throughputBytes/s': SppUtils.parse_unit(params[3]),
                  'queueTimeSec': SppUtils.parse_unit(params[4])
              },
-             [("messageId")]
+             ["messageId"]
              ),
         'CTGGA0072':
             ('vmReplicateSummary',
@@ -114,10 +114,10 @@ class JobMethods:
                 'imported365Users': int(params[0]),
             },
             [ # Additional Information from job-message itself, including rename
-                ("jobId"),
-                ("jobSessionId"),
-                ("jobName"),
-                ("jobExecutionTime") # used to instantly integrate with other stats
+                "jobId",
+                "jobSessionId",
+                "jobName",
+                "jobExecutionTime" # used to instantly integrate with other stats
             ]
             ),
         'CTGGA2444':
@@ -127,10 +127,10 @@ class JobMethods:
                  'selectedItems': int(params[0]),
              },
              [
-                ("jobId"),
-                ("jobSessionId"),
-                ("jobName"),
-                ("jobExecutionTime")  # used to instantly integrate with other stats
+                "jobId",
+                "jobSessionId",
+                "jobName",
+                "jobExecutionTime"  # used to instantly integrate with other stats
              ]
              ),
         'CTGGA2402':
@@ -149,9 +149,9 @@ class JobMethods:
                         }
                 ),
                 [
-                    ("jobId"),
-                    ("jobSessionId"),
-                    ("jobName")
+                    "jobId",
+                    "jobSessionId",
+                    "jobName"
                 ]
                 ),
     }
@@ -383,11 +383,16 @@ class JobMethods:
                     continue
                 # Saving additional fields from the job_log struct itself.
                 if(additional_fields):
-                    for (key, rename) in additional_fields:
-                        row_dict[rename] = job_log[key]
+                    for value in additional_fields:
+                        # with rename
+                        if(isinstance(value, Tuple)):
+                            row_dict[value[0]] = job_log[value[1]]
+                        else:
+                            # without rename
+                            row_dict[value] = job_log[value]
             except (KeyError, IndexError) as error:
                 ExceptionUtils.exception_info(
-                    error, extra_message=f"MessageID params wrong defined. Skipping message_id {message_id}")
+                    error, extra_message=f"MessageID params wrong defined. Skipping message_id {message_id} with content: {job_log}")
                 continue
 
             # Issue 9, In case where all tag values duplicate another record, including the timestamp, Influx will throw the insert
@@ -587,4 +592,4 @@ class JobMethods:
         # Insert data after everything is completed
         self.__influx_client.insert_dicts_to_buffer(table.name, insert_list)
 
-        LOGGER.info(">>> inserted a total of {} logs".format(logs_total_count))
+        LOGGER.info(">>> inserting a total of {} logs".format(logs_total_count))
