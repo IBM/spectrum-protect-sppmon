@@ -78,7 +78,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.13  (2021/02/07)"
+VERSION = "0.13.1  (2021/02/10)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
