@@ -240,6 +240,8 @@ class Table:
             fields = {}
         if(not tags):
             tags = []
+        if(not retention_policy):
+            retention_policy = next(filter(lambda rp: rp.default, database.retention_policies))
 
         self.__database: Database = database
         self.__fields: Dict[str, Datatype] = fields
@@ -265,7 +267,7 @@ class Table:
 
         None-Values and empty strings are ignored.
         If there are no fields declared, it will split by a default pattern.
-        Undeclared collums will be added with a "MISSING" postfix to the key.
+        Undeclared collums will produce a warning.
         This function uses the tag/field and timestamp definiton declared within this table.
 
         Arguments:

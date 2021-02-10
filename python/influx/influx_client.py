@@ -523,7 +523,14 @@ class InfluxClient:
                     retention_policy=table.retention_policy.name,
                     batch_size=self.__query_max_batch_size,
                     time_precision='s', protocol='line')
-            except (InfluxDBServerError, InfluxDBClientError, ConnectionError) as error: # type: ignore
+            except InfluxDBClientError as error: # type: ignore
+                match = re.match(r".*partial write:[\s\w]+=(\d+).*", error.content)
+                if(match and int(match.group(1)) < 10000):
+                    pass # ignore this case, its unavoidable and doesnt change anything
+                else:
+                    ExceptionUtils.exception_info(error=error, extra_message="Error when sending Insert Buffer") # type: ignore
+
+            except (InfluxDBServerError, ConnectionError) as error: # type: ignore
                 ExceptionUtils.exception_info(error=error, extra_message="Error when sending Insert Buffer") # type: ignore
             end_time = time.perf_counter()
 
