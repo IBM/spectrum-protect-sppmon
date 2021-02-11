@@ -74,11 +74,11 @@ class OtherMethods:
                     LOGGER.info(f">> No {type.name} client detected.")
 
                     if(type == SshTypes.SERVER):
-                        ExceptionUtils.error_message(">> Server is not declared as SSH-client. This one is required for process-statistics.")
+                        ExceptionUtils.error_message(">> Critical: Without Server as ssh client you wont have any process statistics available. These are a key part of SPPMon.")
                         ssh_working = False # No error, but still critical
 
-                    if(type == SshTypes.VSNAP , ssh_clients):
-                        LOGGER.info(">> WARNING: No vSnap-client detected. You may add vSnap's for additional storage information and alerts.")
+                    if(type == SshTypes.VSNAP):
+                        LOGGER.info(">> WARNING: Without vSnap as ssh client you have no access to storage information. You may add vSnap's for additional monitoring and alerts.")
                         no_warnings = False # ssh will still work, but thats definitly a warning
 
             ssh_methods: SshMethods = SshMethods(influx_client, config_file, False)
