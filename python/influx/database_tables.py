@@ -188,6 +188,8 @@ class Table:
         fields - dict of field name with datatype
         tags - tags as list of str
         time_key - key name of the timestamp field
+        retention_policy - retention policy associated with this table
+        database - table is declared within this database
 
     Methods
         split_by_table_def - Split the given dict into a pre-defined set of tags, fields and a timestamp.
@@ -238,6 +240,8 @@ class Table:
             fields = {}
         if(not tags):
             tags = []
+        if(not retention_policy):
+            retention_policy = next(filter(lambda rp: rp.default, database.retention_policies))
 
         self.__database: Database = database
         self.__fields: Dict[str, Datatype] = fields
@@ -263,7 +267,7 @@ class Table:
 
         None-Values and empty strings are ignored.
         If there are no fields declared, it will split by a default pattern.
-        Undeclared collums will be added with a "MISSING" postfix to the key.
+        Undeclared collums will produce a warning.
         This function uses the tag/field and timestamp definiton declared within this table.
 
         Arguments:

@@ -6,9 +6,10 @@ Classes:
 """
 import logging
 import json
+import re
 
 from pprint import pprint
-from typing import Callable, List, Tuple, Dict, Any, Union, Set
+from typing import Callable, List, Match, Tuple, Dict, Any, Union, Set
 from prettytable import PrettyTable
 from sppConnection.ssh_client import SshClient, SshCommand, SshTypes
 
@@ -59,7 +60,7 @@ class MethodUtils:
             return []
 
         ssh_cmd_response_list = []
-        result_list = []
+        result_list: List[Tuple[str, List[Dict[str, Any]]]] = []
         for client in client_list:
 
             if(cls.verbose):
@@ -88,7 +89,8 @@ class MethodUtils:
 
                 try:
                     table_result_tuple = ssh_command.parse_result(ssh_type=ssh_type)
-                    result_list.append(table_result_tuple)
+                    if(table_result_tuple):
+                        result_list.append(table_result_tuple)
                 except ValueError as error:
                     ExceptionUtils.exception_info(error=error, extra_message="Error when parsing result, skipping parsing of this result")
 
@@ -182,3 +184,20 @@ class MethodUtils:
             table.add_row(row_vals)
         table.align = "l"
         print(table, flush=True) # type: ignore
+
+    @staticmethod
+    def joblogs_parse_params(regex_str: str, parse_string: str, mapping_func: Callable[[Match[Any]], Dict[str, Any]]) -> Dict[str, Any]:
+        """Used to parse a string within a joblog to stat transition. Note: match[0] is full match, group 1 is match[1] in lambda.
+
+        Args:
+            regex_str (str): raw regex string used as pattern
+            parse_string (str): string to be matched
+            mapping_func (Callable[[Match[Any]], Dict[str, Any]]): lambda which takes a match object and returns a dict.
+
+        Returns:
+            Dict[str, Any]: [description]
+        """
+        match = re.match(regex_str, parse_string)
+        if(not match):
+            return {}
+        return mapping_func(match)

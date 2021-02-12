@@ -41,6 +41,15 @@ Author:
  08/25/2020 version 0.10.1 Fixes to Transfer Data, Parse Unit and Top-SSH-Command parsing
  09/01/2020 version 0.10.2 Parse_Unit fixes (JobLogs) and adjustments on timeout
  11/10/2020 version 0.10.3 Introduced --loadedSystem argument and moved --minimumLogs to depricated
+ 12/07/2020 version 0.10.4 Included SPP 10.1.6 addtional job information features and some bugfixes
+ 12/29/2020 version 0.10.5 Replaced ssh 'top' command by 'ps' command to bugfix truncating data
+ 01/22/2021 version 0.10.6 Removed `--processStats`, integrated in `--ssh` plus Server/vSnap `df` root recording
+ 01/22/2021 version 0.10.7 Replaced `transfer_data` by `copy_database` with improvements
+ 01/28/2021 version 0.11   Copy_database now also creates the database with RP's if missing.
+ 01/29/2021 version 0.12   Implemented --test function, also disabeling regular setup on certain args
+ 02/09/2021 version 0.12.1 Hotfix job statistic and --test now also checks for all commands individually
+ 02/07/2021 version 0.13   Implemented additional Office365 Joblog parsing
+ 02/10/2021 version 0.13.1 Fixes to partial send(influx), including influxdb version into stats
 
 """
 from __future__ import annotations
@@ -58,7 +67,6 @@ from typing import Any, Dict, List, NoReturn, Union
 from influx.influx_client import InfluxClient
 from sppConnection.api_queries import ApiQueries
 from sppConnection.rest_client import RestClient
-from sppConnection.ssh_client import SshClient
 from sppmonMethods.jobs import JobMethods
 from sppmonMethods.other import OtherMethods
 from sppmonMethods.protection import ProtectionMethods
@@ -70,7 +78,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.10.3  (2020/11/10)"
+VERSION = "0.13.1  (2021/02/10)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
@@ -80,9 +88,10 @@ parser = OptionParser(version=VERSION)
 parser.add_option("--cfg", dest="confFileJSON", help="required: specify the JSON configuration file")
 parser.add_option("--verbose", dest="verbose", action="store_true", help="print to stdout")
 parser.add_option("--debug", dest="debug", action="store_true", help="save debug messages")
+parser.add_option("--test", dest="test", action="store_true", help="tests connection to all components")
 
 parser.add_option("--constant", dest="constant", action="store_true",
-                  help="execute recommended constant functions: (ssh, processStats, cpu, sppCatalog)")
+                  help="execute recommended constant functions: (ssh, cpu, sppCatalog)")
 
 parser.add_option("--hourly", dest="hourly", action="store_true",
                   help="execute recommended hourly functions: (constant + jobs, vadps, storages)")
@@ -99,8 +108,6 @@ parser.add_option("--loadedSystem", dest="loadedSystem", action="store_true",
                   help="Special settings for loaded systems, reducing API-request loads")
 
 parser.add_option("--ssh", dest="ssh", action="store_true", help="execute monitoring commands via ssh")
-parser.add_option("--processStats", dest="processStats", action="store_true",
-                  help="monitor selected server processes via ssh")
 
 parser.add_option("--vms", dest="vms", action="store_true", help="store vm statistics (hyperV, vmWare)")
 parser.add_option("--vmStats", dest="vmStats", action="store_true", help="calculate vm statistic from catalog data")
@@ -113,18 +120,18 @@ parser.add_option("--sites", dest="sites", action="store_true", help="store site
 parser.add_option("--cpu", dest="cpu", action="store_true", help="capture SPP server CPU and RAM utilization")
 parser.add_option("--sppcatalog", dest="sppcatalog", action="store_true", help="capture Spp-Catalog Storage usage")
 
-##########################
-#TODO Remove minimum Logs on next version.
+#TODO Minimum Logs and processStats are depricated, to be removed in Version 1.1.
 parser.add_option("--minimumLogs", dest="minimumLogs", action="store_true",
-                  help="DEPRICATED, use '--loadedSystem' instead")
-parser.add_option("--transfer_data", dest="transfer_data", action="store_true",
-                  help="TEMPORARY FEATURE:transfer data into retention policies, BACKUP before doing so")
-parser.add_option("--old_database", dest="old_database",
-                  help="TEMPORARY FEATURE:transfer data of this db into the cfg-database")
+                  help="DEPRICATED, use '--loadedSystem' instead. To be removed in v1.1")
+parser.add_option("--processStats", dest="processStats", action="store_true",
+                  help="DEPRICATED, use '--ssh' instead")
+
+parser.add_option("--copy_database", dest="copy_database",
+                  help="Copy all data from .cfg database into a new database, specified by `copy_database=newName`. Delete old database with caution.")
 parser.add_option("--create_dashboard", dest="create_dashboard", action="store_true",
-                  help="Create a 14-day dashboard with alerts for the given spp-server. CFG and dashboard path required")
+                  help="Create a server unique dashboard with alerts. Option `--cfg` and `--dashboard_folder_path` required.")
 parser.add_option("--dashboard_folder_path", dest="dashboard_folder_path",
-                  help="Only in use with create_dashboard. Path to the folder of the \"SPPMON for IBM Spectrum Protect Plus\" dashboard")
+                  help="Used only with`--create_dashboard` option. Specifies changed folder-path of the template \"SPPMON for IBM Spectrum Protect Plus\" dashboard.")
 
 
 (OPTIONS, ARGS) = parser.parse_args()
@@ -142,11 +149,10 @@ class SppMon:
     """Main-File for the sppmon. Only general functions here and calls for sub-modules.
 
     Attributes:
-        job_log_retention_time - Configured spp log rentation time.
-        minimum_timeout - increased timeout on loaded systems.
-        minLogs_page_size - reduced pagesize on loaded systems.
-        minLogs_joblog_type - reduced types to be requested on loaded systems.
-        log_path - path to logger, set in set_logger.
+        log_path - path to logger, set in set_logger
+        pid_file_path - path to pid_file, set in check_pid_file
+        config_file
+        See below for full list
 
     Methods:
         set_logger - Sets global logger for stdout and file logging.
@@ -175,10 +181,13 @@ class SppMon:
 
     # Priority list for manual changes:
 
+    # Only if unable to connect at all:
+    # 1. Increase initial_connection_timeout
+
     # Small/Medium Spikes:
 
     # finetune `default` variables:
-    # 1. increase timeout while decreasing preferred send time
+    # 1. increase timeout while decreasing preferred send time (timeout disable: None)
     # 2. increase timeout reduction (0-0.99)
     # 3. decrease scaling factor (>1)
 
@@ -193,6 +202,8 @@ class SppMon:
     # 1. decrease allowed_send_delta (>=0)
     # 2. decrease starting pagesize (>1)
 
+    initial_connection_timeout: float = 6.05
+    """Time spend waiting for the initial connection, slightly larger than 3 multiple"""
 
     pref_send_time: int = 30
     """preferred query send time in seconds"""
@@ -209,9 +220,9 @@ class SppMon:
     loaded_allowed_send_delta: float = 0.1
     """delta of send allowed before adjustments are made to the pagesize in % on loaded systems"""
 
-    request_timeout: int = 60
+    request_timeout: int | None = 60
     """timeout for api-requests"""
-    loaded_request_timeout: int = 360
+    loaded_request_timeout: int | None = 360
     """timeout on loaded systems"""
 
     timeout_reduction: float = 0.7
@@ -246,13 +257,13 @@ class SppMon:
     """Configured spp log rentation time, logs get deleted after this time."""
 
     # set later in each method, here to avoid missing attribute
-    influx_client = None
-    rest_client = None
-    api_queries = None
-    system_methods = None
-    job_methods = None
-    hypervisor_methods = None
-    ssh_methods = None
+    influx_client: InfluxClient = None
+    rest_client: RestClient = None
+    api_queries: ApiQueries = None
+    system_methods: SystemMethods = None
+    job_methods: JobMethods = None
+    protection_methods: ProtectionMethods = None
+    ssh_methods: SshMethods = None
 
     def __init__(self):
         self.log_path: str = ""
@@ -262,6 +273,7 @@ class SppMon:
 
         self.set_logger()
 
+        LOGGER.info("Starting SPPMon")
         if(not self.check_pid_file()):
             ExceptionUtils.error_message("Another instance of sppmon with the same args is running")
             self.exit(ERROR_CODE_CMD_LINE)
@@ -282,14 +294,15 @@ class SppMon:
             ExceptionUtils.error_message("missing config file, aborting")
             self.exit(error_code=ERROR_CODE_CMD_LINE)
         try:
-            config_file = SppUtils.read_conf_file(config_file_path=OPTIONS.confFileJSON)
+            self.config_file = SppUtils.read_conf_file(config_file_path=OPTIONS.confFileJSON)
         except ValueError as error:
             ExceptionUtils.exception_info(error=error, extra_message="Syntax Error in Config file, unable to read")
             self.exit(error_code=ERROR_CODE_CMD_LINE)
 
+        LOGGER.info("Setting up configurations")
         self.setup_args()
-        self.set_critial_configs(config_file)
-        self.set_optional_configs(config_file)
+        self.set_critial_configs(self.config_file)
+        self.set_optional_configs(self.config_file)
 
     def set_logger(self) -> None:
         """Sets global logger for stdout and file logging.
@@ -328,7 +341,8 @@ class SppMon:
         logger.addHandler(stream_handler)
 
     def check_pid_file(self) -> bool:
-
+        if(OPTIONS.verbose):
+            LOGGER.info("Checking for other SPPMon instances")
         self.pid_file_path = SppUtils.filename_of_config(OPTIONS.confFileJSON, ".pid_file")
         try:
             try:
@@ -407,16 +421,13 @@ class SppMon:
             self.exit(error_code=ERROR_CODE_CMD_LINE)
         try:
             # critical components only
-
-            auth_influx = SppUtils.get_cfg_params(param_dict=config_file, param_name="influxDB")
-            if(not isinstance(auth_influx, dict)):
-                raise ValueError("influx config need to be dict")
-            self.influx_client = InfluxClient(auth_influx=auth_influx)
-            self.influx_client.connect()
+            self.influx_client = InfluxClient(config_file)
+            if(not self.ignore_setup):
+                self.influx_client.connect()
 
         except ValueError as err:
             ExceptionUtils.exception_info(error=err, extra_message="error while setting up critical config. Aborting")
-            self.influx_client = None # set none cause it does not work.
+            self.influx_client = None # set none, otherwise the variable is undeclared
             self.exit(error_code=ERROR_CODE)
 
     def set_optional_configs(self, config_file: Dict[str, Any]) -> None:
@@ -435,16 +446,6 @@ class SppMon:
 
         # ############################ REST-API #####################################
         try:
-            auth_rest = SppUtils.get_cfg_params(
-                param_dict=config_file,
-                param_name="sppServer")
-
-            if(not isinstance(auth_rest, dict)):
-                raise ValueError("sppServer config need to be dict")
-
-            self.job_log_retention_time = auth_rest.get("jobLog_rentation", "60d")
-
-
             ConnectionUtils.verbose = OPTIONS.verbose
             # ### Loaded Systems part 1/2 ### #
             if(OPTIONS.minimumLogs or OPTIONS.loadedSystem):
@@ -455,7 +456,8 @@ class SppMon:
 
                 # Setting RestClient request settings.
                 self.rest_client = RestClient(
-                    auth_rest=auth_rest,
+                    config_file=config_file,
+                    initial_connection_timeout=self.initial_connection_timeout,
                     pref_send_time=self.loaded_pref_send_time,
                     request_timeout=self.loaded_request_timeout,
                     send_retries=self.loaded_send_retries,
@@ -470,7 +472,8 @@ class SppMon:
 
                 # Setting RestClient request settings.
                 self.rest_client = RestClient(
-                    auth_rest=auth_rest,
+                    config_file=config_file,
+                    initial_connection_timeout=self.initial_connection_timeout,
                     pref_send_time=self.pref_send_time,
                     request_timeout=self.request_timeout,
                     send_retries=self.send_retries,
@@ -480,10 +483,12 @@ class SppMon:
                 )
 
             self.api_queries = ApiQueries(self.rest_client)
-            self.rest_client.login()
+            if(not self.ignore_setup):
+                self.rest_client.login()
 
         except ValueError as error:
             ExceptionUtils.exception_info(error=error, extra_message="REST-API is not available due Config error")
+            # Required to declare variable
             self.rest_client = None
             self.api_queries = None
 
@@ -501,6 +506,9 @@ class SppMon:
             given_log_types = self.joblog_types
 
         try:
+            auth_rest: Dict[str, Any] = SppUtils.get_cfg_params(param_dict=config_file, param_name="sppServer") # type: ignore
+            self.job_log_retention_time = auth_rest.get("jobLog_rentation", self.job_log_retention_time)
+
             self.job_methods = JobMethods(
                 self.influx_client, self.api_queries, self.job_log_retention_time,
                 given_log_types, OPTIONS.verbose)
@@ -509,44 +517,30 @@ class SppMon:
 
         try:
             # dependen on system methods
-            self.hypervisor_methods = ProtectionMethods(self.system_methods, self.influx_client, self.api_queries,
+            self.protection_methods = ProtectionMethods(self.system_methods, self.influx_client, self.api_queries,
                                                         OPTIONS.verbose)
         except ValueError as error:
             ExceptionUtils.exception_info(error=error)
 
         # ############################### SSH #####################################
-        if(self.ssh or self.process_stats):
+        if(self.ssh and not self.ignore_setup):
             try:
-
-                auth_ssh = SppUtils.get_cfg_params(
-                    param_dict=config_file,
-                    param_name="sshclients")
-
-                ssh_clients: List[SshClient] = []
-                if(not isinstance(auth_ssh, list)):
-                    raise ValueError("not a list of sshconfig given", auth_ssh)
-
-                for client_ssh in auth_ssh:
-                    try:
-                        ssh_clients.append(SshClient(client_ssh))
-                    except ValueError as error:
-                        ExceptionUtils.exception_info(
-                            error=error,
-                            extra_message=
-                            f"Setting up one client failed, skipping it. Client: \
-                            {client_ssh.get('name', 'ERROR WHEN GETTING NAME')}"
-                        )
-
                 # set from None to methods once finished
                 self.ssh_methods = SshMethods(
                     influx_client=self.influx_client,
-                    ssh_clients=ssh_clients,
+                    config_file=config_file,
                     verbose=OPTIONS.verbose)
 
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
                     extra_message="SSH-Commands are not available due Config error")
+                # Variable needs to be declared
+                self.ssh_methods = None
+        else:
+            # Variable needs to be declared
+            self.ssh_methods = None
+
 
     def setup_args(self) -> None:
         """This method set up all required parameters and transforms arg groups into individual args.
@@ -557,7 +551,23 @@ class SppMon:
 
         if(OPTIONS.minimumLogs):
             ExceptionUtils.error_message(
-                "DEPRICATED: using depricated argument '--minumumLogs'. Switch to '--loadedSystem'.")
+                "DEPRICATED: using depricated argument '--minumumLogs'. Use to '--loadedSystem' instead.")
+        if(OPTIONS.processStats):
+            ExceptionUtils.error_message(
+                "DEPRICATED: using depricated argument '--minumumLogs'. Use to '--ssh' instead.")
+
+        # ignore setup args
+        self.ignore_setup: bool = (
+            OPTIONS.create_dashboard or bool(OPTIONS.dashboard_folder_path) or
+            OPTIONS.test
+                                  )
+        if(self.ignore_setup):
+            ExceptionUtils.error_message("> WARNING: An option for a utility operation has been specified.  Bypassing normal SPPMON operation.")
+
+        if((OPTIONS.create_dashboard or bool(OPTIONS.dashboard_folder_path)) and not
+           (OPTIONS.create_dashboard and bool(OPTIONS.dashboard_folder_path))):
+           ExceptionUtils.error_message("> Using --create_dashboard without associated folder path. Aborting.")
+           self.exit(ERROR_CODE_CMD_LINE)
 
         # incremental setup, higher executes all below
         all_args: bool = OPTIONS.all
@@ -586,7 +596,6 @@ class SppMon:
         # ######## Constant Methods ############
 
         self.ssh: bool = OPTIONS.ssh or constant
-        self.process_stats: bool = OPTIONS.processStats or constant
         self.cpu: bool = OPTIONS.cpu or constant
         self.spp_catalog: bool = OPTIONS.sppcatalog or constant
 
@@ -603,6 +612,7 @@ class SppMon:
 
             # add version nr, api calls are needed
             insert_dict["sppmon_version"] = VERSION
+            insert_dict["influxdb_version"] = self.influx_client.version
             if(self.rest_client):
                 try:
                     (version_nr, build) = self.rest_client.get_spp_version_build()
@@ -673,12 +683,13 @@ class SppMon:
         LOGGER.debug("Script end time: %d", script_end_time)
 
         try:
-            self.store_script_metrics()
+            if(not self.ignore_setup):
+                self.store_script_metrics()
 
-            if(self.influx_client):
-                self.influx_client.disconnect()
-            if(self.rest_client):
-                self.rest_client.logout()
+                if(self.influx_client):
+                    self.influx_client.disconnect()
+                if(self.rest_client):
+                    self.rest_client.logout()
 
         except ValueError as error:
             ExceptionUtils.exception_info(error=error, extra_message="Error occured while exiting sppmon")
@@ -697,6 +708,8 @@ class SppMon:
         sys.exit(error_code)
 
     def main(self):
+
+        LOGGER.info("Starting argument execution")
 
         if(not self.influx_client):
             ExceptionUtils.error_message("somehow no influx client is present even after init")
@@ -763,59 +776,49 @@ class SppMon:
                     error=error,
                     extra_message="Top-level-error when excecuting ssh commands, skipping them all")
 
-        if(self.process_stats and self.ssh_methods):
-            # execute process stats for server
-            try:
-                self.ssh_methods.process_stats()
-                self.influx_client.flush_insert_buffer()
-            except ValueError as error:
-                ExceptionUtils.exception_info(
-                    error=error,
-                    extra_message="Top-level-error when excecuting ssh process statistic commands, skipping them all")
-
         # ################### HYPERVISOR METHODS #####################
-        if(self.vms and self.hypervisor_methods):
+        if(self.vms and self.protection_methods):
             try:
-                self.hypervisor_methods.store_vms()
+                self.protection_methods.store_vms()
                 self.influx_client.flush_insert_buffer()
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
                     extra_message="Top-level-error when requesting all VMs, skipping them all")
 
-        if(self.sla_stats and self.hypervisor_methods):
+        if(self.sla_stats and self.protection_methods):
             # number of VMs per SLA and sla dumps
             try:
-                self.hypervisor_methods.vms_per_sla()
-                self.hypervisor_methods.sla_dumps()
+                self.protection_methods.vms_per_sla()
+                self.protection_methods.sla_dumps()
                 self.influx_client.flush_insert_buffer()
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
                     extra_message="Top-level-error when requesting and computing VMs per sla, skipping them all")
 
-        if(self.vm_stats and self.hypervisor_methods):
+        if(self.vm_stats and self.protection_methods):
             # retrieve and calculate VM inventory summary
             try:
-                self.hypervisor_methods.create_inventory_summary()
+                self.protection_methods.create_inventory_summary()
                 self.influx_client.flush_insert_buffer()
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
                     extra_message="Top-level-error when creating inventory summary, skipping them all")
 
-        if(self.vadps and self.hypervisor_methods):
+        if(self.vadps and self.protection_methods):
             try:
-                self.hypervisor_methods.vadps()
+                self.protection_methods.vadps()
                 self.influx_client.flush_insert_buffer()
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
                     extra_message="Top-level-error when requesting vadps, skipping them all")
 
-        if(self.storages and self.hypervisor_methods):
+        if(self.storages and self.protection_methods):
             try:
-                self.hypervisor_methods.storages()
+                self.protection_methods.storages()
                 self.influx_client.flush_insert_buffer()
             except ValueError as error:
                 ExceptionUtils.exception_info(
@@ -824,28 +827,37 @@ class SppMon:
 
         # ###################### OTHER METHODS #######################
 
+        if(OPTIONS.copy_database):
+            try:
+                self.influx_client.copy_database(OPTIONS.copy_database)
+            except ValueError as error:
+                ExceptionUtils.exception_info(
+                    error=error,
+                    extra_message="Top-level-error when coping database.")
+
+        # ################### NON-SETUP-METHODS #######################
+
+        if(OPTIONS.test):
+            try:
+                OtherMethods.test_connection(self.influx_client, self.rest_client, self.config_file)
+            except ValueError as error:
+                ExceptionUtils.exception_info(
+                    error=error,
+                    extra_message="Top-level-error when testing connection.")
+
         if(OPTIONS.create_dashboard):
             try:
-                OtherMethods.create_dashboard(
-                    dashboard_folder_path=OPTIONS.dashboard_folder_path,
-                    database_name=self.influx_client.database.name)
+                if(not OPTIONS.dashboard_folder_path):
+                    ExceptionUtils.error_message(
+                        "Only use --create_dashboard in combination with --dashboard_folder_path=\"PATH/TO/GRAFANA/FOLDER/\"")
+                else:
+                    OtherMethods.create_dashboard(
+                        dashboard_folder_path=OPTIONS.dashboard_folder_path,
+                        database_name=self.influx_client.database.name)
             except ValueError as error:
                 ExceptionUtils.exception_info(
                     error=error,
-                    extra_message="Top-level-error when creating dashboards")
-
-        # ######################   DISCLAMER   #######################
-        # ###################  TEMPORARY FEATURE  ####################
-        # this part is deleted once all old versions of SPPMon have been migrated
-        # use at own caution
-        # ############################################################
-        if(OPTIONS.transfer_data):
-            try:
-                self.influx_client.transfer_data(OPTIONS.old_database)
-            except ValueError as error:
-                ExceptionUtils.exception_info(
-                    error=error,
-                    extra_message="Top-level-error when transfering data storages.")
+                    extra_message="Top-level-error when creating dashboard")
 
         self.exit()
 

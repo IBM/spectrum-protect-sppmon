@@ -45,8 +45,8 @@ class SppUtils:
     """name of the single timestamp capture to allow same naming within the db"""
 
     @staticmethod
-    def filename_of_config(conf_file: str, fileending: str) -> str:
-        """returns a filepath to the logdir out of the config file + a new fileending
+    def filename_of_config(conf_file_path: str, fileending: str) -> str:
+        """returns a filepath to the home / sppmonLogs out of the config file + a new fileending
 
         Args:
             conf_file (str): name of the configfile incl. path
@@ -55,11 +55,10 @@ class SppUtils:
         Returns:
             str: full path to the file
         """
-        if(conf_file):
-            cfg_file = conf_file
-
+        if(conf_file_path):
+            real_path = os.path.realpath(conf_file_path)
             # get everything behind the last slash
-            config_name = os.path.basename(cfg_file)
+            config_name = os.path.basename(real_path)
             # get name without fileending
             config_name = config_name.split('.')[-2]
 
@@ -217,15 +216,15 @@ class SppUtils:
         for key in key_list:
 
             # path is available -> go on
-            if(key in sub_dict):
+            if(sub_dict):
 
                 # sub_dict is now either another sub_dict or the result
-                sub_dict = sub_dict[key]
+                sub_dict = sub_dict.get(key, None)
 
             # path is wrong or not existent
             else:
                 # return wanted key and None
-                return key_list[-1], None
+                return (key_list[-1], None)
 
         # key is now lowest level with right value
         return (key_list[-1], sub_dict)
@@ -278,7 +277,7 @@ class SppUtils:
             delimiter: str = " ") -> Optional[Union[int, Number]]:
         """Parses a str or number into the lowest unit.
 
-        Specify a delimiter if used, default splitting by space.
+        Specify a delimiter if used, default splitting to a single space.
         Only specify `given unit` if the unit is not within the data itself.
         specify `unit_start_pos` if the unit is within data without delimiter.
         check dict `datatypes` for parseable units.

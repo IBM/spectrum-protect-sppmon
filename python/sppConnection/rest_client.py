@@ -3,6 +3,7 @@
 Classes:
     RestClient
 """
+from __future__ import annotations
 import logging
 import json
 from typing import Optional, Tuple, Dict, List, Any
@@ -41,19 +42,26 @@ class RestClient():
         'Content-type': 'application/json'}
     """Headers send to the REST-API. SessionId added after login."""
 
-    def __init__(self, auth_rest: Dict[str, Any],
+    def __init__(self, config_file: Dict[str, Any],
+                 initial_connection_timeout: float,
                  pref_send_time: int,
-                 request_timeout: int,
+                 request_timeout: int | None,
                  send_retries: int,
                  starting_page_size: int,
                  min_page_size: int,
                  verbose: bool):
 
-        if(not auth_rest):
-            raise ValueError("REST API parameters are not specified")
-        if(request_timeout is None):
-            raise ValueError("no timeout specified")
+        if(not config_file):
+            raise ValueError("A config file is required to setup the InfluxDB client.")
+
+        auth_rest = SppUtils.get_cfg_params(
+            param_dict=config_file,
+            param_name="sppServer")
+        if(not isinstance(auth_rest, dict)):
+            raise ValueError("The REST-API config is corrupted within the file: Needs to be a dictionary.")
+
         self.__timeout = request_timeout
+        self.__initial_connection_timeout = initial_connection_timeout
 
         self.__preferred_time = pref_send_time
         self.__page_size = starting_page_size
@@ -259,6 +267,7 @@ class RestClient():
 
         failed_trys: int = 0
         response_query: Optional[Response] = None
+        send_time: float = -1 # prevent unbound var
 
         while(response_query is None):
 
@@ -285,7 +294,8 @@ class RestClient():
             try:
                 start_time = time.perf_counter()
                 response_query = requests.get( # type: ignore
-                    url=url, headers=self.__headers, verify=False, timeout=self.__timeout)
+                    url=url, headers=self.__headers, verify=False,
+                    timeout=(self.__initial_connection_timeout, self.__timeout))
                 end_time = time.perf_counter()
                 send_time = (end_time - start_time)
 
@@ -321,7 +331,7 @@ class RestClient():
                     self.__page_size = self.__min_page_size
                     # repeat with minimal possible size
 
-                elif(self.__send_retries > failed_trys): # more then 1 try left
+                else: # (self.__send_retries > failed_trys): # more then 1 try left
                     LOGGER.debug(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesizefor url: {url}")
                     if(self.__verbose):
                         LOGGER.info(f"Timeout error when requesting, now on try {failed_trys} of {self.__send_retries}. Reducing pagesize for url: {url}")
@@ -384,10 +394,12 @@ class RestClient():
         try:
             if(post_data):
                 response_query: Response = requests.post( # type: ignore
-                    url, headers=self.__headers, data=post_data, verify=False, timeout=self.__timeout)
+                    url, headers=self.__headers, data=post_data, verify=False,
+                    timeout=(self.__initial_connection_timeout, self.__timeout))
             else:
                 response_query: Response = requests.post( # type: ignore
-                    url, headers=self.__headers, auth=auth, verify=False, timeout=self.__timeout)
+                    url, headers=self.__headers, auth=auth, verify=False,
+                    timeout=(self.__initial_connection_timeout, self.__timeout))
         except requests.exceptions.RequestException as error: # type: ignore
             ExceptionUtils.exception_info(error=error) # type: ignore
             raise ValueError("Error when sending REST-API post data", endpoint, post_data)

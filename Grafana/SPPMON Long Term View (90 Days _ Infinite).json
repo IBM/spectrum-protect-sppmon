@@ -17,8 +17,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 28,
-  "iteration": 1601761701374,
+  "id": 30,
+  "iteration": 1611415756956,
   "links": [],
   "panels": [
     {
@@ -53,7 +53,7 @@
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 8,
         "x": 0,
         "y": 1
@@ -76,8 +76,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -213,8 +216,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -311,7 +317,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 8,
         "x": 16,
         "y": 1
@@ -331,8 +337,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -443,7 +452,147 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "hiddenSeries": false,
+      "id": 98,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_ssh_type",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ssh_mpstat_cmd",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "%idle"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "min"
+              },
+              {
+                "params": [
+                  "*-1 + 100"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Highest CPU load by Component",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
         "w": 8,
         "x": 8,
         "y": 9
@@ -462,8 +611,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -577,143 +729,6 @@
     {
       "aliasColors": {},
       "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$SPP_Server",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 11
-      },
-      "hiddenSeries": false,
-      "id": 98,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$tag_ssh_type",
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "ssh_type"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "ssh_mpstat_cmd",
-          "orderByTime": "ASC",
-          "policy": "$rp",
-          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "%idle"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "min"
-              },
-              {
-                "params": [
-                  "*-1 + 100"
-                ],
-                "type": "math"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Highest CPU load by Component",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
@@ -728,10 +743,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 8,
         "x": 16,
-        "y": 11
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 128,
@@ -750,8 +765,11 @@
       "links": [],
       "maxDataPoints": 100,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -831,6 +849,146 @@
     {
       "aliasColors": {},
       "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 155,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_ssh_type",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ssh_free_cmd",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              },
+              {
+                "params": [
+                  " / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Highest RAM load by Component",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
@@ -845,10 +1003,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 8,
         "x": 8,
-        "y": 17
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 125,
@@ -867,8 +1025,11 @@
       "links": [],
       "maxDataPoints": 100,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1010,143 +1171,6 @@
     {
       "aliasColors": {},
       "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$SPP_Server",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 18
-      },
-      "hiddenSeries": false,
-      "id": 155,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$tag_ssh_type",
-          "groupBy": [
-            {
-              "params": [
-                "1d"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "ssh_type"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "ssh_free_cmd",
-          "orderByTime": "ASC",
-          "policy": "$rp",
-          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "used"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "max"
-              },
-              {
-                "params": [
-                  " / total"
-                ],
-                "type": "math"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Highest RAM load by Component",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
       "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
@@ -1161,10 +1185,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 8,
         "x": 16,
-        "y": 19
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 150,
@@ -1183,8 +1207,11 @@
       "links": [],
       "maxDataPoints": 100,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1279,7 +1306,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 23
       },
       "id": 112,
       "panels": [],
@@ -1316,7 +1343,7 @@
         "h": 9,
         "w": 14,
         "x": 0,
-        "y": 26
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 107,
@@ -1333,8 +1360,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -1557,7 +1587,8 @@
         "defaults": {
           "custom": {
             "align": null,
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "filterable": false
           },
           "mappings": [],
           "noValue": "Unknow Version",
@@ -1577,7 +1608,7 @@
         "h": 9,
         "w": 10,
         "x": 14,
-        "y": 26
+        "y": 24
       },
       "id": 154,
       "options": {
@@ -1590,7 +1621,7 @@
           }
         ]
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "",
@@ -1708,7 +1739,7 @@
         "h": 9,
         "w": 14,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "hiddenSeries": false,
       "id": 108,
@@ -1725,8 +1756,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -1970,7 +2004,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 42
       },
       "id": 89,
       "panels": [],
@@ -1997,7 +2031,7 @@
         "h": 14,
         "w": 13,
         "x": 0,
-        "y": 45
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 115,
@@ -2016,8 +2050,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2141,11 +2178,11 @@
         "h": 14,
         "w": 11,
         "x": 13,
-        "y": 45
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 46,
-      "interval": "5m",
+      "interval": "1d",
       "legend": {
         "alignAsTable": false,
         "avg": true,
@@ -2163,8 +2200,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2199,7 +2239,7 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "$rp",
-          "query": "SELECT * FROM (SELECT sum(\"%CPU\") FROM $rp.\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") GROUP BY  \"COMMAND\"  ",
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%CPU\") FROM \"$rp\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2251,7 +2291,7 @@
           "format": "percent",
           "label": "",
           "logBase": 1,
-          "max": "800",
+          "max": null,
           "min": "0",
           "show": true
         },
@@ -2289,7 +2329,7 @@
         "h": 15,
         "w": 7,
         "x": 0,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 52,
@@ -2307,8 +2347,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2427,7 +2470,7 @@
         "h": 15,
         "w": 6,
         "x": 7,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 50,
@@ -2443,8 +2486,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -2576,11 +2622,11 @@
         "h": 15,
         "w": 7,
         "x": 13,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 47,
-      "interval": "30m",
+      "interval": "1d",
       "legend": {
         "alignAsTable": false,
         "avg": true,
@@ -2596,8 +2642,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2632,7 +2681,7 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "$rp",
-          "query": "SELECT * FROM (SELECT sum(\"%MEM\") FROM \"$rp\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") GROUP BY \"COMMAND\" ",
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%MEM\") FROM \"$rp\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2724,7 +2773,7 @@
         "h": 15,
         "w": 4,
         "x": 20,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 63,
@@ -2746,8 +2795,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2782,7 +2834,7 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "$rp",
-          "query": "SELECT * FROM (SELECT sum(\"MEM_ABS\") FROM \"$rp\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") GROUP BY  \"COMMAND\"  ",
+          "query": "SELECT sum(*) FROM (SELECT mean(\"MEM_ABS\") FROM \"$rp\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -2864,9 +2916,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 10,
+        "w": 8,
         "x": 0,
-        "y": 74
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 82,
@@ -2883,8 +2935,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2967,6 +3022,7 @@
     {
       "aliasColors": {},
       "bars": false,
+      "cacheTimeout": null,
       "dashLength": 10,
       "dashes": false,
       "datasource": "$SPP_Server",
@@ -2980,9 +3036,168 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 10,
-        "x": 10,
-        "y": 74
+        "w": 7,
+        "x": 8,
+        "y": 72
+      },
+      "hiddenSeries": false,
+      "id": 167,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_ssh_type: $tag_hostName on \"$tag_Mounted\"",
+          "groupBy": [
+            {
+              "params": [
+                "$interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "hostName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "Mounted"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "df_ssh",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Use%"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "VSNAP"
+            },
+            {
+              "condition": "OR",
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "SERVER"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Storage Usage (Server & vSnap)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:6623",
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:6624",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 14,
+        "w": 9,
+        "x": 15,
+        "y": 72
       },
       "hiddenSeries": false,
       "id": 54,
@@ -2998,8 +3213,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3117,7 +3335,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 88
+        "y": 86
       },
       "id": 58,
       "panels": [],
@@ -3142,7 +3360,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 89
+        "y": 87
       },
       "hiddenSeries": false,
       "id": 16,
@@ -3161,8 +3379,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3266,7 +3487,7 @@
         "h": 12,
         "w": 6,
         "x": 12,
-        "y": 89
+        "y": 87
       },
       "hiddenSeries": false,
       "id": 19,
@@ -3282,8 +3503,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3385,7 +3609,7 @@
         "h": 12,
         "w": 6,
         "x": 18,
-        "y": 89
+        "y": 87
       },
       "hiddenSeries": false,
       "id": 18,
@@ -3401,8 +3625,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3504,7 +3731,7 @@
         "h": 12,
         "w": 6,
         "x": 0,
-        "y": 101
+        "y": 99
       },
       "hiddenSeries": false,
       "id": 87,
@@ -3520,8 +3747,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3630,7 +3860,7 @@
         "h": 12,
         "w": 6,
         "x": 6,
-        "y": 101
+        "y": 99
       },
       "hiddenSeries": false,
       "id": 66,
@@ -3646,8 +3876,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3768,7 +4001,7 @@
         "h": 12,
         "w": 6,
         "x": 12,
-        "y": 101
+        "y": 99
       },
       "hiddenSeries": false,
       "id": 68,
@@ -3784,8 +4017,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3887,7 +4123,7 @@
         "h": 12,
         "w": 6,
         "x": 18,
-        "y": 101
+        "y": 99
       },
       "hiddenSeries": false,
       "id": 67,
@@ -3903,8 +4139,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4019,7 +4258,7 @@
         "h": 12,
         "w": 6,
         "x": 0,
-        "y": 113
+        "y": 111
       },
       "hiddenSeries": false,
       "id": 133,
@@ -4035,8 +4274,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4144,7 +4386,776 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 125
+        "y": 123
+      },
+      "id": 158,
+      "panels": [],
+      "title": "Additional Job Statistics",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 124
+      },
+      "hiddenSeries": false,
+      "id": 160,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Success ratio by resource type",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 124
+      },
+      "hiddenSeries": false,
+      "id": 161,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:280",
+          "alias": "/ratio/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName total count",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        },
+        {
+          "alias": "$tag_jobName sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "VM Backup Statistics",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 132
+      },
+      "hiddenSeries": false,
+      "id": 166,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": false
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType total count",
+          "groupBy": [
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total count by resource type",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 140
+      },
+      "hiddenSeries": false,
+      "id": 164,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "1d"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 148
+      },
+      "hiddenSeries": false,
+      "id": 165,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": true,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "1w"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Failed Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:293",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:294",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 156
       },
       "id": 75,
       "panels": [],
@@ -4169,7 +5180,7 @@
         "h": 11,
         "w": 9,
         "x": 0,
-        "y": 126
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 4,
@@ -4185,8 +5196,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4320,7 +5334,7 @@
         "h": 11,
         "w": 7,
         "x": 9,
-        "y": 126
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 11,
@@ -4336,8 +5350,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4448,7 +5465,7 @@
         "h": 11,
         "w": 8,
         "x": 16,
-        "y": 126
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 6,
@@ -4465,8 +5482,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4563,7 +5583,7 @@
         "h": 10,
         "w": 9,
         "x": 0,
-        "y": 137
+        "y": 168
       },
       "hiddenSeries": false,
       "id": 12,
@@ -4579,8 +5599,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -4720,7 +5743,7 @@
         "h": 10,
         "w": 15,
         "x": 9,
-        "y": 137
+        "y": 168
       },
       "hiddenSeries": false,
       "id": 81,
@@ -4736,10 +5759,13 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 3,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -4982,7 +6008,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 147
+        "y": 178
       },
       "hiddenSeries": false,
       "id": 84,
@@ -4998,8 +6024,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5125,7 +6154,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 147
+        "y": 178
       },
       "hiddenSeries": false,
       "id": 86,
@@ -5141,8 +6170,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5288,7 +6320,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 147
+        "y": 178
       },
       "hiddenSeries": false,
       "id": 85,
@@ -5304,8 +6336,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5431,7 +6466,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 155
+        "y": 186
       },
       "hiddenSeries": false,
       "id": 104,
@@ -5447,8 +6482,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5574,7 +6612,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 155
+        "y": 186
       },
       "hiddenSeries": false,
       "id": 148,
@@ -5590,8 +6628,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5717,7 +6758,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 155
+        "y": 186
       },
       "hiddenSeries": false,
       "id": 149,
@@ -5733,8 +6774,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5833,7 +6877,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 163
+        "y": 194
       },
       "id": 70,
       "panels": [],
@@ -5858,7 +6902,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 164
+        "y": 195
       },
       "hiddenSeries": false,
       "id": 14,
@@ -5875,8 +6919,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -5886,13 +6933,25 @@
       "steppedLine": true,
       "targets": [
         {
-          "alias": "[[tag_name]]",
+          "alias": "$tag_siteName",
           "groupBy": [
             {
               "params": [
-                "name"
+                "$interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "siteName"
               ],
               "type": "tag"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
             }
           ],
           "measurement": "storages",
@@ -5907,6 +6966,10 @@
                   "pct_used"
                 ],
                 "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
               }
             ]
           ],
@@ -5917,7 +6980,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "vSnap storage space utilization",
+      "title": "Site Storage Used (by percent)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -5963,6 +7026,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$SPP_Server",
+      "description": "Selects mean of each unique storage, sums up to total per site",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -5975,7 +7039,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 164
+        "y": 195
       },
       "hiddenSeries": false,
       "id": 71,
@@ -5992,8 +7056,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -6003,7 +7070,7 @@
       "steppedLine": true,
       "targets": [
         {
-          "alias": "[[tag_name]]",
+          "alias": "$tag_siteName",
           "groupBy": [
             {
               "params": [
@@ -6016,6 +7083,8 @@
           "measurement": "storages",
           "orderByTime": "ASC",
           "policy": "$rp",
+          "query": "SELECT sum(used_mean) FROM (SELECT mean(\"used\") AS \"used_mean\" FROM \"$rp\".\"storages\" WHERE $timeFilter GROUP BY time($__interval), \"siteName\", \"storageId\") GROUP BY  time($__interval), \"siteName\" fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -6035,7 +7104,283 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "vSnap storage space utilization",
+      "title": "Site Storage Used (by capacity)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:20816",
+          "decimals": null,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:20817",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 2,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 203
+      },
+      "hiddenSeries": false,
+      "id": 162,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 1,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "$tag_hostAddress",
+          "groupBy": [
+            {
+              "params": [
+                "$interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "hostAddress"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "storages",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "pct_used"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "vSnap Storage Used (by percent)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:27857",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:27858",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 2,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$SPP_Server",
+      "description": "Selects mean of each unique storage, sums up to total per site",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 203
+      },
+      "hiddenSeries": false,
+      "id": 163,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 1,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "$tag_hostAddress",
+          "groupBy": [
+            {
+              "params": [
+                "$interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "hostAddress"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "storages",
+          "orderByTime": "ASC",
+          "policy": "$rp",
+          "query": "SELECT sum(used_mean) FROM (SELECT mean(\"used\") AS \"used_mean\" FROM \"$rp\".\"storages\" WHERE $timeFilter GROUP BY time($__interval), \"siteName\", \"storageId\") GROUP BY  time($__interval), \"siteName\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "vSnap Storage Used (by capacity)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -6095,7 +7440,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 172
+        "y": 211
       },
       "hiddenSeries": false,
       "id": 48,
@@ -6114,8 +7459,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6125,7 +7473,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_name",
+          "alias": "$tag_hostName",
           "groupBy": [
             {
               "params": [
@@ -6135,7 +7483,7 @@
             },
             {
               "params": [
-                "name"
+                "hostName"
               ],
               "type": "tag"
             },
@@ -6148,7 +7496,7 @@
           ],
           "measurement": "vsnap_system_stats",
           "orderByTime": "ASC",
-          "policy": "default",
+          "policy": "$rp",
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -6165,7 +7513,13 @@
               }
             ]
           ],
-          "tags": []
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "VSNAP"
+            }
+          ]
         }
       ],
       "thresholds": [],
@@ -6229,7 +7583,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 172
+        "y": 211
       },
       "hiddenSeries": false,
       "id": 92,
@@ -6245,8 +7599,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6430,7 +7787,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 180
+        "y": 219
       },
       "id": 77,
       "panels": [],
@@ -6455,7 +7812,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 181
+        "y": 220
       },
       "hiddenSeries": false,
       "id": 79,
@@ -6471,8 +7828,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6595,7 +7955,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 181
+        "y": 220
       },
       "hiddenSeries": false,
       "id": 156,
@@ -6611,8 +7971,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6729,7 +8092,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 189
+        "y": 228
       },
       "hiddenSeries": false,
       "id": 91,
@@ -6745,8 +8108,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6930,7 +8296,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 197
+        "y": 236
       },
       "id": 132,
       "panels": [],
@@ -6955,7 +8321,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 198
+        "y": 237
       },
       "hiddenSeries": false,
       "id": 134,
@@ -6971,8 +8337,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7156,7 +8525,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 206
+        "y": 245
       },
       "id": 65,
       "panels": [],
@@ -7187,7 +8556,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 207
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 41,
@@ -7203,8 +8572,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7555,7 +8927,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 216
+        "y": 255
       },
       "hiddenSeries": false,
       "id": 21,
@@ -7571,8 +8943,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7688,7 +9063,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 216
+        "y": 255
       },
       "hiddenSeries": false,
       "id": 23,
@@ -7704,8 +9079,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7822,7 +9200,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 216
+        "y": 255
       },
       "hiddenSeries": false,
       "id": 22,
@@ -7838,8 +9216,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7946,10 +9327,11 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "default",
           "value": "default"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Server to be shown",
@@ -7967,9 +9349,10 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "rp_inf",
-          "value": "rp_inf"
+          "text": "rp_days_90",
+          "value": "rp_days_90"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Time Range",
@@ -7977,12 +9360,12 @@
         "name": "rp",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "rp_days_90",
             "value": "rp_days_90"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "rp_inf",
             "value": "rp_inf"
           }
@@ -8011,5 +9394,5 @@
   "timezone": "",
   "title": "SPPMON Long Term View (90 Days / Infinite)",
   "uid": "8pQ8jDSGk",
-  "version": 2
+  "version": 9
 }

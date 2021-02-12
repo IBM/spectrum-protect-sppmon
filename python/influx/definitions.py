@@ -297,11 +297,16 @@ class Definitions:
                 'start':            Datatype.TIMESTAMP,
                 'end':              Datatype.TIMESTAMP,
                 'jobLogsCount':     Datatype.INT,
-                'id':               Datatype.INT
+                # due high numbers id is saved as field
+                'id':               Datatype.INT,
+                'numTasks':         Datatype.INT,
+                'percent':          Datatype.FLOAT
+                # count(id) -> "count": Int -> RP INF
             },
             tags=[  # TAGS
                 'jobId',
                 'status',
+                'indexStatus',
                 'jobName',
                 'subPolicyType',
                 'type',
@@ -311,7 +316,39 @@ class Definitions:
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
                 cls._CQ_DWSMPL([
-                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount"
+                    "mean(\"duration\") as \"duration\"", "sum(jobLogsCount) as jobLogsCount",
+                    "mean(numTasks) as numTasks", "mean(\"percent\") as \"percent\"",
+                    "count(id) as \"count\""
+                    ], cls._RP_INF(), "1w")
+            ]
+        )
+
+        cls.__add_predef_table(
+            name='jobs_statistics',
+            fields={
+                'total':            Datatype.INT,
+                'success':          Datatype.INT,
+                'failed':           Datatype.INT,
+                'skipped':          Datatype.INT,
+                'id':               Datatype.INT,
+                # count(id) -> "count": Int -> RP INF
+            },
+            tags=[
+                'resourceType',
+                'jobId',
+                'status',
+                'indexStatus',
+                'jobName',
+                'type',
+                'subPolicyType',
+            ],
+            time_key='start',
+            retention_policy=cls._RP_DAYS_90(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "mean(\"total\") as \"total\"", "mean(\"success\") as \"success\"",
+                    "mean(\"failed\") as \"failed\"", "mean(\"skipped\") as \"skipped\"",
+                    "count(id) as \"count\""
                     ], cls._RP_INF(), "1w")
             ]
         )
@@ -321,17 +358,18 @@ class Definitions:
             fields={  # FIELDS
                 # Due high numbers these ID's are saved as fields. Maybe remove ID's?
                 'jobLogId':         Datatype.STRING,
-                'jobsessionId':     Datatype.INT,
+                'jobSessionId':     Datatype.INT,
 
                 # default fields
                 'messageParams':    Datatype.STRING,
-                "message":          Datatype.STRING
+                "message":          Datatype.STRING,
+                'jobExecutionTime': Datatype.TIMESTAMP
             },
             tags=[  # TAGS
                 'type',
                 'messageId',
-                'jobSessionName',
-                'jobSessionId'
+                'jobName',
+                'jobId'
             ],
             time_key='logTime',
             retention_policy=cls._RP_HALF_YEAR(),
@@ -392,6 +430,7 @@ class Definitions:
             },
             tags=[
                 'sppmon_version',
+                'influxdb_version',
                 'spp_version',
                 'vms',
                 'spp_build',
@@ -419,7 +458,10 @@ class Definitions:
                 "old_database",
                 "create_dashboard",
                 "dashboard_folder_path",
-                "loadedSystem"
+                "loadedSystem",
+                "processStats",
+                "copy_database",
+                "test"
             ],
             retention_policy=cls._RP_DAYS_14(),
             continuous_queries=[
@@ -646,9 +688,7 @@ class Definitions:
                 'failed':                     Datatype.INT,
                 'duration':                   Datatype.INT
             },
-            tags=[
-                'messageId'
-            ],
+            tags=[], # None
             time_key='time',
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
@@ -668,9 +708,7 @@ class Definitions:
                 'throughputBytes/sec':      Datatype.INT,
                 'duration':                 Datatype.INT
             },
-            tags=[
-                'messageId'
-            ],
+            tags=[],# None
             time_key='time',
             retention_policy=cls._RP_DAYS_90(),
             continuous_queries=[
@@ -689,11 +727,11 @@ class Definitions:
             name='vadps',
             fields={
                 'state':            Datatype.STRING,
+                'vadpName':         Datatype.STRING,
+                'vadpId':           Datatype.INT,
+                'ipAddr':           Datatype.STRING,
             },
             tags=[
-                'vadpName',
-                'vadpId',
-                'ipAddr',
                 'siteId',
                 'siteName',
                 'version'
@@ -702,45 +740,39 @@ class Definitions:
             continuous_queries=[
                 # cls._CQ_TRNSF(cls._RP_DAYS_14())
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_14(),
                     group_time="1h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_DAYS_90(),
                     group_time="6h",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as enabled_count"],
+                    fields=["count(distinct(vadpId)) as enabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" =~ /ENABLED/)"
                 ),
                 cls._CQ_TMPL(
-                    fields=["count(state) as disabled_count"],
+                    fields=["count(distinct(vadpId)) as disabled_count"],
                     new_retention_policy=cls._RP_INF(),
                     group_time="1w",
-                    group_args=['siteId', 'siteName', 'version'],
                     where_str="(\"state\" !~ /ENABLED/)"
                 )
             ]
@@ -970,18 +1002,13 @@ class Definitions:
             fields={
                 '%CPU':                     Datatype.FLOAT,
                 '%MEM':                     Datatype.FLOAT,
-                'RES':                      Datatype.INT,
-                'SHR':                      Datatype.INT,
                 'TIME+':                    Datatype.INT,
                 'VIRT':                     Datatype.INT,
                 'MEM_ABS':                  Datatype.INT
             },
             tags=[
                 'COMMAND',
-                'NI',
                 'PID',
-                'PR',
-                'S',
                 'USER',
                 'hostName',
                 'ssh_type'
@@ -1137,12 +1164,12 @@ class Definitions:
             fields={
                 "Size":                     Datatype.INT,
                 "Used":                     Datatype.INT,
-                "Avail":                    Datatype.INT,
+                "Available":                Datatype.INT,
                 "Use%":                     Datatype.INT,
             },
             tags=[
                 "Filesystem",
-                "Mounted"
+                "Mounted",
                 "hostName",
                 "ssh_type"
             ],
@@ -1150,19 +1177,98 @@ class Definitions:
             continuous_queries=[
                 cls._CQ_DWSMPL([
                     "mean(\"Use%\") as \"Use%\"",
-                    "mean(Avail) as Avail",
+                    "mean(Available) as Available",
                     "mean(Used) as Used",
                     "mean(Size) as Size"
                     ], cls._RP_DAYS_90(), "6h"),
                 cls._CQ_DWSMPL([
                     "mean(\"Use%\") as \"Use%\"",
-                    "mean(Avail) as Avail",
+                    "mean(Available) as Available",
                     "mean(Used) as Used",
                     "mean(Size) as Size"
                     ], cls._RP_INF(), "1w")
             ]
             # capture time
+        ),
+
+        # ################# Other Tables ############################
+
+        cls.__add_predef_table(
+            name="office365Stats",
+            fields={
+                "protectedItems":           Datatype.INT,
+                "selectedItems":            Datatype.INT,
+                "imported365Users":         Datatype.INT
+            },
+            tags=[
+                "jobId",
+                'jobName',
+                'ssh_type',
+                "jobSessionId" # dropped in downsampling
+            ],
+            retention_policy=cls._RP_DAYS_14(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "sum(protectedItems) as sum_protectedItems",
+                    "sum(selectedItems) as sum_selectedItems",
+                    "sum(imported365Users) as sum_imported365Users"
+                    ], cls._RP_DAYS_90(), "6h",
+                    group_args=[
+                        "jobId",
+                        'jobName',
+                        'ssh_type',
+                    ]),
+                cls._CQ_DWSMPL([
+                    "sum(protectedItems) as sum_protectedItems",
+                    "sum(selectedItems) as sum_selectedItems",
+                    "sum(imported365Users) as sum_imported365Users"
+                    ], cls._RP_INF(), "1w",
+                    group_args=[
+                        "jobId",
+                        'jobName',
+                        'ssh_type',
+                    ]),
+            ],
+            time_key="jobExecutionTime"
+        ),
+        cls.__add_predef_table(
+            name="office365TransfBytes",
+            fields={
+                "itemName":                 Datatype.STRING,
+                "transferredBytes":         Datatype.INT
+            },
+            tags=[
+                'itemType',
+                'serverName',
+                "jobId",
+                'jobName',
+                "jobSessionId" # dropped in downsampling
+            ],
+            retention_policy=cls._RP_DAYS_14(),
+            continuous_queries=[
+                cls._CQ_DWSMPL([
+                    "sum(transferredBytes) as transferredBytes"
+                    ], cls._RP_DAYS_90(), "6h",
+                    group_args=[
+                        "itemType",
+                        "jobId",
+                        'jobName',
+                        'serverName',
+                    ]),
+                cls._CQ_DWSMPL([
+                    "sum(transferredBytes) as transferredBytes"
+                    ], cls._RP_INF(), "1w",
+                    group_args=[
+                        "itemType",
+                        "jobId",
+                        'jobName',
+                        'serverName',
+                    ]),
+            ]
+            # time key unset
         )
+
+
 
         # ################################################################################
         # ################### End of table definitions ###################################

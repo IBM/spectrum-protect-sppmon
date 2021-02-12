@@ -17,7 +17,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 47,
+  "id": 31,
   "links": [],
   "panels": [
     {
@@ -67,7 +67,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 5,
         "x": 0,
         "y": 1
@@ -86,7 +86,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [
@@ -159,7 +159,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 5,
         "x": 5,
         "y": 1
@@ -177,7 +177,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "",
@@ -221,7 +221,7 @@
     {
       "cacheTimeout": null,
       "datasource": null,
-      "description": "95% Percentille / last 24h of each component memory usage",
+      "description": "95% Percentille / last 24h of each component memory usage\nMax root storage usage  / last 24h of Server and vSnap",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -251,8 +251,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 4,
+        "h": 8,
+        "w": 5,
         "x": 10,
         "y": 1
       },
@@ -270,7 +270,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "$tag_name",
@@ -310,6 +310,61 @@
             ]
           ],
           "tags": []
+        },
+        {
+          "alias": "\"$tag_Mounted\" on $tag_ssh_type",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "Mounted"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "df_ssh",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Use%"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "SERVER"
+            },
+            {
+              "condition": "OR",
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "VSNAP"
+            }
+          ]
         }
       ],
       "timeFrom": null,
@@ -359,9 +414,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 10,
-        "x": 14,
+        "h": 8,
+        "w": 9,
+        "x": 15,
         "y": 1
       },
       "id": 136,
@@ -380,7 +435,7 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "$tag_jobName",
@@ -451,10 +506,10 @@
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 44,
@@ -474,8 +529,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -629,10 +687,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 4,
         "x": 8,
-        "y": 8
+        "y": 9
       },
       "id": 139,
       "options": {
@@ -649,7 +707,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [],
@@ -709,10 +767,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 4,
         "x": 12,
-        "y": 8
+        "y": 9
       },
       "id": 140,
       "options": {
@@ -729,7 +787,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [],
@@ -789,10 +847,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 4,
         "x": 16,
-        "y": 8
+        "y": 9
       },
       "id": 138,
       "options": {
@@ -809,7 +867,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [],
@@ -881,10 +939,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 4,
         "x": 20,
-        "y": 8
+        "y": 9
       },
       "id": 141,
       "options": {
@@ -901,7 +959,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [],
@@ -942,6 +1000,151 @@
     },
     {
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "noValue": "N/A",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 65
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 8,
+        "y": 12
+      },
+      "id": 98,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "alias": "$tag_ssh_type",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ssh_mpstat_cmd",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "%idle"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "min"
+              },
+              {
+                "params": [
+                  "*-1 + 100"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Highest CPU load by Component",
+      "type": "stat"
+    },
+    {
+      "dashboardFilter": "",
+      "dashboardTags": [],
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "folderId": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 12
+      },
+      "id": 93,
+      "limit": "100",
+      "nameFilter": "",
+      "onlyAlertsOnDashboard": true,
+      "repeatDirection": "h",
+      "show": "current",
+      "sortOrder": 3,
+      "stateFilter": [
+        "execution_error",
+        "alerting",
+        "pending"
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SPP Alerts",
+      "type": "alertlist"
+    },
+    {
+      "datasource": null,
       "description": "This panel shows how much the dela did increase, leaving out going down again.\nGood for noticing errors, even if they disappeared",
       "fieldConfig": {
         "defaults": {
@@ -967,9 +1170,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
+        "h": 7,
         "w": 4,
-        "x": 8,
+        "x": 16,
         "y": 12
       },
       "id": 142,
@@ -986,7 +1189,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": false
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "--constant",
@@ -1171,40 +1374,6 @@
       "type": "gauge"
     },
     {
-      "dashboardFilter": "",
-      "dashboardTags": [],
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "folderId": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 12,
-        "y": 12
-      },
-      "id": 93,
-      "limit": "100",
-      "nameFilter": "",
-      "onlyAlertsOnDashboard": true,
-      "repeatDirection": "h",
-      "show": "current",
-      "sortOrder": 3,
-      "stateFilter": [
-        "execution_error",
-        "alerting",
-        "pending"
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "SPP Alerts",
-      "type": "alertlist"
-    },
-    {
       "cacheTimeout": null,
       "datasource": null,
       "description": "",
@@ -1239,7 +1408,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 16,
+        "x": 20,
         "y": 12
       },
       "id": 128,
@@ -1260,7 +1429,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "Catalog Backup",
@@ -1292,93 +1461,6 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Catalog Backup Duration",
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "noValue": "N/A",
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 12
-      },
-      "id": 150,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.1.3",
-      "targets": [
-        {
-          "alias": "",
-          "groupBy": [
-            {
-              "params": [
-                "24h"
-              ],
-              "type": "time"
-            }
-          ],
-          "measurement": "jobs",
-          "orderByTime": "ASC",
-          "policy": "rp_days_90",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "jobLogsCount"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Job Logs Stored 24h",
       "type": "stat"
     },
     {
@@ -1433,7 +1515,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1541,7 +1623,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1598,120 +1680,9 @@
       "type": "bargauge"
     },
     {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "noValue": "N/A",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 65
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 16,
-        "y": 16
-      },
-      "id": 98,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.1.3",
-      "targets": [
-        {
-          "alias": "$tag_ssh_type",
-          "groupBy": [
-            {
-              "params": [
-                "24h"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "ssh_type"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "ssh_mpstat_cmd",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT max(\"%idle\") *-1 + 100 FROM \"ssh_mpstat_cmd\" WHERE $timeFilter GROUP BY time(10m), \"COMMAND\"",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "%idle"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "min"
-              },
-              {
-                "params": [
-                  "*-1 + 100"
-                ],
-                "type": "math"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Highest CPU load by Component",
-      "type": "stat"
-    },
-    {
       "cacheTimeout": null,
       "datasource": null,
-      "description": "Sum of replicated bytes within the last 24h\nSum of transferred bytes within the last 24h\n",
+      "description": "Sum of replicated bytes (VM) within the last 24h\nSum of transferred bytes (VM) within the last 24h\nSum of transferred bytes (Office365) within the last 24h\n",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1755,10 +1726,10 @@
         },
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
-          "alias": "Amount Replicated",
+          "alias": "VM Replicated",
           "groupBy": [
             {
               "params": [
@@ -1795,7 +1766,7 @@
           ]
         },
         {
-          "alias": "Amount Protected",
+          "alias": "VM Transferred",
           "groupBy": [
             {
               "params": [
@@ -1830,11 +1801,42 @@
               "value": "CTGGA2384"
             }
           ]
+        },
+        {
+          "alias": "Office Transferred",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            }
+          ],
+          "measurement": "office365TransfBytes",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "transferredBytes"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "VM Statistics (Last 24h)",
+      "title": "Additional Statistics (Last 24h)",
       "type": "stat"
     },
     {
@@ -1879,7 +1881,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [],
@@ -1948,6 +1950,93 @@
           }
         }
       ],
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "noValue": "N/A",
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 16,
+        "y": 19
+      },
+      "id": 150,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "alias": "",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "jobLogsCount"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Job Logs Stored 24h",
       "type": "stat"
     },
     {
@@ -2061,8 +2150,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2285,8 +2377,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2321,7 +2416,7 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT mean(*) FROM (SELECT sum(\"%CPU\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") GROUP BY time($interval), \"COMMAND\"  fill(none)",
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%CPU\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2472,8 +2567,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2667,8 +2765,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -2879,8 +2980,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -2915,8 +3019,8 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"%MEM\") FROM (SELECT sum(\"%MEM\") as \"%MEM\" FROM \"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time(1s), \"COMMAND\") WHERE time < 1596621600s GROUP BY time($__interval), COMMAND ",
-          "rawQuery": false,
+          "query": "SELECT sum(*) FROM (SELECT mean(\"%MEM\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -3037,8 +3141,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -3073,8 +3180,8 @@
           "measurement": "processStats",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
-          "query": "SELECT sum(mem) FROM (SELECT mean(\"MEM_ABS\") as mem FROM \"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($__interval), \"COMMAND\", \"PID\") GROUP BY time($__interval), \"COMMAND\" fill(none)",
-          "rawQuery": false,
+          "query": "SELECT sum(*) FROM (SELECT mean(\"MEM_ABS\") FROM \"rp_days_14\".\"processStats\" WHERE (\"ssh_type\" = 'SERVER') AND $timeFilter GROUP BY time($interval), \"COMMAND\", \"PID\" fill(none)) GROUP BY  \"COMMAND\", time($interval) FILL(none)",
+          "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
           "select": [
@@ -3190,7 +3297,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 9,
         "x": 0,
         "y": 42
       },
@@ -3209,8 +3316,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3315,6 +3425,212 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                80
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "Storage Usage (Server & vSnap) alert",
+        "noDataState": "no_data",
+        "notifications": []
+      },
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 10,
+        "w": 7,
+        "x": 9,
+        "y": 42
+      },
+      "hiddenSeries": false,
+      "id": 174,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_ssh_type: $tag_hostName on \"$tag_Mounted\"",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "ssh_type"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "hostName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "Mounted"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "df_ssh",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "Use%"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "SERVER"
+            },
+            {
+              "condition": "OR",
+              "key": "ssh_type",
+              "operator": "=",
+              "value": "VSNAP"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 80
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Storage Usage (Server & vSnap)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:316",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:317",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -3330,8 +3646,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 10,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 16,
         "y": 42
       },
       "hiddenSeries": false,
@@ -3348,8 +3664,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3543,8 +3862,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3715,8 +4037,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3906,8 +4231,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4085,8 +4413,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4264,8 +4595,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4443,8 +4777,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4640,8 +4977,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4831,8 +5171,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4966,6 +5309,1211 @@
         "x": 0,
         "y": 72
       },
+      "id": 162,
+      "panels": [],
+      "title": "Additional Job Statistics",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 73
+      },
+      "hiddenSeries": false,
+      "id": 172,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1307",
+          "alias": "/ratio/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SuccessRatio by resource type",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1238",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1239",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false,
+            "width": 120
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Times of Failure / 14 Days"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 233
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "jobName"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last Failed"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "jobId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 75
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 11,
+        "y": 73
+      },
+      "id": 170,
+      "options": {
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobId"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "query": "SELECT first(\"percent\") AS \"Last Percent\", first(\"numTasks\") AS \"Last numTasks\", first(\"duration\") AS \"Last Duration\", count(\"duration\") AS \"Times of Failure / 14 Days\" FROM \"rp_days_90\".\"jobs\" WHERE (\"status\" != 'COMPLETED') AND $timeFilter GROUP BY \"status\", \"jobName\", \"jobId\"",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "start"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "*1000"
+                ],
+                "type": "math"
+              },
+              {
+                "params": [
+                  "Last Failed"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "numTasks"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last numTasks"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last Percent"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              },
+              {
+                "params": [
+                  "Last Duration"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              },
+              {
+                "params": [
+                  "Times of Failure / 14 Days"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Unsuccessful jobs overview",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "jobId",
+                "jobName",
+                "status",
+                "Last Failed",
+                "Last numTasks",
+                "Last Percent",
+                "Last Duration",
+                "Times of Failure / 14 Days",
+                "Percent",
+                "numTasks",
+                "Duration"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 81
+      },
+      "hiddenSeries": false,
+      "id": 171,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_resourceType total count",
+          "groupBy": [
+            {
+              "params": [
+                "12h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "resourceType"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "previous"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "!=",
+              "value": "database"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total count by ResourceType",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1238",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        },
+        {
+          "$$hashKey": "object:1239",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "jobName"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 11,
+        "y": 81
+      },
+      "id": 168,
+      "options": {
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.3.3",
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobId"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "DESC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "percent"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Percent"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "num"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "numTasks"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "duration"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "Duration"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "List of unsucessfull jobs",
+      "transformations": [],
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 89
+      },
+      "hiddenSeries": false,
+      "id": 167,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:350",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:351",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 11,
+        "y": 89
+      },
+      "hiddenSeries": false,
+      "id": 169,
+      "legend": {
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName $tag_status Count",
+          "groupBy": [
+            {
+              "params": [
+                "24h"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "status"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "jobs",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "count"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "status",
+              "operator": "!=",
+              "value": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Failed Jobs status overview",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:350",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:351",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 97
+      },
+      "hiddenSeries": false,
+      "id": 165,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1307",
+          "alias": "/ratio/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName total count",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "hide": false,
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        },
+        {
+          "alias": "$tag_jobName sucess ratio",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "jobs_statistics",
+          "orderByTime": "ASC",
+          "policy": "rp_days_90",
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "success"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "*100 / total"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "resourceType",
+              "operator": "=",
+              "value": "vm"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "VM Backup Statistics",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1238",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1239",
+          "decimals": 0,
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 105
+      },
       "id": 75,
       "panels": [],
       "title": "VMware & Hyper-V Statistics",
@@ -4989,7 +6537,7 @@
         "h": 8,
         "w": 9,
         "x": 0,
-        "y": 73
+        "y": 106
       },
       "hiddenSeries": false,
       "id": 4,
@@ -5005,8 +6553,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5159,7 +6710,7 @@
         "h": 8,
         "w": 7,
         "x": 9,
-        "y": 73
+        "y": 106
       },
       "hiddenSeries": false,
       "id": 11,
@@ -5175,8 +6726,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5286,7 +6840,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 73
+        "y": 106
       },
       "hiddenSeries": false,
       "id": 12,
@@ -5302,8 +6856,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -5614,7 +7171,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 81
+        "y": 114
       },
       "hiddenSeries": false,
       "id": 81,
@@ -5630,10 +7187,13 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 4,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -5683,6 +7243,7 @@
               "type": "fill"
             }
           ],
+          "hide": false,
           "measurement": "vmBackupSummary",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
@@ -5700,7 +7261,7 @@
               },
               {
                 "params": [],
-                "type": "count"
+                "type": "sum"
               },
               {
                 "params": [
@@ -5810,6 +7371,7 @@
               "type": "fill"
             }
           ],
+          "hide": false,
           "measurement": "vmBackupSummary",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
@@ -5914,7 +7476,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 81
+        "y": 114
       },
       "id": 6,
       "links": [],
@@ -6005,7 +7567,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 89
+        "y": 122
       },
       "hiddenSeries": false,
       "id": 160,
@@ -6021,8 +7583,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6192,7 +7757,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 96
+        "y": 129
       },
       "hiddenSeries": false,
       "id": 84,
@@ -6208,8 +7773,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6341,7 +7909,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 96
+        "y": 129
       },
       "hiddenSeries": false,
       "id": 86,
@@ -6357,8 +7925,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6504,7 +8075,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 96
+        "y": 129
       },
       "hiddenSeries": false,
       "id": 85,
@@ -6520,8 +8091,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6653,7 +8227,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 103
+        "y": 136
       },
       "hiddenSeries": false,
       "id": 104,
@@ -6669,8 +8243,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6796,7 +8373,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 103
+        "y": 136
       },
       "hiddenSeries": false,
       "id": 148,
@@ -6812,8 +8389,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6939,7 +8519,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 103
+        "y": 136
       },
       "hiddenSeries": false,
       "id": 149,
@@ -6955,8 +8535,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7071,7 +8654,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 110
+        "y": 143
       },
       "id": 70,
       "panels": [],
@@ -7097,7 +8680,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 111
+        "y": 144
       },
       "hiddenSeries": false,
       "id": 158,
@@ -7114,8 +8697,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7218,7 +8804,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "description": "",
+      "description": "Selects mean of each unique storage, sums up to total per site",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -7231,7 +8817,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 111
+        "y": 144
       },
       "hiddenSeries": false,
       "id": 71,
@@ -7248,8 +8834,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7275,6 +8864,12 @@
             },
             {
               "params": [
+                "storageId"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "previous"
               ],
               "type": "fill"
@@ -7284,6 +8879,8 @@
           "measurement": "storages",
           "orderByTime": "ASC",
           "policy": "rp_days_14",
+          "query": "SELECT sum(used_mean) FROM (SELECT mean(\"used\") AS \"used_mean\" FROM \"rp_days_14\".\"storages\" WHERE $timeFilter GROUP BY time($__interval), \"siteName\", \"storageId\") GROUP BY  time($__interval), \"siteName\" fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -7297,6 +8894,12 @@
               {
                 "params": [],
                 "type": "mean"
+              },
+              {
+                "params": [
+                  "used_mean"
+                ],
+                "type": "alias"
               }
             ]
           ],
@@ -7313,6 +8916,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -7354,7 +8958,7 @@
           {
             "evaluator": {
               "params": [
-                90
+                65
               ],
               "type": "gt"
             },
@@ -7400,7 +9004,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 118
+        "y": 151
       },
       "hiddenSeries": false,
       "id": 14,
@@ -7417,8 +9021,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7473,13 +9080,11 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:930",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 90,
-          "yaxis": "left"
+          "value": 65
         }
       ],
       "timeFrom": null,
@@ -7543,7 +9148,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 118
+        "y": 151
       },
       "hiddenSeries": false,
       "id": 159,
@@ -7560,8 +9165,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -7679,7 +9287,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 125
+        "y": 158
       },
       "hiddenSeries": false,
       "id": 48,
@@ -7698,8 +9306,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7871,7 +9482,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 125
+        "y": 158
       },
       "hiddenSeries": false,
       "id": 92,
@@ -7887,8 +9498,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8074,7 +9688,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 163
       },
       "id": 77,
       "panels": [],
@@ -8086,7 +9700,8 @@
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": null
+            "align": null,
+            "filterable": false
           },
           "mappings": [],
           "thresholds": {
@@ -8122,7 +9737,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 131
+        "y": 164
       },
       "id": 79,
       "options": {
@@ -8134,7 +9749,7 @@
           }
         ]
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [
@@ -8224,7 +9839,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 131
+        "y": 164
       },
       "hiddenSeries": false,
       "id": 157,
@@ -8240,8 +9855,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8431,7 +10049,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 139
+        "y": 172
       },
       "hiddenSeries": false,
       "id": 91,
@@ -8447,8 +10065,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8634,7 +10255,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 147
+        "y": 180
       },
       "id": 132,
       "panels": [],
@@ -8717,7 +10338,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 148
+        "y": 181
       },
       "hiddenSeries": false,
       "id": 134,
@@ -8733,8 +10354,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8920,13 +10544,538 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 181
+      },
+      "hiddenSeries": false,
+      "id": 177,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "Selected Items of $tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "selectedItems"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Protected Items of $tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "protectedItems"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Count Protected / Selected Items",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 189
+      },
+      "hiddenSeries": false,
+      "id": 175,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "imported365Users"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Imported Users by Job",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 189
+      },
+      "hiddenSeries": false,
+      "id": 176,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_jobName",
+          "groupBy": [
+            {
+              "params": [
+                "jobName"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365Stats",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "protectedItems"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [
+                  "/ selectedItems"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Protected Item Sucess Ratio",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 197
+      },
+      "hiddenSeries": false,
+      "id": 178,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_itemType",
+          "groupBy": [
+            {
+              "params": [
+                "itemType"
+              ],
+              "type": "tag"
+            }
+          ],
+          "measurement": "office365TransfBytes",
+          "orderByTime": "ASC",
+          "policy": "rp_days_14",
+          "query": "SELECT mean(\"%idle\") *-1+100 FROM \"ssh_mpstat_cmd\" WHERE (\"ssh_type\" = 'VADP') AND $timeFilter GROUP BY time($__interval), \"hostName\", \"host\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "transferredBytes"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Office365 Transferred Bytes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:524",
+          "decimals": 0,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:525",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 156
+        "y": 205
       },
       "id": 112,
       "panels": [],
@@ -8967,7 +11116,7 @@
         "h": 16,
         "w": 5,
         "x": 0,
-        "y": 157
+        "y": 206
       },
       "id": 109,
       "interval": "24h",
@@ -8982,7 +11131,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "panelId": 108,
@@ -9025,7 +11174,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 157
+        "y": 206
       },
       "hiddenSeries": false,
       "id": 107,
@@ -9042,8 +11191,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -9275,7 +11427,7 @@
         "h": 16,
         "w": 5,
         "x": 14,
-        "y": 157
+        "y": 206
       },
       "id": 62,
       "limit": "100",
@@ -9312,7 +11464,7 @@
         "h": 16,
         "w": 5,
         "x": 19,
-        "y": 157
+        "y": 206
       },
       "id": 147,
       "limit": "100",
@@ -9491,7 +11643,7 @@
         "h": 8,
         "w": 9,
         "x": 5,
-        "y": 165
+        "y": 214
       },
       "hiddenSeries": false,
       "id": 108,
@@ -9508,8 +11660,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -9820,7 +11975,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 173
+        "y": 222
       },
       "id": 143,
       "options": {
@@ -9936,7 +12091,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 173
+        "y": 222
       },
       "id": 145,
       "options": {
@@ -10052,7 +12207,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 173
+        "y": 222
       },
       "id": 146,
       "options": {
@@ -10106,135 +12261,9 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "build.Version"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "InfluxDB version"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "runtime.version"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Go runtime version"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "system.started"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "InfluxDB start time"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 13,
-        "x": 0,
-        "y": 181
-      },
-      "id": 153,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "/.*/",
-          "values": true
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.1.3",
-      "targets": [
-        {
-          "groupBy": [],
-          "measurement": "sppmon_metrics",
-          "orderByTime": "ASC",
-          "policy": "rp_days_14",
-          "query": "show diagnostics",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "version"
-                ],
-                "type": "field"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "duration"
-                ],
-                "type": "field"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "InfluxDB version",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "build.Version",
-                "runtime.version",
-                "system.started"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
           "custom": {
-            "align": "center"
+            "align": "center",
+            "filterable": false
           },
           "mappings": [],
           "noValue": "Unknown",
@@ -10252,15 +12281,15 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 11,
-        "x": 13,
-        "y": 181
+        "w": 24,
+        "x": 0,
+        "y": 230
       },
       "id": 154,
       "options": {
         "showHeader": true
       },
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "targets": [
         {
           "groupBy": [
@@ -10279,6 +12308,12 @@
             {
               "params": [
                 "sppmon_version"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "influxdb_version"
               ],
               "type": "tag"
             }
@@ -10317,7 +12352,8 @@
                 "Time",
                 "spp_build",
                 "spp_version",
-                "sppmon_version"
+                "sppmon_version",
+                "influxdb_version"
               ]
             }
           }
@@ -10333,8 +12369,9 @@
             },
             "renameByName": {
               "Time": "Last used time",
-              "spp_build": "SPP Build",
-              "spp_version": "SPP Version",
+              "influxdb_version": "InfluxDB version",
+              "spp_build": "SPP build",
+              "spp_version": "SPP version",
               "sppmon_version": "SPPMon version"
             }
           }
@@ -10349,7 +12386,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 187
+        "y": 236
       },
       "id": 65,
       "panels": [],
@@ -10484,7 +12521,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 188
+        "y": 237
       },
       "hiddenSeries": false,
       "id": 41,
@@ -10500,8 +12537,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10775,7 +12815,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 197
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 21,
@@ -10791,8 +12831,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10906,7 +12949,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 197
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 23,
@@ -10922,8 +12965,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -11038,7 +13084,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 197
+        "y": 246
       },
       "hiddenSeries": false,
       "id": 22,
@@ -11054,8 +13100,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.3",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -11161,7 +13210,7 @@
   },
   "time": {
     "from": "now-14d",
-    "to": "now-5m"
+    "to": "now"
   },
   "timepicker": {
     "nowDelay": "",
@@ -11178,5 +13227,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 4
+  "version": 45
 }

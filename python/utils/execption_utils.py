@@ -28,7 +28,7 @@ class ExceptionUtils:
 
     @classmethod
     def error_message(cls, message: str):
-        """Prints and saves a error message without raising anything.
+        """Prints and saves a error message without aborting.
 
         Arguments:
             message {str} -- message to be displayed and saved.
@@ -49,11 +49,6 @@ class ExceptionUtils:
         Keyword Arguments:
             extra_message {str} -- Extra message to be saved and displayed (default: {None})
         """
-        if(extra_message):
-            #LOGGER.info(extra_message)
-            LOGGER.error(extra_message)
-            cls.stored_errors.append(extra_message)
-
         error_type, error_2, trace_back = sys.exc_info()
         if(trace_back):
             file_name = os.path.split(trace_back.tb_frame.f_code.co_filename)[1]
@@ -71,3 +66,8 @@ class ExceptionUtils:
         LOGGER.error(f"Exception Message: {error.args[0]}")
         if(error.args[1:]):
             LOGGER.error(f"Exception args: {error.args[1:]}")
+
+        if(extra_message):
+            #LOGGER.info(extra_message)
+            LOGGER.error(extra_message)
+            cls.stored_errors.append(extra_message)

@@ -7,7 +7,7 @@ Classes:
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from influx.influx_client import InfluxClient
 from sppConnection.ssh_client import SshClient, SshCommand, SshTypes
@@ -24,21 +24,39 @@ class SshMethods:
     Split into parse methods and execute methods. All parse methods are reusable for each type of server.
     Those parse functions need a special signature to be automatically executed in the `SshCommand`s.
 
+    Attributes:
+        all_command_list
+        client_commands
+
     Methods:
         process_stats
         ssh
+        setup_ssh_clients
 
     """
 
-    def __init__(self, influx_client: Optional[InfluxClient], ssh_clients: List[SshClient], verbose: bool = False):
-        if(not ssh_clients):
-            raise ValueError("No ssh-clients are present. Skipping SSH-Methods creation")
+    @property
+    def all_command_list(self) -> List[SshCommand]:
+        """Commands to be executed on every ssh-client"""
+        return self.__all_command_list
+
+    @property
+    def client_commands(self) -> Dict[SshTypes, List[SshCommand]]:
+        """Mapping of ssh commands to be executed on the mapped type"""
+        return self.__client_commands
+
+    def __init__(self, influx_client: InfluxClient, config_file: Dict[str, Any], verbose: bool = False):
+        if(not config_file):
+            raise ValueError("Require config file to setup ssh clients")
         if(not influx_client):
             raise ValueError("need InfluxClient to send data to DB")
 
         self.__influx_client = influx_client
-        self.__ssh_clients = ssh_clients
         self.__verbose = verbose
+
+        self.__ssh_clients = self.setup_ssh_clients(config_file)
+        if(not self.__ssh_clients):
+            raise ValueError("No ssh-clients are present. Skipping SSH-Methods creation")
 
         # ################################################################################################
         # ################################### SSH COMMAND LIST GROUPS ####################################
@@ -71,6 +89,19 @@ class SshMethods:
             # SEVER
             SshTypes.SERVER: [
                 # added later due function, check below
+
+                SshCommand(
+                    command='df -h / --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
+                SshCommand(
+                    command='df -h /opt/IBM/SPP --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
+                ## df -h /
+                ## df -h /opt/IBM/SPP
             ],
 
             # VSnap
@@ -84,7 +115,14 @@ class SshMethods:
                     command='sudo vsnap --json system stats',
                     parse_function=SshMethods._parse_system_stats_cmd,
                     table_name="vsnap_system_stats"
-                )
+                ),
+                SshCommand(
+                    command='df -h / --block-size=G',
+                    parse_function=SshMethods._parse_df_cmd,
+                    table_name="df_ssh"
+                ),
+                ##  zpool list
+                ##  df -h /
             ],
 
             # VADP
@@ -100,7 +138,7 @@ class SshMethods:
             # OTHER
             SshTypes.OTHER: [
                 SshCommand(
-                    command="df -h -P",
+                    command="df -h --block-size=G",
                     parse_function=SshMethods._parse_df_cmd,
                     table_name="df_ssh"
                 )
@@ -110,19 +148,40 @@ class SshMethods:
         # ################ MULTI COMMAND ADD ##########################
 
         # SERVER
-
         # add server later due multiple processes
-        top_grep_list = ["mongod", "beam.smp", "java"] # be aware this is double declared below
-        for grep_name in top_grep_list:
+        self.__ps_grep_list = ["mongod", "beam.smp", "java"] # be aware this is double declared below
+        for grep_name in self.__ps_grep_list:
             self.__client_commands[SshTypes.SERVER].append(
                 SshCommand(
-                    command=f"top -b -n1 -p $(pgrep -d',' -f {grep_name})",
-                    parse_function=SshMethods._parse_top_cmd,
+                    command=f"ps -o \"%cpu,%mem,comm,rss,vsz,user,pid,etimes\" -p $(pgrep -d',' -f {grep_name}) S -ww",
+                    parse_function=self._parse_ps_cmd,
                     table_name="processStats"
                 )
             )
 
         # ################ END OF SSH COMMAND LIST GROUPS ############################
+
+    @staticmethod
+    def setup_ssh_clients(config_file: Dict[str, Any]) -> List[SshClient]:
+        auth_ssh = SppUtils.get_cfg_params(
+            param_dict=config_file,
+            param_name="sshclients")
+
+        if(not isinstance(auth_ssh, list)):
+            raise ValueError("not a list of sshconfig given", auth_ssh)
+
+        ssh_clients: List[SshClient] = []
+        for client_ssh in auth_ssh:
+            try:
+                ssh_clients.append(SshClient(client_ssh))
+            except ValueError as error:
+                ExceptionUtils.exception_info(
+                    error=error,
+                    extra_message=
+                    f"Setting up one ssh-client failed, skipping it. Client: \
+                    {client_ssh.get('name', 'ERROR WHEN GETTING NAME')}"
+                )
+        return ssh_clients
 
     def __exec_save_commands(self, ssh_type: SshTypes, command_list: List[SshCommand]) -> None:
         """Helper method, executes and saves all commands via ssh for all clients of the given type.
@@ -148,24 +207,10 @@ class SshMethods:
                 list_with_dicts=insert_list
             )
 
-    def process_stats(self) -> None:
-        """Executes all server-process stats related functionality."""
-        try:
-            LOGGER.info(f"> executing process_stats ssh commands")
-            self.__exec_save_commands(
-                ssh_type=SshTypes.SERVER,
-                command_list=self.__client_commands[SshTypes.SERVER] + self.__all_command_list
-            )
-        except ValueError as error:
-            ExceptionUtils.exception_info(
-                error=error, extra_message="Top-level-error when process_stats ssh commands, skipping them all")
-
     def ssh(self) -> None:
         """Executes all ssh related functionality for each type of client each."""
         LOGGER.info(f"> executing ssh commands for each sshclient-type individually.")
         for ssh_type in SshTypes:
-            if(ssh_type is SshTypes.SERVER):
-                continue # skip due the method process_stats, already collected there
             try:
                 LOGGER.info(f">> executing ssh commands, which are labled to be executed for {ssh_type.value} ssh clients")
                 self.__exec_save_commands(
@@ -176,9 +221,8 @@ class SshMethods:
                 ExceptionUtils.exception_info(
                     error=error, extra_message=f"Top-level-error when excecuting {ssh_type.value} ssh commands, skipping them all")
 
-    @staticmethod
-    def _parse_top_cmd(ssh_command: SshCommand, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
-        """Parses the result of the `top` command, splitting it into its parts.
+    def _parse_ps_cmd(self, ssh_command: SshCommand, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
+        """Parses the result of the `df` command, splitting it into its parts.
 
         Arguments:
             ssh_command {SshCommand} -- command with saved result
@@ -195,23 +239,15 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
-
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
         result_lines = ssh_command.result.splitlines()
-
-        header = result_lines[6].split()
+        header = result_lines[0].split()
         values: List[Dict[str, Any]] = list(
-            map(lambda row: dict(zip(header, row.split())), result_lines[7:])) # type: ignore
-
-        ram_line = result_lines[3].split()
-        total_mem = SppUtils.parse_unit(
-            data=ram_line[3],
-            given_unit="KiB"
-        )
-
-        time_pattern = re.compile(r"(\d+):(\d{2})(?:\.(\d{2}))?")
+            map(lambda row: dict(zip(header, row.split())), result_lines[1:])) # type: ignore
 
         # remove top statistic itself to avoid spam with useless information
-        values = list(filter(lambda row: row["COMMAND"] in ["mongod", "beam.smp", "java"], values))
+        values = list(filter(lambda row: row["COMMAND"] in self.__ps_grep_list, values))
 
         for row in values:
             # set default needed fields
@@ -220,23 +256,10 @@ class SshMethods:
             (time_key, time_value) = SppUtils.get_capture_timestamp_sec()
             row[time_key] = time_value
 
-            # split time into seconds
-            match = re.match(time_pattern, row['TIME+'])
-            if(match):
-                time_list = match.groups()
-                (hours, minutes, seconds) = time_list
-                if(seconds is None):
-                    seconds = 0
-                time = int(hours)*pow(60, 2) + int(minutes)*pow(60, 1) + int(seconds)*pow(60, 0)
-            else:
-                time = None
-            row['TIME+'] = time
+            row['TIME+'] = row.pop('ELAPSED')
 
-            row['MEM_ABS'] = int((float(row['%MEM']) * total_mem) / 100 )
-
-            row['SHR'] = SppUtils.parse_unit(row['SHR'])
-            row['RES'] = SppUtils.parse_unit(row['RES'])
-            row['VIRT'] = SppUtils.parse_unit(row['VIRT'])
+            row['MEM_ABS'] = SppUtils.parse_unit(row.pop("RSS"),"kib")
+            row['VIRT'] = SppUtils.parse_unit(row.pop('VSZ'), "kib")
 
         return (ssh_command.table_name, values)
 
@@ -259,6 +282,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pool_result_list: List[Dict[str, Any]] = []
 
@@ -341,6 +366,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         try:
             insert_dict: Dict[str, Any] = json.loads(ssh_command.result)
@@ -377,6 +404,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
@@ -387,8 +416,12 @@ class SshMethods:
             map(lambda row: dict(zip(header, row.split())), result_lines[1:])) # type: ignore
 
         for row in values:
+            if("1G-blocks" in row):
+                row["Size"] = row.pop("1G-blocks")
             row["Size"] = SppUtils.parse_unit(row['Size'])
-            row["Avail"] = SppUtils.parse_unit(row['Avail'])
+            if("Avail" in row):
+                row["Available"] = row.pop("Avail")
+            row["Available"] = SppUtils.parse_unit(row['Available'])
             row["Used"] = SppUtils.parse_unit(row['Used'])
             row["Use%"] = row["Use%"][:-1]
 
@@ -419,6 +452,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         pattern = re.compile(r"(.*)\s+\((.*)\)\s+(\d{2}\/\d{2}\/\d{4})\s+(\S*)\s+\((\d+)\sCPU\)")
 
@@ -477,6 +512,8 @@ class SshMethods:
             raise ValueError("no command given or empty result")
         if(not ssh_type):
             raise ValueError("no sshtype given")
+        if(not ssh_command.table_name):
+            raise ValueError("need table name to insert parsed value")
 
         result_lines = ssh_command.result.splitlines()
         header = result_lines[0].split()
@@ -497,7 +534,7 @@ class SshMethods:
 
             # recalculate values to be more usefull
             if('available' in row):
-                row['free'] = int(row.pop('available')) + int(row['free'])
+                row['free'] = int(row.pop('available'))
                 row['used'] = int(row['total']) - int(row['free'])
 
         return (ssh_command.table_name, values)

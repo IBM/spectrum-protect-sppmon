@@ -52,7 +52,7 @@ class SshCommand:
         return self.__cmd
 
     @property
-    def table_name(self) -> str:
+    def table_name(self) -> Optional[str]:
         """name of table the result should be saved in"""
         return self.__table_name
 
@@ -75,7 +75,7 @@ class SshCommand:
         self.__result: Optional[str] = result
         self.__host_name: Optional[str] = host_name
 
-    def parse_result(self, ssh_type: SshTypes) -> Tuple[str, List[Dict[str, Any]]]:
+    def parse_result(self, ssh_type: SshTypes) -> Optional[Tuple[str, List[Dict[str, Any]]]]:
         """Use the function saved within this query to parse the result once existent.
 
         Arguments:
@@ -84,7 +84,10 @@ class SshCommand:
         Returns:
             Tuple[str, List[Dict[Any, Any]]] -- [description]
         """
-        return self.__parse_function(self, ssh_type)
+        if(self.__parse_function):
+            return self.__parse_function(self, ssh_type)
+        else:
+            return None
 
     def save_result(self, result: Optional[str], host_name: str) -> SshCommand:
         """Creates a new SshCommand with optional hostname and result saved.
@@ -150,7 +153,7 @@ class SshClient:
         self.__client_ssh = paramiko.SSHClient() # type: ignore
         self.__client_ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy()) # type: ignore
 
-    def __connect(self) -> None:
+    def connect(self) -> None:
         """Connects to the client via ssh.
 
         Raises:
@@ -174,7 +177,7 @@ class SshClient:
             ExceptionUtils.exception_info(error=error)
             raise ValueError("ssh-login failed due socket error", self.client_name)
 
-    def __disconnect(self) -> None:
+    def disconnect(self) -> None:
         """disconnects from the remote"""
         self.__client_ssh.close()
 
@@ -201,7 +204,7 @@ class SshClient:
             LOGGER.info(f"> connecting to {self.client_type.name} client on host {self.host_name}")
 
 
-        self.__connect()
+        self.connect()
 
         LOGGER.debug("> connection successfull")
         if(verbose):
@@ -226,7 +229,7 @@ class SshClient:
                 new_command = ssh_command.save_result(result=None, host_name=self.host_name)
             new_command_list.append(new_command)
 
-        self.__disconnect()
+        self.disconnect()
 
         return new_command_list
 
@@ -254,7 +257,7 @@ class SshClient:
         LOGGER.debug(f">> excecuting command:   {ssh_command}")
 
         try:
-            (ssh_stdin, ssh_stdout, ssh_stderr) = self.__client_ssh.exec_command(ssh_command) # type: ignore
+            (_, ssh_stdout, _) = self.__client_ssh.exec_command(ssh_command) # type: ignore
 
             response_cmd = ssh_stdout.read() # type: ignore
 
