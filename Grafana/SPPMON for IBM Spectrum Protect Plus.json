@@ -1757,13 +1757,7 @@
               }
             ]
           ],
-          "tags": [
-            {
-              "key": "messageId",
-              "operator": "=",
-              "value": "CTGGA0398"
-            }
-          ]
+          "tags": []
         },
         {
           "alias": "VM Transferred",
@@ -7687,13 +7681,7 @@
               }
             ]
           ],
-          "tags": [
-            {
-              "key": "messageId",
-              "operator": "=",
-              "value": "CTGGA0398"
-            }
-          ]
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -13227,5 +13215,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 45
+  "version": 46
 }
