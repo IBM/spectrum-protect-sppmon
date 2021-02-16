@@ -18,7 +18,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 28,
-  "iteration": 1612976448549,
+  "iteration": 1613395804356,
   "links": [],
   "panels": [
     {
@@ -1996,13 +1996,7 @@
               }
             ]
           ],
-          "tags": [
-            {
-              "key": "messageId",
-              "operator": "=",
-              "value": "CTGGA0398"
-            }
-          ]
+          "tags": []
         },
         {
           "alias": "VM Backuped",
@@ -2316,5 +2310,5 @@
   "timezone": "",
   "title": "Multiple Server Overview",
   "uid": "GtH9VNSMz",
-  "version": 13
+  "version": 15
 }
