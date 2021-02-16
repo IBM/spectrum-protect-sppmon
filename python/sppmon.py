@@ -2,11 +2,14 @@
 (C) IBM Corporation 2020
 
 Description:
+ Monitoring and long-term reporting for IBM Spectrum Protect Plus. 
+ Provides a data bridge from SPP to InfluxDB and provides visualization dashboards via Grafana. 
+
  This program provides functions to query IBM Spectrum Protect Plus Servers,
- VSNAP and VADP servers #  via REST API and ssh
+ VSNAP, VADP and other servers via REST API and ssh. This data is stored into a InfluxDB database.
 
 Repository:
-  https://github.ibm.com/ESCC/sppmon
+  https://github.com/IBM/spectrum-protect-sppmon
 
 Author:
  Daniel Wendler
