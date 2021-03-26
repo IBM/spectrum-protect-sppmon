@@ -1,0 +1,2 @@
+- removed influxdb user "sppmonInfluxUser" from wiki
+- made influxdb username "GrafanaReader" mandatory

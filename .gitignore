@@ -1,4 +1,4 @@
-﻿/.vs
+/.vs
 /python/.vs/python/v16
 /python/python.pyproj
 /python/python.sln
@@ -7,3 +7,4 @@
 config_files/*.conf
 !config_files/sppconnections_default.conf
 Grafana/customer_dashboards/*
+install_script/.savefile.txt
