@@ -7,4 +7,5 @@
 config_files/*.conf
 !config_files/sppconnections_default.conf
 Grafana/customer_dashboards/*
-install_script/.savefile.txt
+scripts/installScript/.savefile.txt
+scripts/installScript/.passwords.txt
