@@ -10,7 +10,7 @@ setupRequirements() {
     echo "https://github.com/IBM/spectrum-protect-sppmon/wiki/System-requirements"
 
     echo ""
-    echo "> Checking yum"
+    echo "> Checking yum install"
     if ! [ -x "$(command -v yum)" ]
         then
             echo "ERROR: yum is not available. Please make sure it is installed!"
@@ -18,6 +18,7 @@ setupRequirements() {
         else
             echo "> Yum installed."
     fi
+
     echo "> Logging System information"
     echo -e "-------------------------------System Information----------------------------"
     echo -e "Hostname:\t\t"`hostname`
@@ -39,6 +40,11 @@ setupRequirements() {
     yum updateinfo summary | grep 'Security|Bugfix|Enhancement'
     echo ""
     echo "> finished logging."
+
+    if confirm "Do you want to check and install updates now? (Recommended)"); then
+        yum upgrade
+    fi
+
 }
 
 # Start if not used as source
