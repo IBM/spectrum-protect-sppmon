@@ -53,6 +53,7 @@ Author:
  02/09/2021 version 0.12.1 Hotfix job statistic and --test now also checks for all commands individually
  02/07/2021 version 0.13   Implemented additional Office365 Joblog parsing
  02/10/2021 version 0.13.1 Fixes to partial send(influx), including influxdb version into stats
+ 03/29/2021 version 0.13.2 Fixes to typing, reducing error messages and tracking code for NaN bug
 
 """
 from __future__ import annotations
@@ -81,7 +82,7 @@ from utils.methods_utils import MethodUtils
 from utils.spp_utils import SppUtils
 
 # Version:
-VERSION = "0.13.1  (2021/02/10)"
+VERSION = "0.13.2  (2021/03/29)"
 
 # ----------------------------------------------------------------------------
 # command line parameter parsing
