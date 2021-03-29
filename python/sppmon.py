@@ -2,8 +2,8 @@
 (C) IBM Corporation 2020
 
 Description:
- Monitoring and long-term reporting for IBM Spectrum Protect Plus. 
- Provides a data bridge from SPP to InfluxDB and provides visualization dashboards via Grafana. 
+ Monitoring and long-term reporting for IBM Spectrum Protect Plus.
+ Provides a data bridge from SPP to InfluxDB and provides visualization dashboards via Grafana.
 
  This program provides functions to query IBM Spectrum Protect Plus Servers,
  VSNAP, VADP and other servers via REST API and ssh. This data is stored into a InfluxDB database.
@@ -637,8 +637,9 @@ class SppMon:
             if(error_count > 0):
                 ExceptionUtils.error_message(f"total of {error_count} exception/s occured")
             insert_dict['errorCount'] = error_count
-            # save list as str
-            insert_dict['errorMessages'] = str(ExceptionUtils.stored_errors)
+            # save list as str if not empty
+            if(ExceptionUtils.stored_errors):
+                insert_dict['errorMessages'] = str(ExceptionUtils.stored_errors)
 
             # get end timestamp
             (time_key, time_val) = SppUtils.get_capture_timestamp_sec()
