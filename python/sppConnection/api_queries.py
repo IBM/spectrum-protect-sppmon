@@ -257,6 +257,10 @@ class ApiQueries:
         LOGGER.debug("retrieving actual SPP server CPU and RAM usage")
         endpoint = "/ngp/metrics"
         metrics = self.__rest_client.get_objects(endpoint=endpoint, add_time_stamp=True)
+        # TODO This is a error-catching code. REMOVE ONCE BUG is found!
+        result_dict = metrics[0]
+        if(result_dict["cpuUtil"] == "NaN" or result_dict["memory.util"] =="NaN"):
+            ExceptionUtils.error_message(f"CRITICAL: REPORT TO DEVELOPER! cpuUtil or memoryUtil is NaN. API-response: {result_dict}")
         return metrics
 
     def get_file_system(self) -> List[Dict[str, Any]]:
