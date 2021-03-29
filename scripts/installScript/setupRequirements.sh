@@ -37,7 +37,8 @@ setupRequirements() {
     df -Ph
     echo -e "-------------------------------Package Updates-------------------------------"
     yum updateinfo summary | grep 'Security|Bugfix|Enhancement'
-    rowLimiter
+    echo ""
+    echo "> finished logging."
 }
 
 # Start if not used as source
