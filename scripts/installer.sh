@@ -95,11 +95,11 @@ restoreState() {
                     echo "Continuing from last saved point"
                 else # restart
                     echo "restarting install process"
-                    continue_point='WELCOME'
+                    continue_point='0_WELCOME'
                 echo "$continue_point" > "$saveFile"
             fi
         else # First execution
-            continue_point='WELCOME'
+            continue_point='0_WELCOME'
             echo "$continue_point" > "$saveFile"
     fi
 }
@@ -132,7 +132,7 @@ main(){
     readAuth
 
     # Part zero: Welcome
-    if [[ $continue_point == "WELCOME" ]]
+    if [[ $continue_point == "0_WELCOME" ]]
         then
             source "${subScripts}/welcome.sh" "$mainPath"
             # Savepoint and explanation inside of `welcome`
@@ -142,31 +142,59 @@ main(){
     sudoCheck
 
     # Part 1: System Setup (incomplete?)
-    if [[ $continue_point == "SYS_SETUP" ]]
+    if [[ $continue_point == "1_SYS_SETUP" ]]
         then
             source "${subScripts}/setupRequirements.sh" "$mainPath"
             saveState 'INFLUX_SETUP' 'InfluxDB installation and setup' # next point
     fi
 
     # Part 2: InfluxDB installation and setup
-    if [[ $continue_point == "INFLUX_SETUP" ]]
+    if [[ $continue_point == "2_INFLUX_SETUP" ]]
         then
             source "${subScripts}/influxSetup.sh" "$mainPath"
-            saveState 'GRAFANA_SETUP' 'Grafana installation'
+            saveState '3_GRAFANA_SETUP' 'Grafana installation'
     fi
 
     # Part 3: Grafana installation
-    if [[ $continue_point == "GRAFANA_SETUP" ]]
+    if [[ $continue_point == "3_GRAFANA_SETUP" ]]
         then
             source "${subScripts}/grafanaSetup.sh" "$mainPath"
-            saveState 'PYTHON_SETUP' 'Python3 installation and packages'
+            saveState '4_PYTHON_SETUP' 'Python3 installation and packages'
     fi
 
     # Part 4: Python installation and packages
-    if [[ $continue_point == "PYTHON_SETUP" ]]
+    if [[ $continue_point == "4_PYTHON_SETUP" ]]
         then
             source "${subScripts}/pythonSetup.sh" "$mainPath"
-            saveState 'USER_MANGEMENT' 'User creation for SPP, vSnap and others'
+            saveState '5_USER_MANGEMENT' 'User creation for SPP, vSnap and others'
+    fi
+
+    # Part 5: User management for SPP server and components
+    if [[ $continue_point == "5_USER_MANGEMENT" ]]
+        then
+            source "${subScripts}/userManagement.sh" "$mainPath"
+            saveState '6_CONFIG_FILE' 'creation of the monitoring file for each SPP-Server'
+    fi
+
+    # Part 6: User management for SPP server and components
+    if [[ $continue_point == "6_CONFIG_FILE" ]]
+        then
+            source "${subScripts}/configFileSetup.sh" "$mainPath"
+            saveState '7_CRONTAB' 'Crontab configuration for automatic execution'
+    fi
+
+    # Part 7: User management for SPP server and components
+    if [[ $continue_point == "7_CRONTAB" ]]
+        then
+            source "${subScripts}/configFileSetup.sh" "$mainPath"
+            saveState '8_GRAFANA_DASHBOARDS' 'Creation and configuration of the grafana dashboards'
+    fi
+
+    # Part 8: Grafana dashboards
+    if [[ $continue_point == "8_GRAFANA_DASHBOARDS" ]]
+        then
+            source "${subScripts}/configFileSetup.sh" "$mainPath"
+            saveState '9_FINISHED' 'Creation and configuration of the grafana dashboards' #TODO
     fi
 
 }
