@@ -266,7 +266,7 @@ class InfluxClient:
             ExceptionUtils.exception_info(error=error) # type: ignore
             raise ValueError("Continuous Query check failed")
 
-    def copy_database(self, new_database_name: str = None) -> None:
+    def copy_database(self, new_database_name: str) -> None:
         if(not new_database_name):
             raise ValueError("copy_database requires a new database name to copy to.")
 

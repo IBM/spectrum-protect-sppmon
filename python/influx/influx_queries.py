@@ -57,7 +57,7 @@ class InsertQuery:
         return self.__table
 
     def __init__(self, table: Structures.Table, fields: Dict[str, Any], tags: Dict[str, Any] = None,
-                 time_stamp: Union[int, str] = None):
+                 time_stamp: Union[int, str, None] = None):
         if(not table):
             raise ValueError("need table to create query")
         if(not fields):
@@ -88,7 +88,7 @@ class InsertQuery:
             if(not list(filter(lambda field_tup: field_tup[1] is not None, fields.items()))):
                 raise ValueError("fields after formatting empty, need at least one value!")
 
-        self.__fields: Dict[str, Union[int, float, str, bool]] = fields
+        self.__fields: Dict[str, Union[float, str, bool]] = fields
         self.__tags: Dict[str, str] = self.format_tags(tags)
 
     def __str__(self) -> str:
@@ -121,7 +121,7 @@ class InsertQuery:
 
         return f'{self.table.name}{tag_str} {fields_str} {time_stamp_str}'
 
-    def format_fields(self, fields: Dict[str, Any]) -> Dict[str, Union[int, float, str]]:
+    def format_fields(self, fields: Dict[str, Any]) -> Dict[str, Union[bool, float, str]]:
         """Formats fields accordingly to the requirements of the influxdb.
 
         Cast and transforms all values to the required datatype, declared in the given table.
@@ -134,16 +134,13 @@ class InsertQuery:
         Returns:
             Dict[str, Union[int, float, str]] -- Dict with field name as key and data as value
         """
-        ret_dict: Dict[str, Union[int, float, str]] = {}
+        ret_dict: Dict[str, Union[float, str, bool]] = {}
         for(key, value) in fields.items():
-            if(value is None or (isinstance(value, str) and not value)):
+            if(value is None or value == ""):
                 continue
 
-            # Get Colum Datatype
-            datatype = self.table.fields.get(key, None)
-            # If nothing is defined select it automatic
-            if(datatype is None):
-                datatype = Structures.Datatype.get_auto_datatype(value)
+            # Get Colum Datatype; if nothing is defined select it automatic
+            datatype = self.table.fields.get(key, Structures.Datatype.get_auto_datatype(value))
 
             # Escape not allowed chars in Key
             key = InfluxUtils.escape_chars(value=key, replace_list=self.__bad_name_characters)
