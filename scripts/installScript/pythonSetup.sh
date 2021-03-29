@@ -3,35 +3,14 @@
 pythonSetup() {
 
     rowLimiter
-    echo "Setup and installation of Python"
+    echo "Installation of Python and packages"
 
-    echo "> configuring yum repository"
-    sudo tee /etc/yum.repos.d/grafana.repo<<EOF
-[grafana]
-name=grafana
-baseurl=https://packages.grafana.com/oss/rpm
-repo_gpgcheck=1
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.grafana.com/gpg.key
-sslverify=1
-sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-EOF
+    echo "> Verifying the installed python version"
+    python_old_path=$(which python)
+    python_old_version=$(python -V 2>&1)
 
-    echo "> Installing Grafana"
-    checkReturn sudo yum install grafana
 
-    echo "> Starting Grafana service"
-    checkReturn sudo systemctl enable --now grafana-server
-
-    echo "> Verify Grafana service"
-    checkReturn sudo systemctl status grafana-server
-
-    echo "> Firewall configuration"
-    checkReturn sudo firewall-cmd --add-port=3000/tcp --permanent
-    checkReturn sudo firewall-cmd --reload
-
-    echo "Finished Grafana Setup"
+    echo "Finished Python installation Setup"
 
 }
 
