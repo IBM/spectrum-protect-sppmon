@@ -5,6 +5,27 @@ configFileSetup() {
     rowLimiter
     echo "Creating and configuring the config files"
 
+    if ! (confirm "Do you want to add a server config now?") then;
+        echo "Continuing with the next Step. Finished config file setup"
+        return 0
+    else
+        local nextServer=true
+    fi
+
+    local config_dir="$(dirname ${1})"
+    config_dir="${config_dir}/../config_files"
+    echo "> All configurations files are written into ${config_dir}"
+
+    while ${nextServer}; do
+        echo "> Adding a new config file"
+        echo "> Gathering server informations"
+
+        local serverName
+        promptLimitedText "readable name of the SPP server (no spaces)?" serverName
+        local current_config="${config_dir}/${servername}.conf"
+
+
+
 
     echo "Finished the config file setup"
 

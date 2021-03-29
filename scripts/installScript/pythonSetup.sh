@@ -20,9 +20,9 @@ pythonSetup() {
     checkReturn sudo yum -y install wget
 
     echo "> Verifying the installed python version"
-    python_old_path=$(which python)
-    current_ver=$(python -V 2>&1)
-    required_ver="3.8.2
+    local python_old_path=$(which python)
+    local current_ver=$(python -V 2>&1)
+    local required_ver="3.8.2
     "
     if [ "$(printf '%s\n' "$required_ver" "$current_ver" | sort -V | head -n1)" = "$required_ver" ]; then
         echo "> Compatible Python version installed ($current_ver > $required_ver)."

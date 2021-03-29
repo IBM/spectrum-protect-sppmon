@@ -123,10 +123,10 @@ EOF
     while [[ $userCreateReturnCode -ne 0 ]] # repeat until break, when it works
         do
             local influxAdminName
-            promptUserCred "InfluxDB admin name" influxAdminName "influxAdmin"
+            promptLimitedText "InfluxDB admin name" influxAdminName "influxAdmin"
 
             local influxAdminPassword
-            promptUserCred "InfluxDB admin password" influxAdminPassword
+            promptLimitedText "InfluxDB admin password" influxAdminPassword
 
             local userCreateResult
             userCreateResult=$(curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES")
@@ -253,7 +253,7 @@ EOF
     local influxGrafanaReaderPassword
     echo "Creating InfluxDB '$influxGrafanaReaderName' user"
 
-    promptUserCred "InfluxDB GrafanaReader user password" influxGrafanaReaderPassword
+    promptLimitedText "InfluxDB GrafanaReader user password" influxGrafanaReaderPassword
 
     verifyConnection $influxGrafanaReaderName $influxGrafanaReaderPassword
 

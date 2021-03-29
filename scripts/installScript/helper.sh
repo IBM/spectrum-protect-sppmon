@@ -107,9 +107,9 @@ promtText() {
 }
 
 
-promptUserCred() {
+promptLimitedText() {
     if (( $# != 2 && $# != 3 )); then
-        >&2 echo "Illegal number of parameters promptUserCred"
+        >&2 echo "Illegal number of parameters promptLimitedText"
         abortInstallScript
     fi
 
@@ -118,29 +118,29 @@ promptUserCred() {
     # OPTIONAL param3: default val
 
     local prohibitedSymbols="\" '"
-    local promptUserCredInput
+    local promptLimitedTextInput
     local symbCheck
 
-    while [-z $promptUserCredInput ]; do
+    while [-z $promptLimitedTextInput ]; do
         if [ -n ${3+x} ]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promtText "Please enter the desired $description" promptUserCredInput $3
+            promtText "Please enter the desired $description" promptLimitedTextInput $3
         else # default not given
-            promtText "Please enter the desired $description" promptUserCredInput
+            promtText "Please enter the desired $description" promptLimitedTextInput
         fi
 
-        if [ -z $promptUserCredInput ]; then
+        if [ -z $promptpromptLimitedTextInput ]; then
             echo "No empy value is allowed, please try again."
         else
-            symbCheck=$(echo "$promptUserCredInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
+            symbCheck=$(echo "$promptLimitedTextInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
             # 0 means match, which is bad. 1 = all good
             if [[ $symbCheck -ne 1 ]]; then
                 echo "The $description must not contain any of the following symbols: $prohibitedSymbols"
-                promptUserCredInput=""
+                promptLimitedTextInput=""
             fi
         fi
     done
 
-    eval $__resultVal="'$promptUserCredInput'"
+    eval $__resultVal="'$promptLimitedTextInput'"
 }
 
 
