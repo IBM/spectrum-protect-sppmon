@@ -19,8 +19,6 @@ configFileSetup() {
 
     while ${nextServer}; do
         echo "> Adding a new config file"
-        echo "> Gathering server informations"
-
         local serverName
 
         local serverNameSet=false
@@ -38,6 +36,8 @@ configFileSetup() {
         echo "{" > ${current_config}
         echo "> Created new config file ${current_config}"
 
+        echo "> Gathering server informations"
+        
         local srv_address
         promptLimitedText "SPP server address" srv_address
         local srv_port

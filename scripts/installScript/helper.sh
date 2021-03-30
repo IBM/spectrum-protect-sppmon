@@ -74,19 +74,20 @@ confirm() { # param1:message
 }
 
 promtText() {
-    if (( $# != 1 && $# != 2 )); then
+    if (( $# != 2 && $# != 3 )); then
         >&2 echo "Illegal number of parameters promtText"
         abortInstallScript
     fi
 
     local message="$1" # param1:message
-    local defaultValue # OPTIONAL param2: default val
+    local __resultVal=$2 # param2: result
+    local defaultValue # OPTIONAL param3: default val
 
     local promtTextInput
 
-    if [ -n ${2+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
+    if [ -n ${3+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
         then    # default set
-            defaultValue="$2"
+            defaultValue="$3"
             message="$message [$defaultValue]"
         else # default not given
             defaultValue=""
@@ -102,18 +103,19 @@ promtText() {
         fi
     done
 
-    echo "$promtTextInput"
+    eval $__resultVal="'$promtTextInput'"
 
 }
 
 promptLimitedText() {
-    if (( $# != 1 && $# != 2 )); then
+    if (( $# != 2 && $# != 3 )); then
         >&2 echo "Illegal number of parameters promptLimitedText"
         abortInstallScript
     fi
 
     local description="$1" # param1: description in text
-    # OPTIONAL param2: default val
+    local __resultVal=$2 # param2: result
+    # OPTIONAL param3: default val
 
     local prohibitedSymbols="\" '\\/"
     local promptLimitedTextInput
@@ -121,9 +123,9 @@ promptLimitedText() {
 
     while [ -z $promptLimitedTextInput ]; do
         if [ -n ${3+x} ]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promptLimitedTextInput=$(promtText "Please enter the desired $description" $3)
+            promtText "Please enter the desired $description" promptLimitedTextInput $3
         else # default not given
-            promptLimitedTextInput=$(promtText "Please enter the desired $description")
+            promtText "Please enter the desired $description" promptLimitedTextInput
         fi
         echo "Recorded text after prompttext: ${promptLimitedTextInput}"
         if [ -z $promptpromptLimitedTextInput ]; then
