@@ -16,7 +16,7 @@ welcome() {
 
     echo "IMPORTANT: You may stop at savepoint and continue later."
     echo "WARNING: Do not exit inbetween savepoints!"
-    echo "Note: You may use the [default] case by just hitting enter in any following promts"
+    echo "Note: You may use the [default] case by just hitting enter in any following prompts"
     if ! (confirm "Start install script?");
         then
             echo "Aborting install script. Nothing has been changed yet."

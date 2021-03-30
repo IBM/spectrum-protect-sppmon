@@ -73,9 +73,9 @@ confirm() { # param1:message
     esac
 }
 
-promtText() {
+promptText() {
     if (( $# != 2 && $# != 3 )); then
-        >&2 echo "Illegal number of parameters promtText"
+        >&2 echo "Illegal number of parameters promptText"
         abortInstallScript
     fi
 
@@ -83,7 +83,7 @@ promtText() {
     local __resultVal=$2 # param2: result
     local defaultValue # OPTIONAL param3: default val
 
-    local promtTextInput
+    local promptTextInput
 
     if [ -n ${3+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
         then    # default set
@@ -93,17 +93,17 @@ promtText() {
             defaultValue=""
     fi
     while true ; do
-        read -r -p"$message: " promtTextInput
+        read -r -p"$message: " promptTextInput
         echo ""
-        promtTextInput="${promtTextInput:-$defaultValue}" # substitues if unset or null
+        promptTextInput="${promptTextInput:-$defaultValue}" # substitues if unset or null
         # form: ${parameter:-word}
 
-        if confirm "Is \"$promtTextInput\" the correct input?"; then
+        if confirm "Is \"$promptTextInput\" the correct input?"; then
                 break
         fi
     done
-
-    eval $__resultVal="'$promtTextInput'"
+    echo "promptText result: ${promptTextInput}"
+    eval $__resultVal="'$promptTextInput'"
 
 }
 
@@ -123,11 +123,13 @@ promptLimitedText() {
 
     while [ -z $promptLimitedTextInput ]; do
         if [ -n ${3+x} ]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promtText "Please enter the desired $description" promptLimitedTextInput $3
+            promptText "Please enter the desired $description" promptLimitedTextInput $3
         else # default not given
-            promtText "Please enter the desired $description" promptLimitedTextInput
+            promptText "Please enter the desired $description" promptLimitedTextInput
         fi
+
         echo "Recorded text after prompttext: ${promptLimitedTextInput}"
+
         if [ -z $promptpromptLimitedTextInput ]; then
             echo "No empy value is allowed, please try again."
         else

@@ -177,7 +177,7 @@ EOF
             local certDuration
 
             while true; do # repeat until valid symbol
-                promtText "How long should if be valid in days? Leave empty for no limit" certDuration
+                promptText "How long should if be valid in days? Leave empty for no limit" certDuration
                 if ! [[ $certDuration =~ '^[0-9]+$' ]] || [[ -z $certDuration ]]; then
                     echo "You may only enter numbers or leave blank."
                 else
@@ -212,14 +212,14 @@ EOF
 
             # Key
             while [[ -z $httpsKeyPath ]]; do
-                promtText "Please enter the path to the https cert key" httpsKeyPath "/etc/ssl/influxdb${selfsignedString}.key"
+                promptText "Please enter the path to the https cert key" httpsKeyPath "/etc/ssl/influxdb${selfsignedString}.key"
                 if [[ -z $httpsKeyPath ]]; then
                     echo "The path of the key must not be empty"
                 fi
             done
             # Cert
             while [[ -z $httpsCertPath ]]; do
-                promtText "Please enter the path to the https cert key" httpsCertPath "/etc/ssl/influxdb${selfsignedString}.cert"
+                promptText "Please enter the path to the https cert key" httpsCertPath "/etc/ssl/influxdb${selfsignedString}.cert"
                 if [[ -z $httpsCertPath ]]; then
                     echo "The path of the cert must not be empty"
                 fi
