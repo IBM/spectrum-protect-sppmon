@@ -40,7 +40,7 @@ configFileSetup() {
         local srv_address
         promptLimitedText "Please enter the desired SPP server address" srv_address
         local srv_port
-        promptLimitedText "Please enter the desired SPP server port" srv_address "443"
+        promptLimitedText "Please enter the desired SPP server port" srv_port "443"
 
         local spp_username
         promptLimitedText "Please enter the desired SPP REST-API User (equal to login via website)" spp_username
@@ -65,6 +65,28 @@ configFileSetup() {
                     "jobLog_rentation": "${spp_retention}"
   },
 EOF
+
+    echo "> inserting influxDB informations"
+    readAuth
+    for auth in ("influxAdminName", "influxAdminPassword", "sslEnabled", "unsafeSsl", "influxAddress", "influxPort" ); do
+        if [[ -z $(eval "\$${auth}") ]]; then
+            promptLimitedText "> Information for '${auth}' is missing. Please enter it." ${auth}
+            saveAuth "$auth" $(eval "\$${auth}")
+        fi
+    done
+
+    checkReturn tee -a ${current_config} &>/dev/null <<EOF
+    "influxDB": {
+                    "username":     "${influxAdminName}",
+                    "password":     "${influxAdminPassword}",
+                    "ssl":          ${sslEnabled},
+                    "verify_ssl":   ${unsafeSsl},
+                    "srv_port":     ${influxPort},
+                    "srv_address":  "${influxAddress}",
+                    "dbName":       "$spp_name"
+  },
+EOF
+
 
 
 

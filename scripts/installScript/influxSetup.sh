@@ -67,8 +67,11 @@ EOF
     echo "> Verify InfluxDB service"
     checkReturn sudo systemctl is-active influxdb
 
+    local influxAddress="$(ip route get 1 | sed -n 's/^.*src \([0-9.]*\) .*$/\1/p')"
+    local influxPort="8086"
+
     echo "> Firewall configuration"
-    checkReturn sudo firewall-cmd --add-port=8086/tcp --permanent
+    checkReturn sudo firewall-cmd --add-port=${influxPort}/tcp --permanent
     checkReturn sudo firewall-cmd --reload
 
     echo " > backup default configuration into /etc/influxdb/influxdb.conf.orig"
@@ -106,8 +109,8 @@ EOF
     # [http] flux-log-enabled = true
     checkReturn sudo sed -ri '/\[http\]/,/flux-log-enabled\s*=.+/ s|\#*\s*flux-log-enabled\s*=.+| flux-log-enabled = true|' /etc/influxdb/influxdb.conf
 
-    # [http] bind-address
-    checkReturn sudo sed -ri '/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \":8086\"|' /etc/influxdb/influxdb.conf
+    # [http] bind-address TODO test " vs ' (port variable)
+    checkReturn sudo sed -ri "/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \":${influxPort}\"|" /etc/influxdb/influxdb.conf
 
     # DISABLE to allow user creation
     # [http] auth-enabled = false
@@ -120,26 +123,36 @@ EOF
 
     # Create user
     local userCreateReturnCode=1 # start value
-    while [[ $userCreateReturnCode -ne 0 ]] # repeat until break, when it works
-        do
-            local influxAdminName
-            promptLimitedText "Please enter the desired InfluxDB admin name" influxAdminName "influxAdmin"
+    while [[ $userCreateReturnCode -ne 0 ]]; do # repeat until break, when it works
 
+        readAuth # read all existing auths
+
+        # Sets default to either pre-saved value or influxadmin
+        if [[ -z $influxAdminName ]]; then
+            local influxAdminName="influxAdmin"
+        fi
+        promptLimitedText "Please enter the desired InfluxDB admin name" influxAdminName "$influxAdminName"
+
+        # sets default to presaved value if empty
+        if [[ -z $influxAdminName ]]; then
             local influxAdminPassword
-            promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword
+        fi
+        promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-            local userCreateResult
-            userCreateResult=$(curl -XPOST "http://localhost:8086/query" --data-urlencode "q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES")
-            userCreateReturnCode=$(echo $userCreateResult | grep .*error.* >/dev/null; echo $?) # {"results":[{"statement_id":0}]}" or {"error":"..."}
-            # 0 means match -> This is faulty. 1 means no match = good
-            if [[ $userCreateReturnCode -ne 1 ]]
-                then
-                    echo "Creation failed, please try again"
-                    echo "Result from influxDB: $userCreateResult"
-                else
-                    saveAuth "influxAdminName" "$influxAdminName"
-                    saveAuth "influxAdminPassword" "$influxAdminPassword"
-            fi
+        local userCreateResult
+        userCreateResult=$(curl -XPOST "http://${influxAddress}:${influxPort}/query" --data-urlencode "q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES")
+        userCreateReturnCode=$(echo $userCreateResult | grep .*error.* >/dev/null; echo $?) # {"results":[{"statement_id":0}]}" or {"error":"..."}
+        # 0 means match -> This is faulty. 1 means no match = good
+        if [[ $userCreateReturnCode -ne 1 ]]
+            then
+                echo "Creation failed, please try again"
+                echo "Result from influxDB: $userCreateResult"
+            else
+                saveAuth "influxAdminName" "$influxAdminName"
+                saveAuth "influxAdminPassword" "$influxAdminPassword"
+                saveAuth "influxPort" "${influxPort}"
+                saveAuth "influxAddress" "${influxAddress}"
+        fi
 
     done
 
@@ -249,13 +262,21 @@ EOF
 
 
     # Create Grafana Reader
+    readAuth # read existing authentification
+
+    # this should always be grafana reader
     local influxGrafanaReaderName="GrafanaReader"
-    local influxGrafanaReaderPassword
+
+    # sets default to presaved value if it exists
+    if [[ -z $influxGrafanaReaderPassword ]]; then
+        local influxGrafanaReaderPassword=""
+    fi
+
     echo "Creating InfluxDB '$influxGrafanaReaderName' user"
 
-    promptLimitedText "Please enter the desired InfluxDB GrafanaReader user password" influxGrafanaReaderPassword
+    promptLimitedText "Please enter the desired InfluxDB GrafanaReader user password" influxGrafanaReaderPassword "$influxGrafanaReaderPassword"
 
-    verifyConnection $influxGrafanaReaderName $influxGrafanaReaderPassword
+    verifyConnection "$influxGrafanaReaderName" "$influxGrafanaReaderPassword"
 
     saveAuth "influxGrafanaReaderName" "$influxGrafanaReaderName"
     saveAuth "influxGrafanaReaderPassword" "$influxGrafanaReaderPassword"

@@ -70,11 +70,10 @@ readAuth() {
         >&2 echo "Illegal number of parameters readAuth"
         abortInstallScript
     fi
-    if [[ -f "$passwordFile" ]]
-        then
-            set -a # now all variables are exported
-            source "$passwordFile"
-            set +a # Not anymore
+    if [[ -r "$passwordFile" ]]; then
+        set -a # now all variables are exported
+        source "$passwordFile"
+        set +a # Not anymore
     fi
 }
 
@@ -129,7 +128,6 @@ main(){
     fi
 
     restoreState
-    readAuth
 
     # Part zero: Welcome
     if [[ $continue_point == "0_WELCOME" ]]
