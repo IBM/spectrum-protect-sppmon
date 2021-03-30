@@ -57,8 +57,8 @@ configFileSetup() {
                 echo "The format is incorrect. Please try again."
             fi
         done
-
-        tee -a ${current_config} &>/dev/null <<EOF
+        echo ${current_config}
+        checkReturn tee -a ${current_config} &>/dev/null <<EOF
     "sppServer": {
                     "username":     "${spp_username}",
                     "password":     "${spp_password}",
