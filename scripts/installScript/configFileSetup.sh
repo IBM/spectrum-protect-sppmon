@@ -22,7 +22,7 @@ configFileSetup() {
         local serverName
 
         local serverNameSet=false
-        while ! $serverNameSet ; do
+        while ! ($serverNameSet) ; do
             promptLimitedText "readable name of the SPP server (no spaces)?" serverName
             local current_config="${config_dir}/${servername}.conf"
             if [[ -e ${current_config} ]]; then
@@ -37,7 +37,7 @@ configFileSetup() {
         echo "> Created new config file ${current_config}"
 
         echo "> Gathering server informations"
-        
+
         local srv_address
         promptLimitedText "SPP server address" srv_address
         local srv_port
