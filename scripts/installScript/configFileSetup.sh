@@ -5,21 +5,20 @@ configFileSetup() {
     rowLimiter
     echo "Creating and configuring the config files"
 
-    if ! (confirm "Do you want to add a server config now?"); then
-        echo "Continuing with the next Step. Finished config file setup"
-        return 0
-    else
-        local nextServer=true
-    fi
-
     local config_dir="$(dirname ${1})"
     config_dir=$(realpath ${config_dir}/../config_files)
 
     echo "> All configurations files are written into dir ${config_dir}"
 
-    while ${nextServer}; do
+    while true do
+
+        if ! (confirm "Do you want to add (another) new server config?"); then
+            echo "Continuing with the next Step."
+            break # stop outer loop
+        fi
+
         echo "> Adding a new config file"
-        local serverName
+        local serverName=""
 
         while [[ -z ${serverName} ]] ; do
             promptLimitedText "Please enter the desired readable name of the SPP server (no spaces)?" serverName
@@ -48,16 +47,15 @@ configFileSetup() {
         local spp_password
         promptLimitedText "Please enter the desired SPP REST-API password (equal to login via website)" spp_password
 
-        local spp_retention
-        while true; do
+        local spp_retention=""
+        while [[ -z ${spp_retention} ]]; do
             promptLimitedText "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)" spp_retention "60d"
-            if [[ "${spp_retention}" =~ ^[0-9]+[hdw]$ ]]; then
-                break
-            else
+            if ! [[ "${spp_retention}" =~ ^[0-9]+[hdw]$ ]]; then
                 echo "The format is incorrect. Please try again."
+                spp_retention=""
             fi
         done
-        echo ${current_config}
+
         checkReturn tee -a ${current_config} &>/dev/null <<EOF
     "sppServer": {
                     "username":     "${spp_username}",
@@ -69,13 +67,8 @@ configFileSetup() {
 EOF
 
 
+
     done
-
-
-
-
-
-
     echo "Finished the config file setup"
 
 }
