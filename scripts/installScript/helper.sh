@@ -101,7 +101,6 @@ promptText() {
                 break
         fi
     done
-    echo "promptText result: ${promptTextInput}"
     eval $__resultVal="'$promptTextInput'"
 
 }
@@ -118,45 +117,28 @@ promptLimitedText() {
 
     local prohibitedSymbols="\" '\\/"
     local promptLimitedTextInput
-    local symbCheck
 
     while [[ -z $promptLimitedTextInput ]]; do
-        echo $promptLimitedTextInput
         if [[ -n ${3+x} ]]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promptText "Please enter the desired $description" promptLimitedTextInput $3
+            promptText ${description} promptLimitedTextInput $3
         else # default not given
-            promptText "Please enter the desired $description" promptLimitedTextInput
+            promptText "${description}" promptLimitedTextInput
         fi
-
-        echo "Recorded text after prompttext: ${promptLimitedTextInput}"
 
         if [[ -z $promptLimitedTextInput ]]; then
             echo "No empy value is allowed, please try again."
         else
-            symbCheck=$(echo "$promptLimitedTextInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
+            local symbCheck=$(echo "$promptLimitedTextInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
             # 0 means match, which is bad. 1 = all good
             if [[ $symbCheck -ne 1 ]]; then
                 echo "The $description must not contain any of the following symbols: $prohibitedSymbols"
                 promptLimitedTextInput=""
             fi
         fi
-        echo $promptLimitedTextInput
     done
 
     eval $__resultVal="'$promptLimitedTextInput'"
 }
-
-promptUserCreds() {
-    if (( $# != 2 && $# != 3 )); then
-        >&2 echo "Illegal number of parameters promptUserCreds"
-        abortInstallScript
-    fi
-
-    local description="$1" # param1: description in text
-    local __resultVal=$2 # param2: result
-    # OPTIONAL param3: default val
-}
-
 
 # ######### STARTUP ##############
 

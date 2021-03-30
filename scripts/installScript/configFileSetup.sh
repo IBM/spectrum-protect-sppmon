@@ -21,13 +21,13 @@ configFileSetup() {
         echo "> Adding a new config file"
         local serverName
 
-        local serverNameSet=false
-        while ! ($serverNameSet) ; do
-            promptLimitedText "readable name of the SPP server (no spaces)?" serverName
-            local current_config="${config_dir}/${servername}.conf"
+        while [[ -z ${serverName} ]] ; do
+            promptLimitedText "Please enter the desired readable name of the SPP server (no spaces)?" serverName
+            local current_config="${config_dir}/${serverName}.conf"
             if [[ -e ${current_config} ]]; then
                 if ! (confirm "Do you want to overwrite existing file ${current_config}?") ; then
                     echo "Please re-enter a different server name"
+                    serverName=""
                 else
                     echo "> Overwriting old config file"
                 fi
@@ -39,14 +39,14 @@ configFileSetup() {
         echo "> Gathering server informations"
 
         local srv_address
-        promptLimitedText "SPP server address" srv_address
+        promptLimitedText "Please enter the desired SPP server address" srv_address
         local srv_port
-        promptLimitedText "SPP server port" srv_address "443"
+        promptLimitedText "Please enter the desired SPP server port" srv_address "443"
 
         local spp_username
-        promptLimitedText "SPP REST-API User (equal to login via website)" spp_username
+        promptLimitedText "Please enter the desired SPP REST-API User (equal to login via website)" spp_username
         local spp_password
-        promptLimitedText "SPP REST-API password (equal to login via website)" spp_password
+        promptLimitedText "Please enter the desired SPP REST-API password (equal to login via website)" spp_password
 
     done
 
