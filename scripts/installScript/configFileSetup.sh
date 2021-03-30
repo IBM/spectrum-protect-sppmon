@@ -58,7 +58,7 @@ configFileSetup() {
             fi
         done
 
-        tee ${current_config} &>/dev/null <<EOF
+        tee -a ${current_config} &>/dev/null <<EOF
     "sppServer": {
                     "username":     "${spp_username}",
                     "password":     "${spp_password}",
