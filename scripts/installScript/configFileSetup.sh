@@ -47,7 +47,7 @@ configFileSetup() {
         local spp_password
         promptLimitedText "SPP REST-API password (equal to login via website)" spp_password
 
-
+    done
 
 
 
