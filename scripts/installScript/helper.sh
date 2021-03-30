@@ -120,7 +120,7 @@ promptLimitedText() {
 
     while [[ -z $promptLimitedTextInput ]]; do
         if [[ -n ${3+x} ]]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promptText ${description} promptLimitedTextInput $3
+            promptText "${description}" promptLimitedTextInput $3
         else # default not given
             promptText "${description}" promptLimitedTextInput
         fi
