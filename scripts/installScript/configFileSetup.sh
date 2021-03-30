@@ -48,6 +48,16 @@ configFileSetup() {
         local spp_password
         promptLimitedText "Please enter the desired SPP REST-API password (equal to login via website)" spp_password
 
+        local spp_retention
+        promptLimitedText "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)" spp_password "60d"
+
+        cat << EOF >> ${current_config}
+\t"sppServer":\t{
+\t\t\t\t\t"username":\t"${spp_username}",
+},
+EOF
+
+
     done
 
 
