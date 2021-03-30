@@ -13,7 +13,7 @@ configFileSetup() {
     fi
 
     local config_dir="$(dirname ${1})"
-    config_dir="realpath ${config_dir}/../config_files"
+    config_dir=$(realpath ${config_dir}/../config_files)
 
     echo "> All configurations files are written into dir ${config_dir}"
 
