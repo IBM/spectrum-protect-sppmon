@@ -10,7 +10,7 @@ configFileSetup() {
 
     echo "> All configurations files are written into dir ${config_dir}"
 
-    while true do
+    while true; do
 
         if ! (confirm "Do you want to add (another) new server config?"); then
             echo "Continuing with the next Step."
