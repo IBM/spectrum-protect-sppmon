@@ -49,9 +49,16 @@ configFileSetup() {
         promptLimitedText "Please enter the desired SPP REST-API password (equal to login via website)" spp_password
 
         local spp_retention
-        promptLimitedText "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)" spp_password "60d"
+        while true; do
+            promptLimitedText "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)" spp_password "60d"
+            if [[ $spp_retention =~ ^[0-9]+[hdw]$ ]]; then
+                break
+            else
+                echo "The format is incorrect. Please try again."
+            fi
+        done
 
-        cat << EOF >> ${current_config}
+        tee ${current_config} <<EOF
 \t"sppServer":\t{
 \t\t\t\t\t"username":\t"${spp_username}",
 },
