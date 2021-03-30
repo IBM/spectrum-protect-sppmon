@@ -139,7 +139,7 @@ promptLimitedText() {
                 promptLimitedTextInput=""
             fi
         fi
-        echo [[ -z $promptLimitedTextInput ]]
+        echo $promptLimitedTextInput
     done
 
     eval $__resultVal="'$promptLimitedTextInput'"
