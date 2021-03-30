@@ -125,7 +125,7 @@ promptLimitedText() {
         else # default not given
             promptLimitedTextInput=$(promtText "Please enter the desired $description")
         fi
-
+        echo "Recorded text after prompttext: ${promptLimitedTextInput}"
         if [ -z $promptpromptLimitedTextInput ]; then
             echo "No empy value is allowed, please try again."
         else
