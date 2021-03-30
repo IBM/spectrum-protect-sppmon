@@ -85,7 +85,7 @@ promptText() {
 
     local promptTextInput
 
-    if [ -n ${3+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
+    if [[ -n ${3+x} ]] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
         then    # default set
             defaultValue="$3"
             message="$message [$defaultValue]"
@@ -120,8 +120,8 @@ promptLimitedText() {
     local promptLimitedTextInput
     local symbCheck
 
-    while [ -z $promptLimitedTextInput ]; do
-        if [ -n ${3+x} ]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
+    while [[ -z $promptLimitedTextInput ]]; do
+        if [[ -n ${3+x} ]]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
             promptText "Please enter the desired $description" promptLimitedTextInput $3
         else # default not given
             promptText "Please enter the desired $description" promptLimitedTextInput
@@ -129,7 +129,7 @@ promptLimitedText() {
 
         echo "Recorded text after prompttext: ${promptLimitedTextInput}"
 
-        if [ -z $promptLimitedTextInput ]; then
+        if [[ -z $promptLimitedTextInput ]]; then
             echo "No empy value is allowed, please try again."
         else
             symbCheck=$(echo "$promptLimitedTextInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
