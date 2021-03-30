@@ -58,10 +58,14 @@ configFileSetup() {
             fi
         done
 
-        tee ${current_config} <<EOF
-\t"sppServer":\t{
-\t\t\t\t\t"username":\t"${spp_username}",
-},
+        tee ${current_config} &>/dev/null <<EOF
+    "sppServer": {
+                    "username":     "${spp_username}",
+                    "password":     "${spp_password}",
+                    "srv_address":  "${srv_address}",
+                    "srv_port":     ${srv_port},
+                    "jobLog_rentation": "${spp_retention}"
+  },
 EOF
 
 
