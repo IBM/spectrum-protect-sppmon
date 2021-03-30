@@ -74,20 +74,19 @@ confirm() { # param1:message
 }
 
 promtText() {
-    if (( $# != 2 && $# != 3 )); then
+    if (( $# != 1 && $# != 2 )); then
         >&2 echo "Illegal number of parameters promtText"
         abortInstallScript
     fi
 
     local message="$1" # param1:message
-    local __resultVal=$2 # param2: result
-    local defaultValue # OPTIONAL param3: default val
+    local defaultValue # OPTIONAL param2: default val
 
     local promtTextInput
 
-    if [ -n ${3+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
+    if [ -n ${2+x} ] # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
         then    # default set
-            defaultValue="$3"
+            defaultValue="$2"
             message="$message [$defaultValue]"
         else # default not given
             defaultValue=""
@@ -101,11 +100,11 @@ promtText() {
         if confirm "Is \"$promtTextInput\" the correct input?"; then
                 break
         fi
-
-        eval $__resultVal="'$promtTextInput'"
     done
-}
 
+    echo "$promtTextInput"
+
+}
 
 promptLimitedText() {
     if (( $# != 2 && $# != 3 )); then
@@ -117,15 +116,15 @@ promptLimitedText() {
     local __resultVal=$2 # param2: result
     # OPTIONAL param3: default val
 
-    local prohibitedSymbols="\" '"
+    local prohibitedSymbols="\" '\\/"
     local promptLimitedTextInput
     local symbCheck
 
     while [-z $promptLimitedTextInput ]; do
         if [ -n ${3+x} ]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
-            promtText "Please enter the desired $description" promptLimitedTextInput $3
+            promptLimitedTextInput=$(promtText "Please enter the desired $description" $3)
         else # default not given
-            promtText "Please enter the desired $description" promptLimitedTextInput
+            promptLimitedTextInput=$(promtText "Please enter the desired $description")
         fi
 
         if [ -z $promptpromptLimitedTextInput ]; then
@@ -141,6 +140,17 @@ promptLimitedText() {
     done
 
     eval $__resultVal="'$promptLimitedTextInput'"
+}
+
+promptUserCreds() {
+    if (( $# != 2 && $# != 3 )); then
+        >&2 echo "Illegal number of parameters promptUserCreds"
+        abortInstallScript
+    fi
+
+    local description="$1" # param1: description in text
+    local __resultVal=$2 # param2: result
+    # OPTIONAL param3: default val
 }
 
 
