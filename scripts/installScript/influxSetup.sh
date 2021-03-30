@@ -65,7 +65,7 @@ EOF
     checkReturn sudo systemctl enable --now influxdb
 
     echo "> Verify InfluxDB service"
-    checkReturn sudo systemctl status influxdb
+    checkReturn sudo systemctl is-active influxdb
 
     echo "> Firewall configuration"
     checkReturn sudo firewall-cmd --add-port=8086/tcp --permanent
@@ -75,7 +75,7 @@ EOF
     checkReturn sudo cp /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
 
     # Access rights
-    checkReturn sudo chown influxdb:influxdb ./influxdb.conf -R
+    checkReturn sudo chown influxdb:influxdb /etc/influxdb/influxdb.conf -R
 
     echo " > editing config file part 1"
     if confirm "Do you want to report usage data to usage.influxdata.com?"

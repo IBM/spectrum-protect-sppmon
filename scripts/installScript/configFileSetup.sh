@@ -5,7 +5,7 @@ configFileSetup() {
     rowLimiter
     echo "Creating and configuring the config files"
 
-    if ! (confirm "Do you want to add a server config now?") then;
+    if ! (confirm "Do you want to add a server config now?"); then
         echo "Continuing with the next Step. Finished config file setup"
         return 0
     else
@@ -47,7 +47,7 @@ configFileSetup() {
         local spp_password
         promptLimitedText "SPP REST-API password (equal to login via website)" spp_password
 
-        
+
 
 
 
