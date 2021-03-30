@@ -51,7 +51,7 @@ configFileSetup() {
         local spp_retention
         while true; do
             promptLimitedText "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)" spp_password "60d"
-            if [[ $spp_retention =~ ^[0-9]+[hdw]$ ]]; then
+            if [[ "${spp_retention}" =~ ^[0-9]+[hdw]$ ]]; then
                 break
             else
                 echo "The format is incorrect. Please try again."
