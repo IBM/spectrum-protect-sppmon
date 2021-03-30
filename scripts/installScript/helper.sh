@@ -107,14 +107,13 @@ promtText() {
 }
 
 promptLimitedText() {
-    if (( $# != 2 && $# != 3 )); then
+    if (( $# != 1 && $# != 2 )); then
         >&2 echo "Illegal number of parameters promptLimitedText"
         abortInstallScript
     fi
 
     local description="$1" # param1: description in text
-    local __resultVal=$2 # param2: result
-    # OPTIONAL param3: default val
+    # OPTIONAL param2: default val
 
     local prohibitedSymbols="\" '\\/"
     local promptLimitedTextInput
