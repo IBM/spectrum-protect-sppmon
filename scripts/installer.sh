@@ -145,7 +145,7 @@ main(){
     if [[ $continue_point == "1_SYS_SETUP" ]]
         then
             source "${subScripts}/setupRequirements.sh" "$mainPath"
-            saveState 'INFLUX_SETUP' 'InfluxDB installation and setup' # next point
+            saveState '2_INFLUX_SETUP' 'InfluxDB installation and setup' # next point
     fi
 
     # Part 2: InfluxDB installation and setup
