@@ -94,7 +94,6 @@ promptText() {
     fi
     while true ; do
         read -r -p"$message: " promptTextInput
-        echo ""
         promptTextInput="${promptTextInput:-$defaultValue}" # substitues if unset or null
         # form: ${parameter:-word}
 
@@ -130,7 +129,7 @@ promptLimitedText() {
 
         echo "Recorded text after prompttext: ${promptLimitedTextInput}"
 
-        if [ -z $promptpromptLimitedTextInput ]; then
+        if [ -z $promptLimitedTextInput ]; then
             echo "No empy value is allowed, please try again."
         else
             symbCheck=$(echo "$promptLimitedTextInput" | grep "[$prohibitedSymbols]" >/dev/null; echo $?)
