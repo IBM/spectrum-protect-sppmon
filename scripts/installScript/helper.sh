@@ -121,6 +121,7 @@ promptLimitedText() {
     local symbCheck
 
     while [[ -z $promptLimitedTextInput ]]; do
+        echo $promptLimitedTextInput
         if [[ -n ${3+x} ]]; then # evaluates to nothing if not set, form: if [ -z {$var+x} ]; then unset; else set; fi
             promptText "Please enter the desired $description" promptLimitedTextInput $3
         else # default not given
