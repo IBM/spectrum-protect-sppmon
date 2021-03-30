@@ -68,7 +68,8 @@ EOF
 
     echo "> inserting influxDB informations"
     readAuth
-    for auth in ("influxAdminName", "influxAdminPassword", "sslEnabled", "unsafeSsl", "influxAddress", "influxPort" ); do
+    local requiredAuth=( "influxAdminName" "influxAdminPassword" "sslEnabled" "unsafeSsl" "influxAddress" "influxPort" )
+    for auth in "${requiredAuth[@]}"; do
         if [[ -z $(eval "\$${auth}") ]]; then
             promptLimitedText "> Information for '${auth}' is missing. Please enter it." ${auth}
             saveAuth "$auth" $(eval "\$${auth}")
