@@ -186,4 +186,8 @@ class InfluxUtils:
             ExceptionUtils.error_message(f"missing field in {mydict}")
             fields["MISSING_FIELD"] = 42
 
+        if(time_stamp is None):
+            ExceptionUtils.error_message(f"No timestamp value gathered when using default split, using current time: {mydict}")
+            time_stamp = SppUtils.get_actual_time_sec()
+
         return (tags, fields, time_stamp)

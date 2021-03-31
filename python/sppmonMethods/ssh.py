@@ -342,6 +342,8 @@ class SshMethods:
             # set default needed fields
             pool_dict['hostName'] = ssh_command.host_name
             pool_dict['ssh_type'] = ssh_type.name
+            (time_key, time_value) = SppUtils.get_capture_timestamp_sec()
+            pool_dict[time_key] = time_value
 
             pool_result_list.append(pool_dict)
 

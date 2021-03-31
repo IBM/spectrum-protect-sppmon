@@ -262,7 +262,7 @@ class Table:
         return f"Table: {self.name}"
 
     def split_by_table_def(self, mydict: Dict[str, Any]) -> Tuple[
-            Dict[str, Any], Dict[str, Any], Union[str, int, None]]:
+            Dict[str, Any], Dict[str, Any], Union[str, int]]:
         """Split the given dict into a pre-defined set of tags, fields and a timestamp.
 
         None-Values and empty strings are ignored.
@@ -339,6 +339,10 @@ class Table:
                 ExceptionUtils.error_message(f"Not all columns for table {self.name} are declared: {key}")
                 # before key+"MISSING" : Removed to avoid death-circle on repeated queries.
                 fields[key] = value
+        if(time_stamp is None):
+            ExceptionUtils.error_message(f"No timestamp value gathered for table {self.name}, using current time: {mydict}")
+            time_stamp = SppUtils.get_actual_time_sec()
+
         return (tags, fields, time_stamp)
 
 class Database:
