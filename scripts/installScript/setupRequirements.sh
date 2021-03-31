@@ -42,7 +42,7 @@ setupRequirements() {
     echo "> finished logging."
 
     if confirm "Do you want to check and install updates now? (Recommended)" ; then
-        yum upgrade
+        sudo yum upgrade
     fi
 
 }
