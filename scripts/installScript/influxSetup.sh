@@ -81,49 +81,56 @@ EOF
     checkReturn sudo firewall-cmd --add-port=${influxPort}/tcp --permanent
     checkReturn sudo firewall-cmd --reload
 
-    echo " > backup default configuration into /etc/influxdb/influxdb.conf.orig"
-    checkReturn sudo cp -n /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
+    local config_path="/etc/influxdb/influxdb.conf"
+    local config_backup_path="${config_path}.orig"
+    if [[ -f "${config_backup_path}" ]]; then
+        echo "> Probably restarting the install script."
+        echo "> Restoring original config file from backup"
+        checkReturn sudo cp "${config_backup_path}" "${config_path}"
+
+    echo "> Backuping default configuration into ${config_backup_path}"
+    checkReturn sudo cp -n "${config_path}" "${config_backup_path}"
 
     # Access rights
     checkReturn sudo chown influxdb:influxdb /etc/influxdb/influxdb.conf -R
 
-    echo " > editing config file part 1"
+    echo "> editing config file part 1"
     if confirm "Do you want to report usage data to usage.influxdata.com?"
         then
-            checkReturn sudo sed -i '"s/\#*\s*reporting-disabled\s*=.*/ reporting-disabled = false/"' /etc/influxdb/influxdb.conf
+            checkReturn sudo sed -i '"s/\#*\s*reporting-disabled\s*=.*/ reporting-disabled = false/"' "${config_path}"
         else
-            checkReturn sudo sed -i '"s/\#*\s*reporting-disabled\s*=.*/ reporting-disabled = true/"' /etc/influxdb/influxdb.conf
+            checkReturn sudo sed -i '"s/\#*\s*reporting-disabled\s*=.*/ reporting-disabled = true/"' "${config_path}"
     fi
 
     # sed -i 's/search_string/replace_string/' filename
     # sed -i -r '/header3/,/pattern/ s|pattern|replacement|' filename
 
     # [meta] dir
-    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = "/influxDB/meta\"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/meta\"|"' "${config_path}"
 
     # [data] dir
-    checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/data\"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/data\"|"' "${config_path}"
     # [data] wal-dir
-    checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = \"/influxDB/wal\"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = \"/influxDB/wal\"|"' "${config_path}"
 
     # [http] enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/enabled\s*=.+/ s|\#*\s*enabled\s*=.+| enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/enabled\s*=.+/ s|\#*\s*enabled\s*=.+| enabled = true|"' "${config_path}"
     # [http] log-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/log-enabled\s*=.+/ s|\#*\s*log-enabled\s*=.+| log-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/log-enabled\s*=.+/ s|\#*\s*log-enabled\s*=.+| log-enabled = true|"' "${config_path}"
 
     # [http] flux-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/flux-enabled\s*=.+/ s|\#*\s*flux-enabled\s*=.+| flux-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/flux-enabled\s*=.+/ s|\#*\s*flux-enabled\s*=.+| flux-enabled = true|"' "${config_path}"
     # [http] flux-log-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/flux-log-enabled\s*=.+/ s|\#*\s*flux-log-enabled\s*=.+| flux-log-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/flux-log-enabled\s*=.+/ s|\#*\s*flux-log-enabled\s*=.+| flux-log-enabled = true|"' "${config_path}"
 
     # [http] bind-address TODO test " vs ' (port variable)
-    checkReturn sudo sed -ri "\"/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \\\":${influxPort}\\\"|\"" /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri "\"/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \\\":${influxPort}\\\"|\"" "${config_path}"
 
     # DISABLE to allow user creation
     # [http] auth-enabled = false
-    checkReturn sudo sed -ri '"/\[http\]/,/auth-enabled\s*=.+/ s|\#*\s*auth-enabled\s*=.+| auth-enabled = false|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/auth-enabled\s*=.+/ s|\#*\s*auth-enabled\s*=.+| auth-enabled = false|"' "${config_path}"
     # [http] https-enabled = false
-    checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = false|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = false|"' "${config_path}"
 
     # restart influxdb
     restartInflux
@@ -165,11 +172,11 @@ EOF
 
     echo " > editing influxdb config file part 2"
     # [http] auth-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/auth-enabled\s*=.+/ s|\#*\s*auth-enabled\s*=.+| auth-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/auth-enabled\s*=.+/ s|\#*\s*auth-enabled\s*=.+| auth-enabled = true|"' "${config_path}"
     # [http] pprof-auth-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/pprof-enabled\s*=.+/ s|\#*\s*pprof-enabled\s*=.+| pprof-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/pprof-enabled\s*=.+/ s|\#*\s*pprof-enabled\s*=.+| pprof-enabled = true|"' "${config_path}"
     # [http] ping-auth-enabled = true
-    checkReturn sudo sed -ri '"/\[http\]/,/ping-auth-enabled\s*=.+/ s|\#*\s*ping-auth-enabled\s*=.+| ping-auth-enabled = true|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[http\]/,/ping-auth-enabled\s*=.+/ s|\#*\s*ping-auth-enabled\s*=.+| ping-auth-enabled = true|"' "${config_path}"
 
     # ################# START OF HTTPS ##########################
 
@@ -179,7 +186,7 @@ EOF
 
     if confirm "Do you want to enable HTTPS-communication with the influxdb? This is highly recommended!"; then
         # [http] https-enabled = true
-        checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = true|"' /etc/influxdb/influxdb.conf
+        checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = true|"' "${config_path}"
 
         sslEnabled=true
 
@@ -249,9 +256,9 @@ EOF
 
         # Edit config file again
         # [http] https-certificate
-        checkReturn sudo sed -ri "/\[http\]/,/https-certificate\s*=.+/ s|\#*\s*https-certificate\s*=.+| https-certificate = \"$httpsCertPath\"|" /etc/influxdb/influxdb.conf
+        checkReturn sudo sed -ri "/\[http\]/,/https-certificate\s*=.+/ s|\#*\s*https-certificate\s*=.+| https-certificate = \"$httpsCertPath\"|" "${config_path}"
         # [http] https-private-key
-        checkReturn sudo sed -ri "/\[http\]/,/https-private-key\s*=.+/ s|\#*\s*https-private-key\s*=.+| https-private-key = \"$httpsKeyPath\"|" /etc/influxdb/influxdb.conf
+        checkReturn sudo sed -ri "/\[http\]/,/https-private-key\s*=.+/ s|\#*\s*https-private-key\s*=.+| https-private-key = \"$httpsKeyPath\"|" "${config_path}"
 
     fi
 
