@@ -7,7 +7,7 @@ restartInflux() {
     fi
 
     echo " restarting influxdb service"
-    checkReturn systemctl restart influxdb
+    checkReturn sudo systemctl restart influxdb
     checkReturn systemctl is-active influxdb
     echo " restarted"
 }
@@ -92,12 +92,12 @@ EOF
     # sed -i -r '/header3/,/pattern/ s|pattern|replacement|' filename
 
     # [meta] dir
-    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = "/influxDB/meta"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/meta\"|"' /etc/influxdb/influxdb.conf
 
     # [data] dir
-    checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = "/influxDB/data"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/data\"|"' /etc/influxdb/influxdb.conf
     # [data] wal-dir
-    checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = "/influxDB/wal"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = \"/influxDB/wal\"|"' /etc/influxdb/influxdb.conf
 
     # [http] enabled = true
     checkReturn sudo sed -ri '"/\[http\]/,/enabled\s*=.+/ s|\#*\s*enabled\s*=.+| enabled = true|"' /etc/influxdb/influxdb.conf
@@ -110,7 +110,7 @@ EOF
     checkReturn sudo sed -ri '"/\[http\]/,/flux-log-enabled\s*=.+/ s|\#*\s*flux-log-enabled\s*=.+| flux-log-enabled = true|"' /etc/influxdb/influxdb.conf
 
     # [http] bind-address TODO test " vs ' (port variable)
-    checkReturn sudo sed -ri "\"/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \":${influxPort}\"|\"" /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri "\"/\[http\]/,/bind-address\s*=.+/ s|\#*\s*bind-address\s*=.+| bind-address = \\\":${influxPort}\\\"|\"" /etc/influxdb/influxdb.conf
 
     # DISABLE to allow user creation
     # [http] auth-enabled = false
