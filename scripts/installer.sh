@@ -83,8 +83,10 @@ restoreState() {
         abortInstallScript
     fi
 
-    if [[ -f "$saveFile" ]]
-        then # already executed
+    if [[ -f "$saveFile" ]]; then # already executed
+
+            rowLimiter
+
             continue_point=$(<"$saveFile")
             echo "Welcome to the SPPMon install guide. You last saved point was $continue_point."
             echo "WARNING: Restarting has unpredictable effects. No warranty for any functionality."

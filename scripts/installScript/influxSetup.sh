@@ -75,7 +75,7 @@ EOF
     checkReturn sudo firewall-cmd --reload
 
     echo " > backup default configuration into /etc/influxdb/influxdb.conf.orig"
-    checkReturn sudo cp /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
+    checkReturn sudo cp -n /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.orig
 
     # Access rights
     checkReturn sudo chown influxdb:influxdb /etc/influxdb/influxdb.conf -R
@@ -92,7 +92,7 @@ EOF
     # sed -i -r '/header3/,/pattern/ s|pattern|replacement|' filename
 
     # [meta] dir
-    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/meta\"|"' /etc/influxdb/influxdb.conf
+    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = "/influxDB/meta\"|"' /etc/influxdb/influxdb.conf
 
     # [data] dir
     checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/data\"|"' /etc/influxdb/influxdb.conf
