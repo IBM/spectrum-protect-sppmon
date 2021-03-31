@@ -87,9 +87,10 @@ EOF
         echo "> Probably restarting the install script."
         echo "> Restoring original config file from backup"
         checkReturn sudo cp "${config_backup_path}" "${config_path}"
-
-    echo "> Backuping default configuration into ${config_backup_path}"
-    checkReturn sudo cp -n "${config_path}" "${config_backup_path}"
+    else
+        echo "> Backuping default configuration into ${config_backup_path}"
+        checkReturn sudo cp -n "${config_path}" "${config_backup_path}"
+    fi
 
     # Access rights
     checkReturn sudo chown influxdb:influxdb /etc/influxdb/influxdb.conf -R

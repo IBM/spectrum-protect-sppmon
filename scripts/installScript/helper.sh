@@ -4,7 +4,7 @@
 
 # ########### MISC / FUNCTIONS #######################
 
-checkReturn() {
+checkReturn() { # TODO maybe this is Bugged. Other quotations needed?
     eval "${@}"
     if [[ "$?" -ne 0 ]]
         then
