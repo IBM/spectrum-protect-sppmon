@@ -8,6 +8,10 @@ restartInflux() {
 
     echo " restarting influxdb service"
     checkReturn sudo systemctl restart influxdb
+
+    echo "> Waiting 15 seconds for startup"
+    sleep 15
+
     checkReturn systemctl is-active influxdb
     echo " restarted"
 }
@@ -63,6 +67,9 @@ EOF
 
     echo "> Starting InfluxDB service"
     checkReturn sudo systemctl enable --now influxdb
+
+    echo "> Waiting 15 seconds for startup"
+    sleep 15
 
     echo "> Verify InfluxDB service"
     checkReturn sudo systemctl is-active influxdb
