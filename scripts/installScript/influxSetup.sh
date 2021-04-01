@@ -52,8 +52,9 @@ influxSetup() {
     rowLimiter
     echo "Setup and installation of InfluxDB"
 
+
     echo "> configuring yum repository"
-    sudo tee  /etc/yum.repos.d/influxdb.repo<<EOF
+    sudo tee  /etc/yum.repos.d/influxdb.repo 1> /dev/null <<EOF
 [influxdb]
 name = InfluxDB Repository
 baseurl = https://repos.influxdata.com/rhel/7/x86_64/stable/
@@ -65,14 +66,19 @@ EOF
     echo "> Installing database"
     checkReturn sudo yum install influxdb
 
-    echo "> Starting InfluxDB service"
-    checkReturn sudo systemctl enable --now influxdb
+    if sudo systemctl is-active influxdb > /dev/null; then
+        echo "> InfluxDB already running"
+        checkReturn sudo systemctl enable influxdb
+    else
+        echo "> Starting InfluxDB service"
+        checkReturn sudo systemctl enable --now influxdb
 
-    echo "> Waiting 15 seconds for startup"
-    sleep 15
+        echo "> Waiting 15 seconds for startup"
+        sleep 15
 
-    echo "> Verify InfluxDB service"
-    checkReturn sudo systemctl is-active influxdb
+        echo "> Verify InfluxDB service"
+        checkReturn sudo systemctl is-active influxdb
+    fi
 
     local influxAddress="$(ip route get 1 | sed -n 's/^.*src \([0-9.]*\) .*$/\1/p')"
     local influxPort="8086"
