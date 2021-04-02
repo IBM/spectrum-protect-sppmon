@@ -13,7 +13,8 @@ restartInflux() {
     sleep 15
 
     checkReturn systemctl is-active influxdb
-    echo " restarted"
+    echo "> Restart sucessfull
+    "
 }
 
 verifyConnection() {
@@ -65,20 +66,6 @@ EOF
 
     echo "> Installing database"
     checkReturn sudo yum install influxdb
-
-    if sudo systemctl is-active influxdb > /dev/null; then
-        echo "> InfluxDB already running"
-        checkReturn sudo systemctl enable influxdb
-    else
-        echo "> Starting InfluxDB service"
-        checkReturn sudo systemctl enable --now influxdb
-
-        echo "> Waiting 15 seconds for startup"
-        sleep 15
-
-        echo "> Verify InfluxDB service"
-        checkReturn sudo systemctl is-active influxdb
-    fi
 
     local influxAddress="$(ip route get 1 | sed -n 's/^.*src \([0-9.]*\) .*$/\1/p')"
     local influxPort="8086"
@@ -141,8 +128,21 @@ EOF
     # [http] https-enabled = false
     checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = false|"' "${config_path}"
 
-    # restart influxdb
-    restartInflux
+    if sudo systemctl is-active influxdb > /dev/null; then
+        echo "> InfluxDB already running"
+        checkReturn sudo systemctl enable influxdb
+        echo "> Restarting influxDB"
+        restartInflux
+    else
+        echo "> Starting InfluxDB service"
+        checkReturn sudo systemctl enable --now influxdb
+
+        echo "> Waiting 15 seconds for startup"
+        sleep 15
+
+        echo "> Verify InfluxDB service"
+        checkReturn sudo systemctl is-active influxdb
+    fi
 
     # Create user
     local userCreateReturnCode=1 # start value
