@@ -7,7 +7,7 @@ restartInflux() {
     fi
     check_influx='systemctl is-active influxdb &>/dev/null; echo $?'
 
-    if (( $(eval "{check_influx}") == 0 )); then
+    if (( $(eval "${check_influx}") == 0 )); then
         echo "> Restarting influxDB service"
         checkReturn sudo systemctl restart influxdb
     else
@@ -19,7 +19,7 @@ restartInflux() {
 
     for (( i = 0; i < 10; i++)); do
         sleep 1
-        if (( $(eval "{check_influx}") == 0 )); then
+        if (( $(eval "${check_influx}") == 0 )); then
             echo "Restart sucessfull"
             return 0
         fi
