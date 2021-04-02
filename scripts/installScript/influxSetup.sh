@@ -5,16 +5,29 @@ restartInflux() {
         >&2 echo "Illegal number of parameters restartInflux"
         abortInstallScript
     fi
+    check_influx='systemctl is-active influxdb &>/dev/null; echo $?'
 
-    echo " restarting influxdb service"
-    checkReturn sudo systemctl restart influxdb
+    if (( $(eval "{check_influx}") == 0 )); then
+        echo "> Restarting influxDB service"
+        checkReturn sudo systemctl restart influxdb
+    else
+        echo "> Starting influxDB service"
+        checkReturn sudo systemctl start influxdb
+    fi
 
-    echo "> Waiting 15 seconds for startup"
-    sleep 15
+    echo "> Waiting max 10 seconds for startup"
 
-    checkReturn systemctl is-active influxdb
-    echo "> Restart sucessfull
-    "
+    for (( i = 0; i < 10; i++)); do
+        sleep 1
+        if (( $(eval "{check_influx}") == 0 )); then
+            echo "Restart sucessfull"
+            return 0
+        fi
+    done
+
+    echo "> Restart failed"
+    abortInstallScript
+
 }
 
 verifyConnection() {
@@ -132,21 +145,8 @@ EOF
     # [http] https-enabled = false
     checkReturn sudo sed -ri '"/\[http\]/,/https-enabled\s*=.+/ s|\#*\s*https-enabled\s*=.+| https-enabled = false|"' "${config_file}"
 
-    if sudo systemctl is-active influxdb > /dev/null; then
-        echo "> InfluxDB already running"
-        checkReturn sudo systemctl enable influxdb
-        echo "> Restarting influxDB"
-        restartInflux
-    else
-        echo "> Starting InfluxDB service"
-        checkReturn sudo systemctl enable --now influxdb
-
-        echo "> Waiting 15 seconds for startup"
-        sleep 15
-
-        echo "> Verify InfluxDB service"
-        checkReturn sudo systemctl is-active influxdb
-    fi
+    checkReturn sudo systemctl enable influxdb
+    restartInflux
 
     # Create user
     local userCreateReturnCode=1 # start value
@@ -280,8 +280,6 @@ EOF
     saveAuth "sslEnabled" "$sslEnabled"
     saveAuth "unsafeSsl" "$unsafeSsl"
 
-    # restart influxdb
-    echo "restart influxdb service"
     restartInflux
 
     # Checking connection
