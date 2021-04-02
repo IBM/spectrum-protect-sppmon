@@ -74,7 +74,7 @@ readAuth() {
     fi
     if [[ -r "$passwordFile" ]]; then
         set -a # now all variables are exported
-        source "$passwordFile"
+        source "${passwordFile}"
         set +a # Not anymore
     fi
 }
