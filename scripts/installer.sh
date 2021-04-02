@@ -63,8 +63,6 @@ saveAuth() { # topic is the describer
     set +a # Not anymore
 
     echo "$topic=\"${value}\"" >> "$passwordFile"
-
-    echo "$topic saved in password file and exported as variable"
 }
 
 readAuth() {
@@ -147,7 +145,15 @@ main(){
     if [[ $continue_point == "1_SYS_SETUP" ]]
         then
             source "${subScripts}/setupRequirements.sh" "$mainPath"
-            saveState '2_INFLUX_SETUP' 'InfluxDB installation and setup' # next point
+            saveState '4_PYTHON_SETUP' 'Python3 installation and packages'
+    fi
+
+    # Part 4: Python installation and packages
+    if [[ $continue_point == "4_PYTHON_SETUP" ]]
+        then
+            source "${subScripts}/pythonSetup.sh" "$mainPath"
+
+            saveState '2_INFLUX_SETUP' 'InfluxDB installation and setup'
     fi
 
     # Part 2: InfluxDB installation and setup
@@ -161,13 +167,6 @@ main(){
     if [[ $continue_point == "3_GRAFANA_SETUP" ]]
         then
             source "${subScripts}/grafanaSetup.sh" "$mainPath"
-            saveState '4_PYTHON_SETUP' 'Python3 installation and packages'
-    fi
-
-    # Part 4: Python installation and packages
-    if [[ $continue_point == "4_PYTHON_SETUP" ]]
-        then
-            source "${subScripts}/pythonSetup.sh" "$mainPath"
             saveState '5_USER_MANGEMENT' 'User creation for SPP, vSnap and others'
     fi
 

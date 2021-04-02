@@ -2,8 +2,8 @@
 (C) IBM Corporation 2020
 
 Description:
- Monitoring and long-term reporting for IBM Spectrum Protect Plus. 
- Provides a data bridge from SPP to InfluxDB and provides visualization dashboards via Grafana. 
+ Monitoring and long-term reporting for IBM Spectrum Protect Plus.
+ Provides a data bridge from SPP to InfluxDB and provides visualization dashboards via Grafana.
 
  This program provides functions to query IBM Spectrum Protect Plus Servers,
  VSNAP, VADP and other servers via REST API and ssh. This data is stored into a InfluxDB database.
