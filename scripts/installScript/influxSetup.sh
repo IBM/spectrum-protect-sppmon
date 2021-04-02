@@ -175,8 +175,8 @@ EOF
                 echo "Creation failed, please try again"
                 echo "Result from influxDB: $userCreateResult"
             else
-                saveAuth "influxAdminName" "$influxAdminName"
-                saveAuth "influxAdminPassword" "$influxAdminPassword"
+                saveAuth "influxAdminName" "${influxAdminName}"
+                saveAuth "influxAdminPassword" "${influxAdminPassword}"
                 saveAuth "influxPort" "${influxPort}"
                 saveAuth "influxAddress" "${influxAddress}"
         fi

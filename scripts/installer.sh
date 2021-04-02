@@ -58,9 +58,11 @@ saveAuth() { # topic is the describer
     local value=$2 # param2: value
 
     # save into global variable
-    eval "\"$topic\"=\"$value\""
+    set -a # now all variables are exported
+    eval "$topic=${value}"
+    set +a # Not anymore
 
-    echo "\"$topic\"=\"$value\"" >> "$passwordFile"
+    echo "$topic=${value}" >> "$passwordFile"
 
     echo "$topic saved in password file and exported as variable"
 }
