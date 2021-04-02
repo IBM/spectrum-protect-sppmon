@@ -6,10 +6,10 @@ pythonSetup() {
     echo "Installation of Python and packages"
 
     echo "> Checking gcc install"
-    if ! [ -x "$(gcc --version)" ]
+    if ! [[ -x "$(gcc --version)" ]]
         then
             echo "> Installing gcc"
-            checkReturn yum install gcc
+            checkReturn sudo yum install gcc
         else
             echo "> gcc installed."
     fi
