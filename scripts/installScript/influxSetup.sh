@@ -77,7 +77,7 @@ EOF
     local config_path=/etc/influxdb
     local config_file="${config_path}/influxdb.conf"
     local config_file_backup="${config_file}.orig"
-    local influx_db_path="$(realpath ~/influxDB)"
+    local influx_db_path="$(realpath /influxDB)"
     if [[ -f "${config_file_backup}" ]]; then
         echo "> Probably restarting the install script."
         echo "> Restoring original config file from backup."
@@ -88,9 +88,9 @@ EOF
     fi
 
     # Access rights
-    checkReturn sudo chown influxdb:influxdb /etc/influxdb/ -R
+    checkReturn sudo chown -R influxdb:influxdb "${config_path}"
     checkReturn mkdir -p "${influx_db_path}"
-    checkReturn sudo chown influxdb:influxdb ${influx_db_path} -R
+    checkReturn sudo chown -R influxdb:influxdb "${influx_db_path}"
 
     echo "> Editing config file - part 1 -"
     if confirm "Do you want to report usage data to usage.influxdata.com?"
