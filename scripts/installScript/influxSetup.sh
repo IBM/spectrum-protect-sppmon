@@ -112,15 +112,15 @@ EOF
     # sed -i 's/search_string/replace_string/' filename
     # sed -i -r '/header3/,/pattern/ s|pattern|replacement|' filename
 
-    # REMOVED: Why should we create influxDB at /, I guess the default should work fine too. Requires sudo if changed
+    # Changing dirs cause on default path /var/lib permissions will fail
     # [meta] dir
-    #checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/meta\"|"' "${config_path}"
+    checkReturn sudo sed -ri '"/\[meta\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"~/influxDB/meta\"|"' "${config_path}"
 
-    # SEE ABOVE
+
     # [data] dir
-    #checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"/influxDB/data\"|"' "${config_path}"
+    checkReturn sudo sed -ri '"/\[data\]/,/dir\s*=.+/ s|\#*\s*dir\s*=.+| dir = \"~/influxDB/data\"|"' "${config_path}"
     # [data] wal-dir
-    #checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = \"/influxDB/wal\"|"' "${config_path}"
+    checkReturn sudo sed -ri '"/\[data\]/,/wal-dir\s*=.+/ s|\#*\s*wal-dir\s*=.+| wal-dir = \"~/influxDB/wal\"|"' "${config_path}"
 
     # [http] enabled = true
     checkReturn sudo sed -ri '"/\[http\]/,/enabled\s*=.+/ s|\#*\s*enabled\s*=.+| enabled = true|"' "${config_path}"
