@@ -6,7 +6,8 @@ pythonSetup() {
     echo "Installation of Python and packages"
 
     echo "> Checking gcc install"
-    if ! [[ -x "$(gcc --version)" ]]
+    gcc --version &>/dev/null
+    if (( $? != 0 ))
         then
             echo "> Installing gcc"
             checkReturn sudo yum install gcc
@@ -28,7 +29,7 @@ pythonSetup() {
         echo "> Compatible Python version installed ($current_ver > $required_ver)."
     else
         echo "> Installing compatible python version. Current install does not match requirements ($current_ver < $required_ver)"
-        checkReturn mkdir /tmp/python392
+        checkReturn mkdir -p /tmp/python392
         checkReturn cd /tmp/python392/
         checkReturn wget https://www.python.org/ftp/python/3.9.2/Python-3.9.2.tgz
 
