@@ -74,10 +74,10 @@ EOF
     checkReturn sudo firewall-cmd --add-port=${influxPort}/tcp --permanent
     checkReturn sudo firewall-cmd --reload
 
-    local config_path="/etc/influxdb"
+    local config_path=/etc/influxdb
     local config_file="${config_path}/influxdb.conf"
     local config_file_backup="${config_file}.orig"
-    local influx_db_path="~/influxDB"
+    local influx_db_path="$(realpath ~/influxDB)"
     if [[ -f "${config_file_backup}" ]]; then
         echo "> Probably restarting the install script."
         echo "> Restoring original config file from backup."
@@ -92,7 +92,7 @@ EOF
     checkReturn mkdir -p "${influx_db_path}"
     checkReturn sudo chown influxdb:influxdb ${influx_db_path} -R
 
-    echo "> editing config file part 1"
+    echo "> Editing config file - part 1 -"
     if confirm "Do you want to report usage data to usage.influxdata.com?"
         then
             checkReturn sudo sed -i '"s/\#*\s*reporting-disabled\s*=.*/ reporting-disabled = false/"' "${config_file}"
@@ -183,7 +183,7 @@ EOF
 
     done
 
-    echo " > editing influxdb config file part 2"
+    echo " > Editing influxdb config file - part 2 -"
     # [http] auth-enabled = true
     checkReturn sudo sed -ri '"/\[http\]/,/auth-enabled\s*=.+/ s|\#*\s*auth-enabled\s*=.+| auth-enabled = true|"' "${config_file}"
     # [http] pprof-auth-enabled = true
