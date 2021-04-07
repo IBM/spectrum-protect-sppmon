@@ -22,11 +22,13 @@ pythonSetup() {
 
     echo "> Verifying the installed python version"
     local python_old_path=$(which python)
+
     local current_ver=$(python -V 2>&1)
     local required_ver="3.8.2
     "
     if [ "$(printf '%s\n' "$required_ver" "$current_ver" | sort -V | head -n1)" = "$required_ver" ]; then
         echo "> Compatible Python version installed ($current_ver > $required_ver)."
+
     else
         echo "> Installing compatible python version. Current install does not match requirements ($current_ver < $required_ver)"
         checkReturn mkdir -p /tmp/python392
@@ -34,11 +36,14 @@ pythonSetup() {
         checkReturn wget https://www.python.org/ftp/python/3.9.2/Python-3.9.2.tgz
 
         checkReturn cd /tmp/python392/
-        checkReturn tar -xvf Python-3.9.2.tgz
+        checkReturn tar -xf Python-3.9.2.tgz
         checkReturn cd /tmp/python392/Python-3.9.2
         checkReturn ./configure --enable-optimizations --prefix=/usr
 
         checkReturn sudo make altinstall
+
+        sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 2
+        sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 
         current_ver=$(python -V 2>&1)
         if [ "$(printf '%s\n' "$required_ver" "$current_ver" | sort -V | head -n1)" = "$required_ver" ]; then
