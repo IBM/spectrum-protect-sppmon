@@ -300,7 +300,7 @@ class SppMon:
         try:
             self.config_file = SppUtils.read_conf_file(config_file_path=OPTIONS.confFileJSON)
         except ValueError as error:
-            ExceptionUtils.exception_info(error=error, extra_message="Syntax Error in Config file, unable to read")
+            ExceptionUtils.exception_info(error=error, extra_message="Error when trying to read Config file, unable to read")
             self.exit(error_code=ERROR_CODE_CMD_LINE)
 
         LOGGER.info("Setting up configurations")
