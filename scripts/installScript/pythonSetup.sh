@@ -67,7 +67,7 @@ pythonSetup() {
         # Only set alternatives if python 2.7 is installed
         if command -v python2.7 &> /dev/null ; then
             echo "> Configuring alternatives between python2.7 (yum) and python3.9 (sppmon)."
-            checkReturn sudo make altinstall
+            checkReturn sudo make altinstall -s
 
             checkReturn sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 2
             checkReturn sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
@@ -94,7 +94,7 @@ pythonSetup() {
     checkReturn python3 -m pip install --upgrade pip
 
     echo "> Installing required packages"
-    checkReturn pip3 install -r $mainPath/../python/requirements.txt
+    checkReturn pip3 install -r $(realpath $mainPath/../python/requirements.txt)
 
     echo "Finished Python installation Setup"
 
