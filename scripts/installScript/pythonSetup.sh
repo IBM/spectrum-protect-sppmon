@@ -45,7 +45,7 @@ pythonSetup() {
     fi
 
     echo "> Installing development libaries and packages"
-    checkReturn sudo yum -y groupinstall "Development Tools"
+    checkReturn sudo yum -y groupinstall '"Development Tools"'
     checkReturn sudo yum -y install openssl-devel bzip2-devel libffi-devel
     checkReturn sudo yum -y install wget
 
@@ -91,7 +91,7 @@ pythonSetup() {
     fi
 
     echo "> Checking pip version"
-    checkReturn  python3 -m pip install --upgrade pip
+    checkReturn python3 -m pip install --upgrade pip
 
     echo "> Installing required packages"
     checkReturn pip3 install -r $mainPath/../python/requirements.txt

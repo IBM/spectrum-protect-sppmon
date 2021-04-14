@@ -6,9 +6,13 @@ abortInstallScript() {
         >&2 echo "Illegal number of parameters abortInstallScript"
     fi
 
+    rowLimiter
+
     echo "Aborting the SPPMon install script."
     echo "You may continue the script from the last saved point by restarting it."
     echo "Last saved point is: $continue_point."
+
+    rowLimiter
 
     # exit with error code
     exit -1
