@@ -14,7 +14,7 @@ currentInstallCheck() {
         echo "> Creating systemlink to /usr/bin/python3"
         checkReturn ln -sf "$python_old_path" /usr/bin/python3
         return 0
-    else command -v python3 &> /dev/null ; then
+    elif command -v python3 &> /dev/null ; then
         local python_old_path=$(which python3)
         local current_ver=$(python3 -V 2>&1)
 

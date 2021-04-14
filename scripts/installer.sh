@@ -130,6 +130,8 @@ main(){
     fi
 
     restoreState
+    # Sudo Check
+    sudoCheck
 
     # Part zero: Welcome
     if [[ $continue_point == "0_WELCOME" ]]
@@ -137,9 +139,6 @@ main(){
             source "${subScripts}/welcome.sh" "$mainPath"
             # Savepoint and explanation inside of `welcome`
     fi
-
-    # Sudo Check
-    sudoCheck
 
     # Part 1: System Setup (incomplete?)
     if [[ $continue_point == "1_SYS_SETUP" ]]

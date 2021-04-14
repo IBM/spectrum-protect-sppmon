@@ -14,8 +14,8 @@ welcome() {
 
     rowLimiter
 
-    echo "IMPORTANT: You may stop at savepoint and continue later."
-    echo "WARNING: Do not exit inbetween savepoints!"
+    echo "You may stop at savepoint and continue the installer later."
+    echo "IMPORTANT: Do not abort inbetween savepoints! This might have unexpected consequences."
     echo "Note: You may use the [default] case by just hitting enter in any following prompts"
     if ! (confirm "Start install script?");
         then
