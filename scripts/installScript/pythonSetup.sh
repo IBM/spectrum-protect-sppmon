@@ -4,7 +4,7 @@ currentInstallCheck() {
     echo "> Verifying the installed python version"
     local python_old_path=$(which python)
 
-    local current_ver=$(python -V 2>&1)
+    local current_ver=$(python -V 2>&1 | grep -oP "^Python \K.*")
     # required version is lower then newly installed -> code does work with 3.8, but latest version is better.
     local required_ver="3.8.2"
 
@@ -16,7 +16,7 @@ currentInstallCheck() {
         return 0
     elif command -v python3 &> /dev/null ; then
         local python_old_path=$(which python3)
-        local current_ver=$(python3 -V 2>&1)
+        local current_ver=$(python3 -V 2>&1 | grep -oP "^Python \K.*")
 
         if [ "$(printf '%s\n' "$required_ver" "$current_ver" | sort -V | head -n1)" = "$required_ver" ]; then
             echo "> Compatible Python version installed ($current_ver > $required_ver)."
