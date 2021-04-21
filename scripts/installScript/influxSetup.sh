@@ -167,7 +167,7 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        local userCreateQuery='curl -XPOST \"http://${influxAddress}:${influxPort}/query\" --data-urlencode \"q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES\"'
+        local userCreateQuery='curl -XPOST "http://${influxAddress}:${influxPort}/query" --data-urlencode \"q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES\"'
         echo $userCreateQuery
         local userCreateResult
         checkReturn userCreateResult=$(${userCreateQuery})
