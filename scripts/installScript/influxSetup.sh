@@ -47,7 +47,7 @@ verifyConnection() {
             connectionTestString="$connectionTestString -unsafeSsl"
         fi
     fi
-
+    echo "$connectionTestString"
     local connectionResponse=$($connectionTestString)
 show databases
 quit
@@ -58,6 +58,8 @@ quit
 
         echo "ERROR: The connection could not be established: $connectionResponse"
         abortInstallScript
+    else
+        echo "> connection sucessfull established."
     fi
 }
 
