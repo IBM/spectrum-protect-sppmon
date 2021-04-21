@@ -221,16 +221,19 @@ EOF
                 promptText "How long should if be valid in days? Leave empty for no limit" certDuration ""
                 if ! [[ "'$certDuration'" =~ ^\'[0-9]*\'$ ]] ; then
                     echo "You may only enter numbers or leave blank."
-                else
+                elif [[ -n "$certDuration" ]]; then
                     # append duration of cert
                     keyCreateCommand="$keyCreateCommand -days $certDuration"
+                    break
+                else
                     break
                 fi
             done
 
             # Actually create the cert
             while true; do # repeat until created
-                eval $keyCreateCommand
+                echo $keyCreateCommand
+                eval "$keyCreateCommand"
                 if [[ $? -ne 0 ]]; then
                     if ! confirm "cert creation failed. Do you want to try again?"; then
                         abortInstallScript
