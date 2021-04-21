@@ -219,19 +219,16 @@ EOF
 
             while true; do # repeat until valid symbol
                 promptText "How long should if be valid in days? Leave empty for no limit" certDuration ""
-                if ! [[ $certDuration =~ '^[0-9]*$' ]] || [[ -z $certDuration ]]; then
+                if ! [[ $certDuration =~ ^[0-9]*$ ]] || [[ -z $certDuration ]]; then
                     echo "You may only enter numbers or leave blank."
                 else
+                    # append duration of cert
+                    keyCreateCommand="$keyCreateCommand -days $certDuration"
                     break
                 fi
             done
 
-            # append duration of cert
-            if [[ -n $certDuration ]]; then
-                keyCreateCommand="$keyCreateCommand -days $certDuration"
-            fi
-
-            # Actually create it
+            # Actually create the cert
             while true; do # repeat until created
                 eval $keyCreateCommand
                 if [[ $? -ne 0 ]]; then
