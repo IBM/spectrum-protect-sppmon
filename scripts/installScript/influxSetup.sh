@@ -35,20 +35,20 @@ verifyConnection() {
         >&2 echo "Illegal number of parameters verifyConnection"
         abortInstallScript
     fi
-    userName=$1 # param1: user to be logged in
-    password=$2 # param2: password to be used
+    local userName=$1 # param1: user to be logged in
+    local password=$2 # param2: password to be used
 
 
     echo "> verifying connection to InfluxDB"
     local connectionTestString="influx -host localhost -username $userName -password $password"
-    if sslEnabled ; then # globalVar
+    if $sslEnabled ; then # globalVar
         connectionTestString="$connectionTestString -ssl"
-        if unsafeSsl ; then # globalVar
+        if $unsafeSsl ; then # globalVar
             connectionTestString="$connectionTestString -unsafeSsl"
         fi
     fi
 
-    local connectionResponse=$(connectionTestString)
+    local connectionResponse=$($connectionTestString)
 show databases
 quit
 
