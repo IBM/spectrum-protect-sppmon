@@ -218,9 +218,8 @@ EOF
             local certDuration
 
             while true; do # repeat until valid symbol
-                promptText "How long should if be valid in days? Leave empty for no limit" certDuration
-                if ! [[ $certDuration =~ '^[0-9]*$' ]]; then
-                    echo "current input: $certDuration"
+                promptText "How long should if be valid in days? Leave empty for no limit" "" certDuration
+                if ! [[ $certDuration =~ '^[0-9]*$' ]] || [[ -z $certDuration ]]; then
                     echo "You may only enter numbers or leave blank."
                 else
                     break
