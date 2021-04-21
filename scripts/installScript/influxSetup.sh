@@ -167,8 +167,9 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-
-        local userCreateResult=$(curl -XPOST "http://${influxAddress}:${influxPort}/query" --data-urlencode "q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES")
+        local userCreateQuery="curl -XPOST \"http://${influxAddress}:${influxPort}/query\" --data-urlencode \"q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES\""
+        echo $userCreateQuery
+        local userCreateResult=$(${userCreateQuery})
         local userCreateReturnCode=$(echo $userCreateResult | grep .*error.* >/dev/null; echo $?) # {"results":[{"statement_id":0}]}" or {"error":"..."}
         # 0 means match -> This is faulty. 1 means no match = good
         if (( $userCreateReturnCode != 1 ));then
@@ -176,6 +177,8 @@ EOF
             echo "Result from influxDB: $userCreateResult"
             # Start again
         else
+            echo "> admin creation sucessfully"
+
             saveAuth "influxAdminName" "${influxAdminName}"
             saveAuth "influxAdminPassword" "${influxAdminPassword}"
             saveAuth "influxPort" "${influxPort}"
