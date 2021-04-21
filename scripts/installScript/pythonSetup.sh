@@ -94,7 +94,9 @@ pythonSetup() {
     checkReturn python3 -m pip install --upgrade pip
 
     echo "> Installing required packages"
-    checkReturn pip3 install -r $(realpath "$(realpath $(dirname "${mainPath}"))/../python/requirements.txt")
+    echo $(realpath $(dirname "${mainPath}")/../python/requirements.txt)
+
+    checkReturn pip3 install -r $(realpath $(dirname "${mainPath}")/../python/requirements.txt)
 
     echo "Finished Python installation Setup"
 
