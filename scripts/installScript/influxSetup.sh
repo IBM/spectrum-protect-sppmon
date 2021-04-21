@@ -239,6 +239,7 @@ EOF
                         abortInstallScript
                     fi
                 else
+                    echo "> cert created sucessfully"
                     break
                 fi
             done
@@ -270,9 +271,9 @@ EOF
 
         # Edit config file again
         # [http] https-certificate
-        checkReturn sudo sed -ri "/\[http\]/,/https-certificate\s*=.+/ s|\#*\s*https-certificate\s*=.+| https-certificate = \"$httpsCertPath\"|" "${config_file}"
+        checkReturn sudo sed -ri "\"/\[http\]/,/https-certificate\s*=.+/ s|\#*\s*https-certificate\s*=.+| https-certificate = \\\"$httpsCertPath\\\"|\"" "${config_file}"
         # [http] https-private-key
-        checkReturn sudo sed -ri "/\[http\]/,/https-private-key\s*=.+/ s|\#*\s*https-private-key\s*=.+| https-private-key = \"$httpsKeyPath\"|" "${config_file}"
+        checkReturn sudo sed -ri "\"/\[http\]/,/https-private-key\s*=.+/ s|\#*\s*https-private-key\s*=.+| https-private-key = \\\"$httpsKeyPath\\\"|\"" "${config_file}"
 
     fi
 
