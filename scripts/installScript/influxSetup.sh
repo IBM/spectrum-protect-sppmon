@@ -167,21 +167,11 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        echo $(influx -host $influxAddress -port $influxPort
-CREATE USER \"$influxAdminName\" WITH PASSWORD \'$influxAdminPassword\' WITH ALL PRIVILEGES
-quit)
+        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx -host $influxAddress -port $influxPort
+        local userCreateReturnCode=$?
 
-
-        #local userCreateQuery='curl -XPOST "http://${influxAddress}:${influxPort}/query" --data-urlencode \"q=CREATE USER $influxAdminName WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES\"'
-        #echo $userCreateQuery
-        #local userCreateResult
-        #checkReturn userCreateResult=$(${userCreateQuery})
-       # local userCreateReturnCode=$(echo $userCreateResult | grep .*error.* >/dev/null; echo $?) # {"results":[{"statement_id":0}]}" or {"error":"..."}
-        # 0 means match -> This is faulty. 1 means no match = good
-        local userCreateReturnCode=0
-        if (( $userCreateReturnCode != 1 ));then
+        if (( $userCreateReturnCode != 0 ));then
             echo "Creation failed, please try again"
-            echo "Result from influxDB: $userCreateResult"
             # Start again
         else
             echo "> admin creation sucessfully"
