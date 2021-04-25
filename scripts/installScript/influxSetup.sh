@@ -167,12 +167,12 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx -host $influxAddress -port $influxPort
+        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
             echo "Creation failed due an error. Please read the output above."
-            if !confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
+            if ! confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
                 break
             fi
             # Start again
