@@ -167,7 +167,9 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx
+        influx -host $influxAddress -port $influxPort
+
+        #echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" |
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
