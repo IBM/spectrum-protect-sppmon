@@ -167,8 +167,8 @@ EOF
         echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
         echo "sudo influx -host $influxAddress -port $influxPort"
 
-        sleep 5
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | sudo influx -host $influxAddress -port $influxPort
+        influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
+        #echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | sudo influx -host $influxAddress -port $influxPort
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
