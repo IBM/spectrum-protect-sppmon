@@ -164,11 +164,11 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        sleep 1
         echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
-        echo "influx -host $influxAddress -port $influxPort"
+        echo "sudo influx -host $influxAddress -port $influxPort"
 
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx -host $influxAddress -port $influxPort
+        sleep 5
+        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | sudo influx -host $influxAddress -port $influxPort
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
