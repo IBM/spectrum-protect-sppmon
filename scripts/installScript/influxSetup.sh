@@ -40,7 +40,7 @@ verifyConnection() {
 
 
     echo "> verifying connection to InfluxDB"
-    local connectionTestString="influx -host localhost -username $userName -password $password"
+    local connectionTestString="influx -host $influxAddress -port $influxPort -username $userName -password $password"
     if $sslEnabled ; then # globalVar
         connectionTestString="$connectionTestString -ssl"
         if $unsafeSsl ; then # globalVar
@@ -48,15 +48,12 @@ verifyConnection() {
         fi
     fi
     echo "$connectionTestString"
-    local connectionResponse=$($connectionTestString)
-show databases
-quit
+    echo "SHOW DATABASES" | $connectionTestString
 
-    local influxVerifyCode=$(echo $connectionResponse | grep .*ERR.* >/dev/null; echo $?)
-    if [[ $influxVerifyCode -ne 1 ]]; then
-        # 0 means match -> This is faulty. 1 means no match = good
+    local influxVerifyCode=$?
+    if [[ $influxVerifyCode -ne 0 ]]; then
 
-        echo "ERROR: The connection could not be established: $connectionResponse"
+        echo "ERROR: The connection could not be established"
         abortInstallScript
     else
         echo "> connection sucessfull established."
@@ -167,8 +164,8 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
-        echo "influx -host $influxAddress -port $influxPort"
+        #echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
+        #echo "influx -host $influxAddress -port $influxPort"
 
         echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | influx -host $influxAddress -port $influxPort
         local userCreateReturnCode=$?
