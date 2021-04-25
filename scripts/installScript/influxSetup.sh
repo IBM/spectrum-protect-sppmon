@@ -164,6 +164,7 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
+        sleep 1
         echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
         echo "influx -host $influxAddress -port $influxPort"
 
