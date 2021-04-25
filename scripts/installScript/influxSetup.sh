@@ -171,7 +171,10 @@ EOF
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
-            echo "Creation failed, please try again"
+            echo "Creation failed due an error. Please read the output above."
+            if !confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
+                break
+            fi
             # Start again
         else
             echo "> admin creation sucessfully"
