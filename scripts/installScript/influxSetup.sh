@@ -48,7 +48,7 @@ verifyConnection() {
         fi
     fi
     echo "$connectionTestString"
-    echo "SHOW DATABASES" | $connectionTestString
+    $connectionTestString -execute "SHOW DATABASES"
 
     local influxVerifyCode=$?
     if [[ $influxVerifyCode -ne 0 ]]; then
@@ -164,11 +164,7 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
-        echo "sudo influx -host $influxAddress -port $influxPort"
-
         influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
-        #echo "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES" | sudo influx -host $influxAddress -port $influxPort
         local userCreateReturnCode=$?
 
         if (( $userCreateReturnCode != 0 ));then
