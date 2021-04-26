@@ -457,7 +457,7 @@ class SshMethods:
         if(not ssh_command.table_name):
             raise ValueError("need table name to insert parsed value")
 
-        pattern = re.compile(r"(.*)\s+\((.*)\)\s+(\d{2}\/\d{2}\/\d{4})\s+(\S*)\s+\((\d+)\sCPU\)")
+        pattern = re.compile(r"(.*)\s+\((.*)\)\s+(\d{2}\/\d{2}\/(?:\d{4}|\d{2}))\s+(\S*)\s+\((\d+)\sCPU\)")
 
         result_lines = ssh_command.result.splitlines()
 
