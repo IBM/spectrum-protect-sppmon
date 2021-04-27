@@ -25,7 +25,7 @@ welcome() {
             echo ""
             echo "Starting install script for sppmon."
             echo ""
-            continue_point='1_SYS_SETUP'
+            continue_point='SYS_SETUP'
             echo "$continue_point" > $saveFile
     fi
 }

@@ -138,67 +138,67 @@ main(){
     sudoCheck
 
     # Part zero: Welcome
-    if [[ $continue_point == "0_WELCOME" ]]
+    if [[ $continue_point == "WELCOME" ]]
         then
             source "${subScripts}/welcome.sh" "$mainPath"
             # Savepoint and explanation inside of `welcome`
     fi
 
     # Part 1: System Setup (incomplete?)
-    if [[ $continue_point == "1_SYS_SETUP" ]]
+    if [[ $continue_point == "SYS_SETUP" ]]
         then
             source "${subScripts}/setupRequirements.sh" "$mainPath"
             saveState '4_PYTHON_SETUP' 'Python3 installation and packages'
     fi
 
     # Part 4: Python installation and packages
-    if [[ $continue_point == "4_PYTHON_SETUP" ]]
+    if [[ $continue_point == "PYTHON_SETUP" ]]
         then
             source "${subScripts}/pythonSetup.sh" "$mainPath"
 
-            saveState '2_INFLUX_SETUP' 'InfluxDB installation and setup'
+            saveState 'INFLUX_SETUP' 'InfluxDB installation and setup'
     fi
 
     # Part 2: InfluxDB installation and setup
     if [[ $continue_point == "2_INFLUX_SETUP" ]]
         then
             source "${subScripts}/influxSetup.sh" "$mainPath"
-            saveState '3_GRAFANA_SETUP' 'Grafana installation'
+            saveState 'GRAFANA_SETUP' 'Grafana installation'
     fi
 
     # Part 3: Grafana installation
     if [[ $continue_point == "3_GRAFANA_SETUP" ]]
         then
             source "${subScripts}/grafanaSetup.sh" "$mainPath"
-            saveState '5_USER_MANGEMENT' 'User creation for SPP, vSnap and others'
+            saveState 'USER_MANGEMENT' 'User creation for SPP, vSnap and others'
     fi
 
     # Part 5: User management for SPP server and components
-    if [[ $continue_point == "5_USER_MANGEMENT" ]]
+    if [[ $continue_point == "USER_MANGEMENT" ]]
         then
             source "${subScripts}/userManagement.sh" "$mainPath"
-            saveState '6_CONFIG_FILE' 'creation of the monitoring file for each SPP-Server'
+            saveState 'CONFIG_FILE' 'creation of the monitoring file for each SPP-Server'
     fi
 
     # Part 6: User management for SPP server and components
-    if [[ $continue_point == "6_CONFIG_FILE" ]]
+    if [[ $continue_point == "CONFIG_FILE" ]]
         then
             source "${subScripts}/configFileSetup.sh" "$mainPath"
-            saveState '7_CRONTAB' 'Crontab configuration for automatic execution'
+            saveState 'CRONTAB' 'Crontab configuration for automatic execution'
     fi
 
     # Part 7: User management for SPP server and components
-    if [[ $continue_point == "7_CRONTAB" ]]
+    if [[ $continue_point == "CRONTAB" ]]
         then
             source "${subScripts}/configFileSetup.sh" "$mainPath"
-            saveState '8_GRAFANA_DASHBOARDS' 'Creation and configuration of the grafana dashboards'
+            saveState 'GRAFANA_DASHBOARDS' 'Creation and configuration of the grafana dashboards'
     fi
 
     # Part 8: Grafana dashboards
-    if [[ $continue_point == "8_GRAFANA_DASHBOARDS" ]]
+    if [[ $continue_point == "GRAFANA_DASHBOARDS" ]]
         then
             source "${subScripts}/configFileSetup.sh" "$mainPath"
-            saveState '9_FINISHED' 'Creation and configuration of the grafana dashboards' #TODO
+            saveState 'FINISHED' 'Creation and configuration of the grafana dashboards' #TODO
     fi
 
 }
