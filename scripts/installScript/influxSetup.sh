@@ -15,15 +15,15 @@ restartInflux() {
         checkReturn sudo systemctl start influxdb
     fi
 
-    echo "> Waiting max 10 seconds for startup"
-
-    for (( i = 0; i < 10; i++)); do
-        sleep 1
-        if (( $(eval "${check_influx}") == 0 )); then
-            echo "Restart sucessfull"
-            return 0
-        fi
-    done
+    echo "> Waiting 10 seconds for startup of influxDB"
+    sleep 10
+    #for (( i = 0; i < 10; i++)); do
+    #    sleep 1
+    #    if (( $(eval "${check_influx}") == 0 )); then
+    #        echo "Restart sucessfull"
+    #        return 0
+    #    fi
+    #done
 
     echo "> Restart failed"
     abortInstallScript
@@ -164,12 +164,6 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
-        sleep 5
-        sudo echo "Now influx"
-        echo influx -execute "SHOW USERS"
-        influx -execute "SHOW USERS"
-
-        echo influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
         influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxAdminName\" WITH PASSWORD '$influxAdminPassword' WITH ALL PRIVILEGES"
         local userCreateReturnCode=$?
 
