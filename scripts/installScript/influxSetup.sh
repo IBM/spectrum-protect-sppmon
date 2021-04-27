@@ -164,6 +164,8 @@ EOF
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
 
+        sleep 5
+        sudo echo "Now influx"
         echo influx -execute "SHOW USERS"
         influx -execute "SHOW USERS"
 
