@@ -24,9 +24,13 @@ restartInflux() {
     #        return 0
     #    fi
     #done
-
-    echo "> Restart failed"
-    abortInstallScript
+    if (( $(eval "${check_influx}") == 0 )); then
+        echo "> Restart sucessfull"
+        return 0
+    else
+        echo "> Restart failed"
+        abortInstallScript
+    fi
 
 }
 

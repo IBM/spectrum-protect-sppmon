@@ -66,9 +66,11 @@ pythonSetup() {
 
         # Only set alternatives if python 2.7 is installed
         if command -v python2.7 &> /dev/null ; then
-            echo "> Configuring alternatives between python2.7 (yum) and python3.9 (sppmon)."
+
+            echo "> Python may take a few seconds to install. Please wait."
             checkReturn sudo make altinstall -s
 
+            echo "> Configuring alternatives between python2.7 (yum) and python3.9 (sppmon)."
             checkReturn sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 2
             checkReturn sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
             checkReturn sudo update-alternatives --set python /usr/bin/python2.7
@@ -77,7 +79,7 @@ pythonSetup() {
         fi
 
         echo "> Creating systemlink to /usr/bin/python3"
-        ln -sf /usr/bin/python3.9 /usr/bin/python3
+        checkReturn sudo ln -sf /usr/bin/python3.9 /usr/bin/python3
 
         # Confirming install
 
@@ -94,7 +96,7 @@ pythonSetup() {
     checkReturn python3 -m pip install --upgrade pip
 
     echo "> Installing required packages"
-    echo $(realpath $(dirname "${mainPath}")/../python/requirements.txt)
+    #echo $(realpath $(dirname "${mainPath}")/../python/requirements.txt)
 
     checkReturn pip3 install -r $(realpath $(dirname "${mainPath}")/../python/requirements.txt)
 
