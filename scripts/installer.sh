@@ -89,23 +89,23 @@ restoreState() {
 
     if [[ -f "$saveFile" ]]; then # already executed
 
-            rowLimiter
+        rowLimiter
 
-            continue_point=$(<"$saveFile")
-            echo "Welcome to the SPPMon install guide. You last saved point was $continue_point."
-            echo "WARNING: Restarting has unpredictable effects. No warranty for any functionality."
-            echo ""
-            if confirm "Do you want to continue without restarting? Abort by CTRL + C."
-                then # no restart
-                    echo "Continuing from last saved point"
-                else # restart
-                    echo "restarting install process"
-                    continue_point='0_WELCOME'
-                echo "$continue_point" > "$saveFile"
-            fi
-        else # First execution
-            continue_point='0_WELCOME'
+        continue_point=$(<"$saveFile")
+        echo "Welcome to the SPPMon install guide. You last saved point was $continue_point."
+        echo "WARNING: Restarting has unpredictable effects. No warranty for any functionality."
+        echo ""
+        if confirm "Do you want to continue without restarting? Abort by CTRL + C."
+            then # no restart
+                echo "Continuing from last saved point"
+            else # restart
+                echo "restarting install process"
+                continue_point='WELCOME'
             echo "$continue_point" > "$saveFile"
+        fi
+    else # First execution
+        continue_point='WELCOME'
+        echo "$continue_point" > "$saveFile"
     fi
 }
 
@@ -148,7 +148,7 @@ main(){
     if [[ $continue_point == "SYS_SETUP" ]]
         then
             source "${subScripts}/setupRequirements.sh" "$mainPath"
-            saveState '4_PYTHON_SETUP' 'Python3 installation and packages'
+            saveState 'PYTHON_SETUP' 'Python3 installation and packages'
     fi
 
     # Part 4: Python installation and packages
