@@ -51,7 +51,7 @@ verifyConnection() {
             connectionTestString="$connectionTestString -unsafeSsl"
         fi
     fi
-    echo "$connectionTestString"
+
     $connectionTestString -execute "SHOW DATABASES"
 
     local influxVerifyCode=$?
@@ -163,7 +163,7 @@ EOF
         promptLimitedText "Please enter the desired InfluxDB admin name" influxAdminName "$influxAdminName"
 
         # sets default to presaved value if empty
-        if [[ -z $influxAdminName ]]; then
+        if [[ -z $influxAdminPassword ]]; then
             local influxAdminPassword
         fi
         promptLimitedText "Please enter the desired InfluxDB admin password" influxAdminPassword "$influxAdminPassword"
@@ -294,25 +294,45 @@ EOF
     verifyConnection $influxAdminName $influxAdminPassword
 
 
-    # Create Grafana Reader
-    readAuth # read existing authentification
+    #################### GRAFANA READER USER ################
 
     # this should always be grafana reader
     local influxGrafanaReaderName="GrafanaReader"
 
-    # sets default to presaved value if it exists
-    if [[ -z $influxGrafanaReaderPassword ]]; then
-        local influxGrafanaReaderPassword=""
-    fi
-
     echo "Creating InfluxDB '$influxGrafanaReaderName' user"
 
-    promptLimitedText "Please enter the desired InfluxDB GrafanaReader user password" influxGrafanaReaderPassword "$influxGrafanaReaderPassword"
+    # Create user
+    while true; do # repeat until break, when it works
+
+        readAuth # read all existing auths
+
+        # sets default to presaved value if empty
+        if [[ -z $influxGrafanaReaderPassword ]]; then
+            local influxGrafanaReaderPassword
+        fi
+        promptLimitedText "Please enter the desired GrafanaReader password" influxGrafanaReaderPassword "$influxGrafanaReaderPassword"
+
+        influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxGrafanaReaderName\" WITH PASSWORD '$influxGrafanaReaderPassword'"
+        local userCreateReturnCode=$?
+
+        if (( $userCreateReturnCode != 0 ));then
+            echo "Creation failed due an error. Please read the output above."
+            if ! confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
+                break
+            fi
+            # Start again
+        else
+            echo "> GrafanaReader creation sucessfully"
+
+            saveAuth "influxGrafanaReaderName" "${influxGrafanaReaderName}"
+            saveAuth "influxGrafanaReaderPassword" "${influxGrafanaReaderPassword}"
+            # BREAK; user finished
+            break
+        fi
+
+    done
 
     verifyConnection "$influxGrafanaReaderName" "$influxGrafanaReaderPassword"
-
-    saveAuth "influxGrafanaReaderName" "$influxGrafanaReaderName"
-    saveAuth "influxGrafanaReaderPassword" "$influxGrafanaReaderPassword"
 
     echo "Finished InfluxDB Setup"
 
