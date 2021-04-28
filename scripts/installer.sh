@@ -160,14 +160,14 @@ main(){
     fi
 
     # Part 2: InfluxDB installation and setup
-    if [[ $continue_point == "2_INFLUX_SETUP" ]]
+    if [[ $continue_point == "INFLUX_SETUP" ]]
         then
             source "${subScripts}/influxSetup.sh" "$mainPath"
             saveState 'GRAFANA_SETUP' 'Grafana installation'
     fi
 
     # Part 3: Grafana installation
-    if [[ $continue_point == "3_GRAFANA_SETUP" ]]
+    if [[ $continue_point == "GRAFANA_SETUP" ]]
         then
             source "${subScripts}/grafanaSetup.sh" "$mainPath"
             saveState 'USER_MANGEMENT' 'User creation for SPP, vSnap and others'
