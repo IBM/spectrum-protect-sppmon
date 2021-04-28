@@ -52,6 +52,9 @@ verifyConnection() {
         fi
     fi
 
+    echo $connectionTestString -execute "SHOW DATABASES"
+    echo "> Waiting 10 seconds to avoid connection error"
+    sleep 10
     $connectionTestString -execute "SHOW DATABASES"
 
     local influxVerifyCode=$?
@@ -151,6 +154,8 @@ EOF
     checkReturn sudo systemctl enable influxdb
     restartInflux
 
+    #################### INFLUXADMIN USER ################
+
     # Create user
     while true; do # repeat until break, when it works
 
@@ -189,6 +194,48 @@ EOF
         fi
 
     done
+
+    #################### GRAFANA READER USER ################
+
+    # this should always be grafana reader
+    local influxGrafanaReaderName="GrafanaReader"
+
+    echo "Creating InfluxDB '$influxGrafanaReaderName' user"
+
+    # Create user
+    while true; do # repeat until break, when it works
+
+        readAuth # read all existing auths
+
+        # sets default to presaved value if empty
+        if [[ -z $influxGrafanaReaderPassword ]]; then
+            local influxGrafanaReaderPassword
+        fi
+        promptLimitedText "Please enter the desired GrafanaReader password" influxGrafanaReaderPassword "$influxGrafanaReaderPassword"
+
+        influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxGrafanaReaderName\" WITH PASSWORD '$influxGrafanaReaderPassword'"
+        local userCreateReturnCode=$?
+
+        if (( $userCreateReturnCode != 0 ));then
+            echo "Creation failed due an error. Please read the output above."
+            if ! confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
+                break
+            fi
+            # Start again
+        else
+            echo "> GrafanaReader creation sucessfully"
+
+            saveAuth "influxGrafanaReaderName" "${influxGrafanaReaderName}"
+            saveAuth "influxGrafanaReaderPassword" "${influxGrafanaReaderPassword}"
+            # BREAK; user finished
+            break
+        fi
+
+    done
+
+    verifyConnection "$influxGrafanaReaderName" "$influxGrafanaReaderPassword"
+
+    ############# ENABLE AUTH ##################
 
     echo " > Editing influxdb config file - part 2 -"
     # [http] auth-enabled = true
@@ -293,46 +340,6 @@ EOF
     # Checking connection
     verifyConnection $influxAdminName $influxAdminPassword
 
-
-    #################### GRAFANA READER USER ################
-
-    # this should always be grafana reader
-    local influxGrafanaReaderName="GrafanaReader"
-
-    echo "Creating InfluxDB '$influxGrafanaReaderName' user"
-
-    # Create user
-    while true; do # repeat until break, when it works
-
-        readAuth # read all existing auths
-
-        # sets default to presaved value if empty
-        if [[ -z $influxGrafanaReaderPassword ]]; then
-            local influxGrafanaReaderPassword
-        fi
-        promptLimitedText "Please enter the desired GrafanaReader password" influxGrafanaReaderPassword "$influxGrafanaReaderPassword"
-
-        influx -host $influxAddress -port $influxPort -execute "CREATE USER \"$influxGrafanaReaderName\" WITH PASSWORD '$influxGrafanaReaderPassword'"
-        local userCreateReturnCode=$?
-
-        if (( $userCreateReturnCode != 0 ));then
-            echo "Creation failed due an error. Please read the output above."
-            if ! confirm "Do you want to try again (y) or continue (n)? Abort by ctrl + c"; then
-                break
-            fi
-            # Start again
-        else
-            echo "> GrafanaReader creation sucessfully"
-
-            saveAuth "influxGrafanaReaderName" "${influxGrafanaReaderName}"
-            saveAuth "influxGrafanaReaderPassword" "${influxGrafanaReaderPassword}"
-            # BREAK; user finished
-            break
-        fi
-
-    done
-
-    verifyConnection "$influxGrafanaReaderName" "$influxGrafanaReaderPassword"
 
     echo "Finished InfluxDB Setup"
 
