@@ -60,8 +60,10 @@ verifyConnection() {
     local influxVerifyCode=$?
     if [[ $influxVerifyCode -ne 0 ]]; then
 
-        echo "ERROR: The connection could not be established"
-        abortInstallScript
+        echo "> ERROR: The connection could not be established."
+        if ! confirm "Do you want to continue anyway?" ; then
+            abortInstallScript
+        fi
     else
         echo "> connection sucessfull established."
     fi
