@@ -105,7 +105,7 @@ EOF
 
     # Access rights
     checkReturn sudo chown -R influxdb:influxdb "${config_path}"
-    checkReturn mkdir -p "${influx_db_path}"
+    checkReturn sudo mkdir -p "${influx_db_path}"
     checkReturn sudo chown -R influxdb:influxdb "${influx_db_path}"
 
     echo "> Editing config file - part 1 -"
