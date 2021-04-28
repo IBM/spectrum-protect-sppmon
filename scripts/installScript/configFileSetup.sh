@@ -5,8 +5,10 @@ configFileSetup() {
     rowLimiter
     echo "Creating and configuring the config files"
 
-    local config_dir="$(dirname ${1})"
-    config_dir=$(realpath ${config_dir}/../config_files)
+    local local_dir="$(dirname ${1})"
+    echo "> local_dir: ${local_dir}"
+    local config_dir=$(realpath ${local_dir}/../config_files)
+    python3 ./configFileSetup.py "${config_dir}"
 
     echo "> All configurations files are written into dir ${config_dir}"
 

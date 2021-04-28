@@ -176,7 +176,9 @@ main(){
     # Part 5: User management for SPP server and components
     if [[ $continue_point == "USER_MANGEMENT" ]]
         then
-            source "${subScripts}/userManagement.sh" "$mainPath"
+            echo "Please follow user creation instructions"
+            echo "https://github.com/IBM/spectrum-protect-sppmon/wiki/Create-user-accounts-in-SPP-server-and-vsnaps"
+            #source "${subScripts}/userManagement.sh" "$mainPath"
             saveState 'CONFIG_FILE' 'creation of the monitoring file for each SPP-Server'
     fi
 

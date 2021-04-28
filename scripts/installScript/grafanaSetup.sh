@@ -24,8 +24,11 @@ EOF
     echo "> Starting Grafana service"
     checkReturn sudo systemctl enable --now grafana-server
 
-    echo "> Verify Grafana service"
-    checkReturn sudo systemctl status grafana-server
+    echo "> Waiting 10 seconds for startup"
+    sleep 10
+
+    echo "> Verify Grafana service is active"
+    checkReturn sudo systemctl is-active grafana-server
 
     echo "> Firewall configuration"
     checkReturn sudo firewall-cmd --add-port=3000/tcp --permanent
