@@ -1,4 +1,61 @@
 {
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "alertlist",
+      "name": "Alert list",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.5.4"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table-old",
+      "name": "Table (old)",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -17,7 +74,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 31,
+  "id": null,
   "links": [],
   "panels": [
     {
@@ -39,7 +96,6 @@
       "description": "95% Percentille over last 24h ",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "displayName": "",
           "mappings": [],
@@ -84,9 +140,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [
@@ -131,7 +188,6 @@
       "description": "95% Percentille over last 24h ",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "displayName": "",
           "mappings": [],
@@ -175,9 +231,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "",
@@ -224,7 +281,6 @@
       "description": "95% Percentille / last 24h of each component memory usage\nMax root storage usage  / last 24h of Server and vSnap",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "max": 100,
@@ -268,9 +324,10 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "showUnfilled": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "$tag_name",
@@ -378,12 +435,10 @@
       "description": "Duration of the last execution of selected jobs",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "min": 0,
           "noValue": "No Execution Recorded",
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -433,9 +488,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "$tag_jobName",
@@ -498,9 +554,7 @@
       "decimals": 1,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -533,7 +587,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -670,7 +724,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "noValue": "Not Executed",
           "thresholds": {
@@ -705,9 +758,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [],
@@ -750,7 +804,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "noValue": "Not Executed",
           "thresholds": {
@@ -785,9 +838,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [],
@@ -830,7 +884,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "noValue": "Not Executed",
           "thresholds": {
@@ -865,9 +918,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [],
@@ -922,7 +976,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "noValue": "Not Executed",
           "thresholds": {
@@ -957,9 +1010,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [],
@@ -1002,7 +1056,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "max": 100,
@@ -1048,9 +1101,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "$tag_ssh_type",
@@ -1114,9 +1168,7 @@
       "dashboardTags": [],
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "folderId": 0,
@@ -1148,7 +1200,6 @@
       "description": "This panel shows how much the dela did increase, leaving out going down again.\nGood for noticing errors, even if they disappeared",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "max": 50,
           "noValue": "N/A",
@@ -1187,9 +1238,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": false
+        "showThresholdMarkers": false,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "--constant",
@@ -1379,11 +1431,9 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "noValue": "N/A",
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1427,9 +1477,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "Catalog Backup",
@@ -1468,7 +1519,6 @@
       "description": "90% percentille of last 24h per Commandgroup",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "max": 800,
@@ -1513,9 +1563,10 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "showUnfilled": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1576,7 +1627,6 @@
       "description": "90% percentille of last 24h",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "max": 100,
@@ -1621,9 +1671,10 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "showUnfilled": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "$tag_COMMAND",
@@ -1685,10 +1736,8 @@
       "description": "Sum of replicated bytes (VM) within the last 24h\nSum of transferred bytes (VM) within the last 24h\nSum of transferred bytes (Office365) within the last 24h\n",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "mappings": [],
           "noValue": "N/A",
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1724,9 +1773,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "VM Replicated",
@@ -1837,9 +1887,6 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": "center"
-          },
           "mappings": [],
           "noValue": "Unknown",
           "thresholds": {
@@ -1873,9 +1920,10 @@
           "fields": "/^SPP Version$/",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [],
@@ -1952,11 +2000,9 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "decimals": 0,
           "mappings": [],
           "noValue": "N/A",
-          "nullValueMode": "connected",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1992,9 +2038,10 @@
           "fields": "",
           "values": false
         },
+        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "alias": "",
@@ -2054,7 +2101,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                80
               ],
               "type": "gt"
             },
@@ -2102,6 +2149,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "CPU and or Memory consumption is exceeding the defined alerting threshold on the IBM Spectrum Protect Plus server.  If the usage continues above the threshold, confirm that the SPP server configuration meets the blueprint CPU and Memory requirements.  Review the charts showing resource consumption by process for further insight into which server components are using the most resources.",
         "name": "CPU / RAM SPP-Server (REST) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -2114,9 +2162,7 @@
       "datasource": null,
       "decimals": 1,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -2148,7 +2194,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2246,7 +2292,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -2323,6 +2370,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The per process threshold for CPU consumption on the IBM Spectrum Protect Plus server is being exceeded for one or more processes.  Continue to monitor to see if this is temporary or ongoing.  If the overall CPU consumption of the SPP server is also being conceded then it may be necessary to expand the CPU allocation of the SPP server.",
         "name": "SPP-Server Processes CPU Usage (sshcmd: top) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -2338,9 +2386,7 @@
       "decimals": 1,
       "description": "Selected Processes monitored by top command\n\"java\", \"mongo\", \"beam.smp\".\nQuerie calcualted due an inner querie to filter out the PID. Simple \"mean\" would result in a falsly low result",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -2375,7 +2421,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2443,7 +2489,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 520
+          "value": 520,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -2496,7 +2543,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                80
               ],
               "type": "gt"
             },
@@ -2521,6 +2568,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "CPU consumption has exceeded the defined alert threshold on one or more systems (SPP server, vSnap server, or VADP proxy).  If the threshold continues to be exceeded, additional CPU resource may need to be allocated to the system.",
         "name": "Component CPU (sshcmd: MP-ssh) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -2532,9 +2580,7 @@
       "datasource": null,
       "decimals": 1,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -2565,7 +2611,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2644,7 +2690,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -2722,6 +2769,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "Memory consumption has exceeded the defined alert threshold on one or more systems (SPP server, vSnap server, or VADP proxy).  If the threshold continues to be exceeded, additional memory may need to be allocated to the system.",
         "name": "RAM by Component Used (sshcmd: free) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -2732,9 +2780,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -2763,7 +2809,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -2853,7 +2899,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0.9
+          "value": 0.9,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -2930,6 +2977,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The per process threshold for memory consumption on the IBM Spectrum Protect Plus server is being exceeded for one or more processes.  Continue to monitor to see if this is temporary or ongoing.  If the overall memory consumption of the SPP server is also being conceded then it may be necessary to expand the memory allocation of the SPP server.",
         "name": "SPP-Server Processes RAM Usage (sshcmd: top) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -2943,9 +2991,7 @@
       "decimals": 1,
       "description": "Mean-Sum of process-group displayed",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -2978,7 +3024,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -3046,7 +3092,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 90
+          "value": 90,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -3102,9 +3149,7 @@
       "decimals": 1,
       "description": "Selected Processes monitored by top command\n\"java\", \"mongo\", \"beam.smp\"",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -3139,7 +3184,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -3271,6 +3316,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "Used storage space for one or more of the catalogs on the IBM Spectrum Protect Plus server has exceeded the alerting threshold.  The storage capacity for the file system holding the catalog can be increased following a procedure available in the SPP documentation.\n\nConfiguration catalog = /data\nRecovery catalog = /data2\nFile catalog = /data3",
         "name": "SPP-Server File System alert",
         "noDataState": "no_data",
         "notifications": []
@@ -3282,9 +3328,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -3314,7 +3358,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3373,7 +3417,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 90
+          "value": 90,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -3450,6 +3495,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The space used in the root file system in the specified server(s) is exceeding the defined alert threshold.  If the file system fills to 100%, a system outage may occur.  Unnecessary files in the root file system need to be cleaned up and/or the capacity of the root file system needs to be increased.",
         "name": "Storage Usage (Server & vSnap) alert",
         "noDataState": "no_data",
         "notifications": []
@@ -3462,9 +3508,7 @@
       "decimals": 0,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -3495,7 +3539,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3578,7 +3622,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 80
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -3631,9 +3676,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -3662,7 +3705,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3826,9 +3869,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -3860,7 +3901,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4004,9 +4045,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4035,7 +4074,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4109,7 +4148,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -4186,6 +4226,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The elapsed time for the maintenance job on the IBM Spectrum Protect Plus server has exceeded the defined alert threshold.  The maintenance job is responsible for removing snapshots that have exceeded the retention specified in SLA policies, and needs to complete on a regular interval in order to maintain sufficient vSnap available storage.",
         "name": "Maintenance Job Duration alert",
         "noDataState": "alerting",
         "notifications": []
@@ -4198,9 +4239,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4229,7 +4268,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4291,7 +4330,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -4380,9 +4420,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4411,7 +4449,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4473,7 +4511,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -4562,9 +4601,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4593,7 +4630,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4655,7 +4692,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -4732,6 +4770,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The elapsed time for one or more VMware backup or replication jobs has exceeded the defined alerting threshold.",
         "name": "VMware Protection Job Durations alert",
         "noDataState": "no_data",
         "notifications": []
@@ -4744,9 +4783,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4775,7 +4812,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -4855,7 +4892,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -4944,9 +4982,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -4975,7 +5011,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5049,7 +5085,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -5138,9 +5175,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -5169,7 +5204,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -5249,7 +5284,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -5315,9 +5351,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -5348,7 +5382,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -5580,7 +5614,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [
@@ -5751,9 +5785,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -5784,7 +5816,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -5931,13 +5963,6 @@
                 "value": "center"
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "jobName"
-            },
-            "properties": []
           }
         ]
       },
@@ -5953,7 +5978,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [
@@ -6047,9 +6072,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -6078,7 +6101,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6183,9 +6206,7 @@
       "datasource": null,
       "decimals": 0,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -6216,7 +6237,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -6332,9 +6353,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -6365,7 +6384,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -6520,9 +6539,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 0,
@@ -6551,7 +6568,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -6693,9 +6710,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -6724,7 +6739,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -6823,9 +6838,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 0,
@@ -6854,7 +6867,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
@@ -7137,6 +7150,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The backup success rate for VMware virtual disks has dropped below the defined alerting threshold.  Check details of job logs on the IBM Spectrum Protect Plus server for details on the errors causing the failures.",
         "name": "VM's Backup Sucess rate alert",
         "noDataState": "no_data",
         "notifications": []
@@ -7154,9 +7168,7 @@
       "datasource": null,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -7187,7 +7199,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -7408,7 +7420,8 @@
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 0.85
+          "value": 0.85,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -7460,9 +7473,7 @@
       "columns": [],
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fontSize": "100%",
@@ -7550,9 +7561,7 @@
       "datasource": null,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -7581,7 +7590,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7734,9 +7743,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -7765,7 +7772,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -7886,9 +7893,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -7917,7 +7922,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8052,9 +8057,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8083,7 +8086,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8204,9 +8207,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8235,7 +8236,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8350,9 +8351,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8381,7 +8380,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8496,9 +8495,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8527,7 +8524,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -8657,9 +8654,7 @@
       "datasource": null,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8689,7 +8684,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -8794,9 +8789,7 @@
       "datasource": null,
       "description": "Selects mean of each unique storage, sums up to total per site",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -8826,7 +8819,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -8946,7 +8939,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                70
               ],
               "type": "gt"
             },
@@ -8971,6 +8964,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The percentage of used storage on one or more vSnap servers has exceeded the alerting threshold.  Once the vSnap reaches the used capacity defined as its error threshold, backup failures may result.  Consult SPP documentation for information on how to expand the storage capacity of a vSnap server.",
         "name": "vSnap storage space utilization alert",
         "noDataState": "no_data",
         "notifications": []
@@ -8981,9 +8975,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -9013,7 +9005,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -9072,7 +9064,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 70,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -9125,9 +9118,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -9157,7 +9148,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 1,
       "points": false,
       "renderer": "flot",
@@ -9264,9 +9255,7 @@
       "datasource": null,
       "decimals": 1,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -9298,7 +9287,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -9401,7 +9390,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                80
               ],
               "type": "gt"
             },
@@ -9449,6 +9438,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The used percentage of CPU and/or memory has exceeded the alerting threshold for one of more vSnap servers.",
         "name": "VSnap CPU & RAM Health alert",
         "noDataState": "no_data",
         "notifications": []
@@ -9459,9 +9449,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -9490,7 +9478,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -9624,7 +9612,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -9737,7 +9726,7 @@
           }
         ]
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [
@@ -9816,9 +9805,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -9847,7 +9834,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -9968,7 +9955,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                80
               ],
               "type": "gt"
             },
@@ -10016,6 +10003,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The percentage of used CPU and/or Memory has exceeded the defined alerting threshold for one or more VADP proxy servers.",
         "name": "VADP CPU & RAM Health alert",
         "noDataState": "no_data",
         "notifications": []
@@ -10026,9 +10014,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10057,7 +10043,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10191,7 +10177,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -10257,7 +10244,7 @@
           {
             "evaluator": {
               "params": [
-                65
+                80
               ],
               "type": "gt"
             },
@@ -10305,6 +10292,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The percentage of used CPU and/or Memory has exceeded the defined alerting threshold for one or more M365 cloud proxy servers.",
         "name": "Cloudproxy CPU & RAM Health alert",
         "noDataState": "ok",
         "notifications": []
@@ -10315,9 +10303,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10346,7 +10332,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10486,7 +10472,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 65
+          "value": 80,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -10539,9 +10526,7 @@
       "datasource": null,
       "decimals": 0,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10570,7 +10555,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10690,9 +10675,7 @@
       "datasource": null,
       "decimals": 0,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10721,7 +10704,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10812,9 +10795,7 @@
       "datasource": null,
       "decimals": 0,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10843,7 +10824,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -10940,9 +10921,7 @@
       "datasource": null,
       "decimals": 0,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -10973,7 +10952,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -11075,9 +11054,6 @@
       "description": "Displays the final change rate of errors which occured, going to stay at 0 if all is on a normal \"error\"-level",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": null
-          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -11117,9 +11093,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "panelId": 108,
@@ -11151,9 +11128,7 @@
       "datasource": null,
       "description": "",
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -11183,7 +11158,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -11405,9 +11380,7 @@
       "dashboardTags": [],
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "folderId": null,
@@ -11442,9 +11415,7 @@
       "dashboardTags": [],
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "folderId": 0,
@@ -11597,6 +11568,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "SPPMON has encountered errors performing one or more data collections.",
         "name": "SPPmon Collection Errors delta alert",
         "noDataState": "keep_state",
         "notifications": []
@@ -11620,9 +11592,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -11652,7 +11622,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 0.5,
       "points": true,
       "renderer": "flot",
@@ -11851,7 +11821,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0
+          "value": 0,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -11900,64 +11871,8 @@
     {
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error Messages"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 1000
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count of Errors"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 116
-              },
-              {
-                "id": "custom.align",
-                "value": "center"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 145
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -11967,6 +11882,7 @@
       },
       "id": 143,
       "options": {
+        "dedupStrategy": "none",
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
@@ -12016,64 +11932,8 @@
     {
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error Messages"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 1000
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count of Errors"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 116
-              },
-              {
-                "id": "custom.align",
-                "value": "center"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 145
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -12083,6 +11943,7 @@
       },
       "id": 145,
       "options": {
+        "dedupStrategy": "none",
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
@@ -12132,64 +11993,8 @@
     {
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Error Messages"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 1000
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Count of Errors"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 116
-              },
-              {
-                "id": "custom.align",
-                "value": "center"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 145
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -12199,6 +12004,7 @@
       },
       "id": 146,
       "options": {
+        "dedupStrategy": "none",
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
@@ -12277,7 +12083,7 @@
       "options": {
         "showHeader": true
       },
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "targets": [
         {
           "groupBy": [
@@ -12482,6 +12288,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
+        "message": "The duration of one or more SPPMON queries has exceeded the defined alerting threshold.",
         "name": "SPPMON Runtime Duration alert",
         "noDataState": "alerting",
         "notifications": []
@@ -12498,9 +12305,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -12529,7 +12334,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -12740,7 +12545,8 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 72000000
+          "value": 72000000,
+          "visible": true
         }
       ],
       "timeFrom": null,
@@ -12792,9 +12598,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -12823,7 +12627,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -12926,9 +12730,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -12957,7 +12759,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -13061,9 +12863,7 @@
       "dashes": false,
       "datasource": null,
       "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -13092,7 +12892,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.5.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -13190,7 +12990,7 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -13215,5 +13015,5 @@
   "timezone": "",
   "title": "SPPMON for IBM Spectrum Protect Plus",
   "uid": "PcYuUMSMk",
-  "version": 46
+  "version": 8
 }
