@@ -4,9 +4,9 @@ import sys
 class ConfigFileSetup:
 
     def main(self):
-        print(sys.argv[0])
-        config_dir: str = sys.argv[0]
-        print(f"> All configurations files are written into dir ${config_dir}")
+        print(sys.argv[1])
+        config_dir: str = sys.argv[1]
+        print(f">PY: All configurations files are written into dir {config_dir}")
 
 
 
