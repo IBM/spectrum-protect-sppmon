@@ -5,7 +5,7 @@ restartInflux() {
         >&2 echo "Illegal number of parameters restartInflux"
         abortInstallScript
     fi
-    check_influx='systemctl is-active influxdb &>/dev/null; echo $?'
+    local check_influx='systemctl is-active influxdb &>/dev/null; echo $?'
 
     if (( $(eval "${check_influx}") == 0 )); then
         echo "> Restarting influxDB service"
@@ -52,8 +52,8 @@ verifyConnection() {
         fi
     fi
 
-    echo $connectionTestString -execute "SHOW DATABASES"
     echo "> Waiting 10 seconds to avoid connection error"
+    echo $connectionTestString -execute "SHOW DATABASES"
     sleep 10
     $connectionTestString -execute "SHOW DATABASES"
 
