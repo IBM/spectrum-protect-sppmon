@@ -8,7 +8,7 @@ configFileSetup() {
     local local_dir="$(dirname ${1})"
     echo "> local_dir: ${local_dir}"
     local config_dir=$(realpath ${local_dir}/../config_files)
-    python3 "${local_dir}/installScript/configFileSetup.py" "${config_dir}"
+    python3 "${local_dir}/installScript/createConfigFile.py" "${config_dir}"
 
     echo "> All configurations files are written into dir ${config_dir}"
 
