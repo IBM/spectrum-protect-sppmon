@@ -2,12 +2,21 @@
 import sys
 import re
 import json
-from os.path import isfile, realpath
-from typing import Any, Callable, Dict, Optional, List, Union
+from os import get_terminal_size
+from os.path import isfile, realpath, join
+from typing import Any, Callable, Dict, Optional, List
 
 class ConfigFileSetup:
 
     password_file_path: str = ""
+
+    @staticmethod
+    def printRow():
+        size: int = get_terminal_size().columns
+        print()
+        print("#"*size)
+        print()
+
 
     @classmethod
     def read_auth(cls, key: str) -> Optional[str]:
@@ -25,8 +34,8 @@ class ConfigFileSetup:
             pass
         return result
 
-    @classmethod
-    def prompt_string(cls, message: str, default: str = "", allow_empty: bool = False, filter: Callable[[str], bool] = None) -> str:
+    @staticmethod
+    def prompt_string(message: str, default: str = "", allow_empty: bool = False, filter: Callable[[str], bool] = None) -> str:
         validate: bool = False
         result: str = ""
 
@@ -41,11 +50,11 @@ class ConfigFileSetup:
             if(filter and not filter(result)):
                 print("> Failed filter rule, please try again.")
                 continue
-            validate = cls.confirm(f"Was \"{result}\" the correct input?")
+            validate = ConfigFileSetup.confirm(f"Was \"{result}\" the correct input?")
         return result
 
-    @classmethod
-    def confirm(cls, message: str, default: bool = True) -> bool:
+    @staticmethod
+    def confirm(message: str, default: bool = True) -> bool:
         default_msg = "[Y/n]" if default else "[y/N]"
         result: str = input(message + f" {default_msg}: ").strip()
         if not result:
@@ -54,6 +63,78 @@ class ConfigFileSetup:
             return True
         else:
             return False
+
+    @classmethod
+    def readAuthOrInput(cls, auth_key: str, message: str, default: str = "", filter: Callable[[str], bool] = None):
+        result: Optional[str] = ConfigFileSetup.read_auth(auth_key)
+        if(not result):
+            result = ConfigFileSetup.prompt_string(message, default=default, filter=filter)
+        return result
+
+    @staticmethod
+    def createServerDict() -> Dict[str, Any]:
+        spp_server: Dict[str, Any] = {}
+        spp_server["username"] = ConfigFileSetup.prompt_string("Please enter the SPP REST-API Username (equal to login via website)")
+        spp_server["password"] = ConfigFileSetup.prompt_string("Please enter the REST-API Users Password (equal to login via website)")
+        spp_server["srv_address"] = ConfigFileSetup.prompt_string("Please enter the SPP server address")
+
+        spp_server["srv_port"] = int(
+            ConfigFileSetup.prompt_string(
+                "Please enter the SPP server port",
+                "443",
+                filter=(lambda x: x.isdigit())))
+
+        spp_server["jobLog_rentation"] = ConfigFileSetup.prompt_string(
+            "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)",
+            "60d",
+            filter=(lambda x: bool(re.match(r"^[0-9]+[hdw]$", x))))
+        return spp_server
+
+    @staticmethod
+    def createInfluxDict(server_name: str) -> Dict[str, Any]:
+        influxDB: Dict[str, Any] = {}
+
+        influxDB["username"] = ConfigFileSetup.readAuthOrInput(
+            "influxAdminName",
+            "Please enter the influxAdmin username",
+            "influxAdmin"
+        )
+
+        influxDB["password"] = ConfigFileSetup.readAuthOrInput(
+            "influxAdminPassword",
+            "Please enter the influxAdmin user password"
+        )
+
+        influxDB["ssl"] = bool(ConfigFileSetup.readAuthOrInput(
+            "sslEnabled",
+            "Please enter whether ssl is enabled (True/False)",
+            filter=(lambda x: bool(re.match(r"^(True)|(False)$", x)))
+        ))
+
+        # Only check this if ssl is enabled
+        influxDB["verify_ssl"] = False if (not influxDB["ssl"]) else bool(ConfigFileSetup.readAuthOrInput(
+            "unsafeSsl",
+            "Please enter whether the ssl connection is selfsigned (True/False)",
+            filter=(lambda x: bool(re.match(r"^(True)|(False)$", x)))
+        ))
+
+        influxDB["srv_address"] = ConfigFileSetup.readAuthOrInput(
+            "influxAddress",
+            "Please enter the influx server address"
+        )
+
+        influxDB["srv_port"] = int(ConfigFileSetup.readAuthOrInput(
+            "influxPort",
+            "Please enter the influx server port",
+            "8086",
+            filter=(lambda x: x.isdigit())
+        ))
+
+        print(f"> Your influxDB database name for this server is \"{server_name}\"")
+        influxDB["dbName"] = server_name
+
+        return influxDB
+
 
 
 
@@ -72,17 +153,19 @@ class ConfigFileSetup:
         # ### Passwordfile setup
         if(not len(sys.argv) == 3):
             print("> No password-file specifed by args.")
-            if(self.confirm("Do you want to use a password-file? (Optional)"), False):
+            if(self.confirm("Do you want to use a password-file? (Optional)", False)):
                 ConfigFileSetup.password_file_path = self.prompt_string("Please specify file to read passwords from", "./passwords.txt")
-        ConfigFileSetup.password_file_path = realpath(config_dir)
-        try:
-            with open(ConfigFileSetup.password_file_path, "r"):
-                pass
-        except IOError as err:
-            print("ERROR: Unable to read password file. Continuing with manual input.")
-            print(f"Error message: {err}")
+                ConfigFileSetup.password_file_path = realpath(config_dir)
+        if(ConfigFileSetup.password_file_path):
+            try:
+                with open(ConfigFileSetup.password_file_path, "r"):
+                    pass
+            except IOError as err:
+                print("ERROR: Unable to read password file. Continuing with manual input.")
+                print(f"Error message: {err}")
 
         # ########## EXECUTION ################
+        ConfigFileSetup.printRow()
         print("> You may add multiple SPP-Server now.")
         print("> Each server requires it's own config file")
 
@@ -90,13 +173,13 @@ class ConfigFileSetup:
 
             config_file_path: str = ""
             server_name: str = ""
-            while(not config_file_path or server_name):
+            while(not config_file_path or not server_name):
                 # Servername for filename and config
                 server_name = self.prompt_string(
                     "What is the name of the SPP-Server? (Human Readable, no Spaces)",
                     filter=(lambda x: not " " in x))
                 # Replace spaces
-                config_file_path = realpath(config_dir) + "/" + server_name + ".conf"
+                config_file_path = join(realpath(config_dir), server_name + ".conf")
 
                 if(isfile(config_file_path)):
                     print(f"> There is already a file at {config_file_path}.")
@@ -114,89 +197,26 @@ class ConfigFileSetup:
 
 
                 # Structure of the config file
-                configs: Dict[
-                    str,
-                    Union[
-                        Dict[str, Any],
-                        List[Dict[str, Any]]]] = {}
+                configs: Dict[str, Any] = {}
 
                 # #################### SERVER ###############################
+                ConfigFileSetup.printRow()
                 print("> collecting server information")
 
-                spp_server: Dict[str, Any] = {}
-                spp_server["username"] = self.prompt_string("Please enter the SPP REST-API Username (equal to login via website)")
-                spp_server["password"] = self.prompt_string("Please enter the REST-API Users Password (equal to login via website)")
-                spp_server["srv_address"] = self.prompt_string("Please enter the SPP server address")
-
-                spp_server["srv_port"] = int(
-                    self.prompt_string(
-                        "Please enter the SPP server port",
-                        "443",
-                        filter=(lambda x: x.isdigit())))
-
-                spp_server["jobLog_rentation"] = self.prompt_string(
-                    "How long are the JobLogs saved within the Server? (Format: 48h, 60d, 2w)",
-                    "60d",
-                    filter=(lambda x: bool(re.match(r"^[0-9]+[hdw]$", x))))
-
-
                 # Saving config
-                configs["sppServer"] = spp_server
+                configs["sppServer"] = ConfigFileSetup.createServerDict()
 
                 print("> finished collecting server informations")
                 # #################### influxDB ###############################
+                ConfigFileSetup.printRow()
                 print("> collecting influxDB informations")
 
-                influxDB: Dict[str, Any] = {}
-
-                influx_username: Optional[str] = self.read_auth("influxAdminName")
-                if(not influx_username):
-                    influx_username = self.prompt_string("Please enter the influxAdmin username", "influxAdmin")
-                influxDB["username"] = influx_username
-
-                influx_password: Optional[str] = self.read_auth("influxAdminPassword")
-                if(not influx_password):
-                    influx_password = self.prompt_string("Please enter the influxAdmin user password")
-                influxDB["password"] = influx_password
-
-                influx_ssl: Optional[str] = self.read_auth("sslEnabled")
-                if(not influx_ssl):
-                    influx_ssl = self.prompt_string(
-                        "Please enter whether ssl is enabled (true/false)",
-                        filter=(lambda x: bool(re.match(r"^(true)|(false)$", x))))
-                influxDB["ssl"] = influx_ssl
-
-                influx_verify_ssl: Optional[str] = "false"
-                if(influx_ssl): # Only check this if ssl is enabled
-                    influx_verify_ssl = self.read_auth("unsafeSsl")
-                    if(not influx_verify_ssl):
-                        influx_verify_ssl = self.prompt_string(
-                            "Please enter whether the ssl connection is selfsigned (True/False)",
-                            filter=(lambda x: bool(re.match(r"^(true)|(false)$", x))))
-                influxDB["verify_ssl"] = influx_verify_ssl
-
-                influx_srv_address: Optional[str] = self.read_auth("influxAddress")
-                if(not influx_srv_address):
-                    influx_srv_address = self.prompt_string("Please enter the influx server address")
-                influxDB["srv_address"] = influx_srv_address
-
-                influx_srv_port: Optional[str] = self.read_auth("influxPort")
-                if(not influx_srv_port):
-                    influx_srv_port = self.prompt_string(
-                        "Please enter the influx server port",
-                        "8086",
-                        filter=(lambda x: x.isdigit()))
-                influxDB["srv_port"] = int(influx_srv_port)
-
-                print(f"> Your influxDB database name for this server is \"{server_name}\"")
-                influxDB["dbName"] = server_name
-
-
                 # Saving config
-                configs["influxDB"] = influxDB
+                configs["influxDB"] = ConfigFileSetup.createInfluxDict(server_name)
 
                 print("> finished collecting influxdb informations")
                 # #################### ssh clients ###############################
+                ConfigFileSetup.printRow()
                 print("> collecting ssh client informations")
 
                 ssh_clients: List[Dict[str, Any]] = []
@@ -217,14 +237,16 @@ class ConfigFileSetup:
 
 
                 # #################### ssh clients: SERVER ###############################
+                ConfigFileSetup.printRow()
                 print("> Collecting SPP-Server ssh informations")
 
                 ssh_server: Dict[str, Any] = {}
 
                 print("> Test the requested logins by logging into the SPP-Server via ssh yourself.")
                 ssh_server["name"] = server_name
-                ssh_server["srv_address"] = spp_server["srv_address"]
-                ssh_server["srv_port"] = spp_server["srv_port"]
+                spp_server_dict: Dict[str, Any] = configs["sppServer"]
+                ssh_server["srv_address"] = spp_server_dict["srv_address"]
+                ssh_server["srv_port"] = spp_server_dict["srv_port"]
                 ssh_server["username"] = self.prompt_string("Please enter the SPP SSH username (equal to login via ssh)")
                 ssh_server["password"] = self.prompt_string("Please enter the SPP SSH user password (equal to login via ssh)")
                 ssh_server["type"] = "server"
@@ -234,6 +256,7 @@ class ConfigFileSetup:
 
                 # #################### ssh clients all other ###############################
                 for ssh_type in ssh_types:
+                    ConfigFileSetup.printRow()
                     print(f"> Collecting {ssh_type} ssh informations")
 
                     while(self.confirm(f"Do you want to add (another) {ssh_type}?")):
