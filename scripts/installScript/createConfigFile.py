@@ -108,13 +108,14 @@ class ConfigFileSetup:
         influxDB["ssl"] = bool(ConfigFileSetup.readAuthOrInput(
             "sslEnabled",
             "Please enter whether ssl is enabled (True/False)",
+            "True",
             filter=(lambda x: bool(re.match(r"^(True)|(False)$", x)))
         ))
 
         # Only check this if ssl is enabled
         influxDB["verify_ssl"] = False if (not influxDB["ssl"]) else bool(ConfigFileSetup.readAuthOrInput(
             "unsafeSsl",
-            "Please enter whether the ssl connection is selfsigned (True/False)",
+            "Please enter whether the ssl certificate is selfsigned (True/False)",
             filter=(lambda x: bool(re.match(r"^(True)|(False)$", x)))
         ))
 
@@ -221,14 +222,16 @@ class ConfigFileSetup:
 
                 ssh_clients: List[Dict[str, Any]] = []
 
-                print("> You will now be asked for multiple ssh logins")
+                print("")
+                print("> NOTE: You will now be asked for multiple ssh logins")
                 print("> You may test all these logins yourself by logging in via ssh")
                 print("> Following categories will be asked:")
                 ssh_types: List[str] = ["vsnap", "vadp", "cloudproxy", "other"] # server excluded here
-                print("> server, "+ ",".join(ssh_types))
+                print("> server, "+ ", ".join(ssh_types))
                 print("> Please add all clients accordingly.")
+                print()
                 print("> If you misstyped anything you may edit the config file manually afterwards")
-                print("> Note: It is highly recommended to add at least one vSnap client")
+                print("> NOTE: It is highly recommended to add at least one vSnap client")
 
                 if(not self.confirm("Do you want to continue now?")):
                     json.dump(configs, config_file, indent=4)
@@ -247,8 +250,8 @@ class ConfigFileSetup:
                 spp_server_dict: Dict[str, Any] = configs["sppServer"]
                 ssh_server["srv_address"] = spp_server_dict["srv_address"]
                 ssh_server["srv_port"] = spp_server_dict["srv_port"]
-                ssh_server["username"] = self.prompt_string("Please enter the SPP SSH username (equal to login via ssh)")
-                ssh_server["password"] = self.prompt_string("Please enter the SPP SSH user password (equal to login via ssh)")
+                ssh_server["username"] = self.prompt_string("Please enter the SPP-Server SSH username (equal to login via ssh)")
+                ssh_server["password"] = self.prompt_string("Please enter the SPP-Server SSH user password (equal to login via ssh)")
                 ssh_server["type"] = "server"
 
                 # Saving config
@@ -259,11 +262,17 @@ class ConfigFileSetup:
                     ConfigFileSetup.printRow()
                     print(f"> Collecting {ssh_type} ssh informations")
 
-                    while(self.confirm(f"Do you want to add (another) {ssh_type}?")):
+                    # counter for naming like: vsnap-1 / vsnap-2
+                    counter: int = 1
+                    while(self.confirm(f"Do you want to add (another) {ssh_type}-client?")):
                         ssh_client: Dict[str, Any] = {}
 
                         print(f"> Test the requested logins by logging into the {ssh_type}-client via ssh yourself.")
-                        ssh_client["name"] = self.prompt_string(f"Please enter the name of the {ssh_type}-client (display only)")
+                        ssh_client["name"] = self.prompt_string(
+                            f"Please enter the name of the {ssh_type}-client (display only)",
+                            f"{ssh_type}-{counter}")
+                        counter += 1 # resetted on next ssh_type
+
                         ssh_client["srv_address"] = self.prompt_string(f"Please enter the server address of the {ssh_type}-client")
                         ssh_client["srv_port"] = int(
                             self.prompt_string(
@@ -276,6 +285,8 @@ class ConfigFileSetup:
 
                         # Saving config
                         ssh_clients.append(ssh_client)
+
+                        ConfigFileSetup.printRow()
 
                 # save all ssh-clients
                 configs["sshclients"] = ssh_clients
