@@ -183,17 +183,17 @@ main(){
     fi
 
     # Part 6: User management for SPP server and components
-    if [[ $continue_point == "CONFIG_FILE" ]]
-        then
-            source "${subScripts}/configFileSetup.sh" "$mainPath"
-            saveState 'CRONTAB' 'Crontab configuration for automatic execution'
+    if [[ $continue_point == "CONFIG_FILE" ]]; then
+        local config_dir=$(realpath ${path}/../config_files)
+        python3 "${path}/addConfigFile.py" "${config_dir}"
+        saveState 'CRONTAB' 'Crontab configuration for automatic execution'
     fi
 
-    # Part 7: User management for SPP server and components
-    if [[ $continue_point == "CRONTAB" ]]
-        then
-            source "${subScripts}/configFileSetup.sh" "$mainPath"
-            saveState 'GRAFANA_DASHBOARDS' 'Creation and configuration of the grafana dashboards'
+    # Part 7: Crontab setup for config files
+    if [[ $continue_point == "CRONTAB" ]]; then
+        local config_dir=$(realpath ${path}/../config_files)
+        python3 "${path}/addCrontabConfig.py" "${config_dir}"
+        saveState 'GRAFANA_DASHBOARDS' 'Creation and configuration of the grafana dashboards'
     fi
 
     # Part 8: Grafana dashboards
